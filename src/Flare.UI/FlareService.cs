@@ -7,6 +7,7 @@ internal sealed class FlareService : IFlareService
 {
     private readonly FlareOptions _options;
     private readonly Queue<ToastInstance> _toastQueue = new();
+    private readonly Lock _lock = new();
 
     internal readonly List<ToastInstance> Toasts = [];
     internal ModalInstance? ActiveModal;
@@ -41,23 +42,27 @@ internal sealed class FlareService : IFlareService
             Options = options,
         };
 
-        if (Toasts.Count >= _options.MaxToasts)
-            _toastQueue.Enqueue(instance);
-        else
+        lock (_lock)
         {
-            Toasts.Add(instance);
-            NotifyChanged();
+            if (Toasts.Count >= _options.MaxToasts)
+                _toastQueue.Enqueue(instance);
+            else
+                Toasts.Add(instance);
         }
 
+        NotifyChanged();
         return Task.CompletedTask;
     }
 
     internal void DismissToast(Guid id)
     {
-        Toasts.RemoveAll(t => t.Id == id);
+        lock (_lock)
+        {
+            Toasts.RemoveAll(t => t.Id == id);
 
-        if (_toastQueue.TryDequeue(out var next))
-            Toasts.Add(next);
+            if (_toastQueue.TryDequeue(out var next))
+                Toasts.Add(next);
+        }
 
         NotifyChanged();
     }
@@ -70,22 +75,35 @@ internal sealed class FlareService : IFlareService
         var merged = MergeModalOptions(options);
         var tcs = new TaskCompletionSource<ModalResult>();
 
-        ActiveModal = new ModalInstance
-        {
-            Id = Guid.NewGuid(),
-            ComponentType = typeof(TComponent),
-            Options = merged,
-            TaskCompletionSource = tcs,
-        };
+        ModalInstance? previous;
 
+        lock (_lock)
+        {
+            previous = ActiveModal;
+            ActiveModal = new ModalInstance
+            {
+                Id = Guid.NewGuid(),
+                ComponentType = typeof(TComponent),
+                Options = merged,
+                TaskCompletionSource = tcs,
+            };
+        }
+
+        previous?.TaskCompletionSource.TrySetResult(ModalResult.Cancel());
         NotifyChanged();
         return tcs.Task;
     }
 
     internal void CloseModal(ModalResult result)
     {
-        var modal = ActiveModal;
-        ActiveModal = null;
+        ModalInstance? modal;
+
+        lock (_lock)
+        {
+            modal = ActiveModal;
+            ActiveModal = null;
+        }
+
         NotifyChanged();
         modal?.TaskCompletionSource.TrySetResult(result);
     }
@@ -102,23 +120,36 @@ internal sealed class FlareService : IFlareService
     {
         var tcs = new TaskCompletionSource<bool>();
 
-        ActiveConfirm = new ConfirmInstance
-        {
-            Id = Guid.NewGuid(),
-            Title = title,
-            Message = message,
-            Options = options,
-            TaskCompletionSource = tcs,
-        };
+        ConfirmInstance? previous;
 
+        lock (_lock)
+        {
+            previous = ActiveConfirm;
+            ActiveConfirm = new ConfirmInstance
+            {
+                Id = Guid.NewGuid(),
+                Title = title,
+                Message = message,
+                Options = options,
+                TaskCompletionSource = tcs,
+            };
+        }
+
+        previous?.TaskCompletionSource.TrySetResult(false);
         NotifyChanged();
         return tcs.Task;
     }
 
     internal void CloseConfirm(bool confirmed)
     {
-        var confirm = ActiveConfirm;
-        ActiveConfirm = null;
+        ConfirmInstance? confirm;
+
+        lock (_lock)
+        {
+            confirm = ActiveConfirm;
+            ActiveConfirm = null;
+        }
+
         NotifyChanged();
         confirm?.TaskCompletionSource.TrySetResult(confirmed);
     }
