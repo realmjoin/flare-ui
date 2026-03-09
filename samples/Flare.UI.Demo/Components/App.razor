@@ -16,7 +16,14 @@
 </head>
 
 <body>
-    <Routes />
+    <ErrorBoundary>
+        <ChildContent>
+            <Routes />
+        </ChildContent>
+        <ErrorContent>
+            <p class="text-danger p-4">An unexpected error occurred. <a href="/">Reload</a></p>
+        </ErrorContent>
+    </ErrorBoundary>
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
