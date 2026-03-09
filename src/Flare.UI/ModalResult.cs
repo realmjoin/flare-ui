@@ -13,6 +13,18 @@ public sealed class ModalResult
 
     public TData? GetData<TData>() => Data is TData typed ? typed : default;
 
+    public bool TryGetData<TData>(out TData? value)
+    {
+        if (Data is TData typed)
+        {
+            value = typed;
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
+
     public static ModalResult Ok(object? data = null) => new(true, data);
     public static ModalResult Cancel() => new(false);
 }
