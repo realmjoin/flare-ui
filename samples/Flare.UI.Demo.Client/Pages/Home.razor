@@ -27,6 +27,7 @@
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoProgress">No progress bar</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoPause">No pause on hover</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoClose">No close button</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastRichContent">Rich content</button>
     </div>
 </section>
 
@@ -130,6 +131,15 @@
     {
         Level = ToastLevel.Info,
         ShowCloseButton = false,
+    });
+
+    private Task ToastRichContent() => Flare.ToastAsync("", new ToastOptions
+    {
+        Level = ToastLevel.Success,
+        Content = @<div>
+            <strong>Deployment complete</strong>
+            <div style="font-size: 0.8rem; opacity: 0.8;">v2.4.1 &mdash; 3 services updated</div>
+        </div>,
     });
 
     // Confirm examples

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components;
+
 namespace Flare;
 
 public sealed class ToastOptions
@@ -8,5 +10,6 @@ public sealed class ToastOptions
     public bool PauseOnHover { get; set; } = true;
     public bool Persistent { get; set; }
     public bool ShowCloseButton { get; set; } = true;
+    public RenderFragment? Content { get; set; }
     public Func<Task>? OnClick { get; set; }
 }

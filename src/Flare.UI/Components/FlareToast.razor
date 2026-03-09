@@ -8,12 +8,28 @@
     @if (Instance.Options.OnClick is not null)
     {
         <button class="@(Headless ? null : "flare-toast-body flare-toast-clickable")" @onclick="HandleClick">
-            @Instance.Message
+            @if (Instance.Options.Content is not null)
+            {
+                @Instance.Options.Content
+            }
+            else
+            {
+                @Instance.Message
+            }
         </button>
     }
     else
     {
-        <span class="@(Headless ? null : "flare-toast-body")">@Instance.Message</span>
+        <span class="@(Headless ? null : "flare-toast-body")">
+            @if (Instance.Options.Content is not null)
+            {
+                @Instance.Options.Content
+            }
+            else
+            {
+                @Instance.Message
+            }
+        </span>
     }
     @if (Instance.Options.ShowCloseButton)
     {
