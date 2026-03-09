@@ -21,10 +21,10 @@ internal sealed class FlareService : IFlareService
 
     // ── Toast ──────────────────────────────────────────
 
-    public Task ToastAsync(string message)
+    public Task<ToastHandle> ToastAsync(string message)
         => ToastAsync(message, _options.Toast);
 
-    public Task ToastAsync(string message, ToastLevel level)
+    public Task<ToastHandle> ToastAsync(string message, ToastLevel level)
         => ToastAsync(message, new ToastOptions
         {
             Level = level,
@@ -33,7 +33,7 @@ internal sealed class FlareService : IFlareService
             PauseOnHover = _options.Toast.PauseOnHover,
         });
 
-    public Task ToastAsync(string message, ToastOptions options)
+    public Task<ToastHandle> ToastAsync(string message, ToastOptions options)
     {
         var instance = new ToastInstance
         {
@@ -51,7 +51,7 @@ internal sealed class FlareService : IFlareService
         }
 
         NotifyChanged();
-        return Task.CompletedTask;
+        return Task.FromResult(new ToastHandle(instance.Id, DismissToast));
     }
 
     internal void DismissToast(Guid id)

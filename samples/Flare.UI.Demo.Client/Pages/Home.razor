@@ -22,6 +22,7 @@
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastCustomDuration">Custom duration (10s)</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastBurst">Burst (5 at once)</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastPersistent">Persistent</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastDismissable">Dismiss via handle</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastClickable">Clickable</button>
     </div>
 </section>
@@ -84,6 +85,18 @@
         Level = ToastLevel.Warning,
         Persistent = true,
     });
+
+    private async Task ToastDismissable()
+    {
+        var handle = await Flare.ToastAsync("I'll dismiss myself in 2 seconds...", new ToastOptions
+        {
+            Level = ToastLevel.Info,
+            Persistent = true,
+        });
+
+        await Task.Delay(2000);
+        handle.Dismiss();
+    }
 
     private Task ToastClickable() => Flare.ToastAsync("Click me to navigate!", new ToastOptions
     {

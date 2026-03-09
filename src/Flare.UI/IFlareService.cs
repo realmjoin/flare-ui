@@ -4,9 +4,9 @@ namespace Flare;
 
 public interface IFlareService
 {
-    Task ToastAsync(string message);
-    Task ToastAsync(string message, ToastLevel level);
-    Task ToastAsync(string message, ToastOptions options);
+    Task<ToastHandle> ToastAsync(string message);
+    Task<ToastHandle> ToastAsync(string message, ToastLevel level);
+    Task<ToastHandle> ToastAsync(string message, ToastOptions options);
 
     Task<ModalResult> ModalAsync<TComponent>(ModalOptions? options = null)
         where TComponent : IComponent;
