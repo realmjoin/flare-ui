@@ -9,10 +9,6 @@
     pointer-events: none;
 }
 
-.flare-toast-container > :deep(*) {
-    pointer-events: auto;
-}
-
 .flare-toast-top-right {
     top: 0;
     right: 0;
