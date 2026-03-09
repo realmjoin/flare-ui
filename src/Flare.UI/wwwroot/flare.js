@@ -32,7 +32,7 @@ export function createFocusTrap(element, initialFocusSelector) {
         ? element.querySelector(initialFocusSelector)
         : element.querySelector(FOCUSABLE);
 
-    target?.focus();
+    try { target?.focus(); } catch { /* element may be detached */ }
 
     return { element, handleKeyDown, previouslyFocused };
 }
@@ -40,5 +40,5 @@ export function createFocusTrap(element, initialFocusSelector) {
 export function destroyFocusTrap(trap) {
     if (!trap) return;
     trap.element.removeEventListener('keydown', trap.handleKeyDown);
-    trap.previouslyFocused?.focus();
+    try { trap.previouslyFocused?.focus(); } catch { /* element may be detached */ }
 }
