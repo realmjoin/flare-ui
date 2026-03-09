@@ -24,6 +24,9 @@
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastPersistent">Persistent</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastDismissable">Dismiss via handle</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick="ToastClickable">Clickable</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoProgress">No progress bar</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoPause">No pause on hover</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoClose">No close button</button>
     </div>
 </section>
 
@@ -35,6 +38,8 @@
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
         <button class="btn btn-outline-danger" @onclick="ShowConfirm">Delete item</button>
         <button class="btn btn-outline-primary" @onclick="ShowConfirmCustom">Custom labels</button>
+        <button class="btn btn-outline-secondary" @onclick="ShowConfirmStrict">No escape / backdrop dismiss</button>
+        <button class="btn btn-outline-secondary" @onclick="ShowConfirmBackdrop">Backdrop dismissable</button>
     </div>
     @if (_confirmResult is not null)
     {
@@ -49,7 +54,11 @@
 <section class="mb-4">
     <h2>Modal</h2>
     <p>Render any Blazor component in a dialog. Returns typed data via <code>ModalResult</code>.</p>
-    <button class="btn btn-outline-primary" @onclick="ShowModal">Edit Profile</button>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-outline-primary" @onclick="ShowModal">Edit Profile</button>
+        <button class="btn btn-outline-secondary" @onclick="ShowModalStrict">No backdrop / escape / close</button>
+        <button class="btn btn-outline-secondary" @onclick="ShowModalNoTitle">No title / close</button>
+    </div>
     @if (_modalName is not null)
     {
         <p class="mt-2">Returned name: <strong>@_modalName</strong></p>
@@ -105,6 +114,24 @@
         OnClick = async () => await Flare.ToastAsync("Toast was clicked!", ToastLevel.Success),
     });
 
+    private Task ToastNoProgress() => Flare.ToastAsync("No progress bar on this one.", new ToastOptions
+    {
+        Level = ToastLevel.Success,
+        ShowProgress = false,
+    });
+
+    private Task ToastNoPause() => Flare.ToastAsync("Hover won't pause me.", new ToastOptions
+    {
+        Level = ToastLevel.Info,
+        PauseOnHover = false,
+    });
+
+    private Task ToastNoClose() => Flare.ToastAsync("No close button — auto-dismisses.", new ToastOptions
+    {
+        Level = ToastLevel.Info,
+        ShowCloseButton = false,
+    });
+
     // Confirm examples
     private async Task ShowConfirm()
     {
@@ -120,12 +147,56 @@
         });
     }
 
-    // Modal example
+    private async Task ShowConfirmStrict()
+    {
+        _confirmResult = await Flare.ConfirmAsync("Mandatory Choice", "You must click a button to proceed.", new ConfirmOptions
+        {
+            CloseOnEscape = false,
+            CloseOnBackdropClick = false,
+        });
+    }
+
+    private async Task ShowConfirmBackdrop()
+    {
+        _confirmResult = await Flare.ConfirmAsync("Backdrop Dismiss", "Click outside to cancel.", new ConfirmOptions
+        {
+            CloseOnBackdropClick = true,
+        });
+    }
+
+    // Modal examples
     private async Task ShowModal()
     {
         var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
         {
             Title = "Edit Profile",
+            Parameters = new() { ["CurrentName"] = "Jane Doe" },
+        });
+
+        if (result.Confirmed)
+            _modalName = result.GetData<string>();
+    }
+
+    private async Task ShowModalStrict()
+    {
+        var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
+        {
+            Title = "Must use form buttons",
+            CloseOnBackdropClick = false,
+            CloseOnEscape = false,
+            ShowCloseButton = false,
+            Parameters = new() { ["CurrentName"] = "Jane Doe" },
+        });
+
+        if (result.Confirmed)
+            _modalName = result.GetData<string>();
+    }
+
+    private async Task ShowModalNoTitle()
+    {
+        var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
+        {
+            ShowCloseButton = false,
             Parameters = new() { ["CurrentName"] = "Jane Doe" },
         });
 
