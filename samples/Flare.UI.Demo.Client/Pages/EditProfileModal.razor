@@ -16,5 +16,9 @@
 
     protected override void OnInitialized() => Name = CurrentName;
 
-    private void Save() => Modal.Ok(Name);
+    private void Save()
+    {
+        if (string.IsNullOrWhiteSpace(Name)) return;
+        Modal.Ok(Name);
+    }
 }
