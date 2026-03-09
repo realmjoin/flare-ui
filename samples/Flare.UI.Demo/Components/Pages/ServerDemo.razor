@@ -1,0 +1,75 @@
+@page "/server"
+@rendermode InteractiveServer
+@inject IFlareService Flare
+
+<FlareProvider>
+
+<PageTitle>Server Mode - Flare.UI Demo</PageTitle>
+
+<h1>Server Mode</h1>
+<p class="lead">This page always runs via Interactive Server (SignalR). The render mode indicator stays blue.</p>
+
+<section class="mb-4">
+    <h2>Toasts</h2>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-success" @onclick="ToastSuccess">Success</button>
+        <button class="btn btn-danger" @onclick="ToastError">Error</button>
+        <button class="btn btn-warning" @onclick="ToastWarning">Warning</button>
+        <button class="btn btn-info" @onclick="ToastInfo">Info</button>
+    </div>
+</section>
+
+<hr />
+
+<section class="mb-4">
+    <h2>Confirm</h2>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-outline-danger" @onclick="ShowConfirm">Delete item</button>
+    </div>
+    @if (_confirmResult is not null)
+    {
+        <p class="mt-2">
+            Result: <strong>@(_confirmResult.Value ? "Confirmed" : "Cancelled")</strong>
+        </p>
+    }
+</section>
+
+<hr />
+
+<section class="mb-4">
+    <h2>Modal</h2>
+    <button class="btn btn-outline-primary" @onclick="ShowModal">Edit Profile</button>
+    @if (_modalName is not null)
+    {
+        <p class="mt-2">Returned name: <strong>@_modalName</strong></p>
+    }
+</section>
+
+</FlareProvider>
+
+@code {
+    private bool? _confirmResult;
+    private string? _modalName;
+
+    private Task ToastSuccess() => Flare.ToastAsync("Item saved successfully.", ToastLevel.Success);
+    private Task ToastError() => Flare.ToastAsync("Something went wrong!", ToastLevel.Error);
+    private Task ToastWarning() => Flare.ToastAsync("Check your input.", ToastLevel.Warning);
+    private Task ToastInfo() => Flare.ToastAsync("FYI: new version available.");
+
+    private async Task ShowConfirm()
+    {
+        _confirmResult = await Flare.ConfirmAsync("Delete Item", "This action cannot be undone. Are you sure?");
+    }
+
+    private async Task ShowModal()
+    {
+        var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
+        {
+            Title = "Edit Profile",
+            Parameters = new() { ["CurrentName"] = "Jane Doe" },
+        });
+
+        if (result.Confirmed)
+            _modalName = result.GetData<string>();
+    }
+}

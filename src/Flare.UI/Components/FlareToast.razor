@@ -1,0 +1,25 @@
+@namespace Flare
+
+<div class="@CssClass()"
+     role="@(Instance.Options.Level == ToastLevel.Error ? "alert" : "status")"
+     aria-live="@(Instance.Options.Level == ToastLevel.Error ? "assertive" : "polite")"
+     @onmouseenter="PauseTimer"
+     @onmouseleave="ResumeTimer">
+    @if (Instance.Options.OnClick is not null)
+    {
+        <button class="@(Headless ? null : "flare-toast-body flare-toast-clickable")" @onclick="HandleClick">
+            @Instance.Message
+        </button>
+    }
+    else
+    {
+        <span class="@(Headless ? null : "flare-toast-body")">@Instance.Message</span>
+    }
+    <button class="@(Headless ? null : "flare-toast-close")" aria-label="Dismiss" @onclick="Dismiss">&times;</button>
+    @if (Instance.Options.ShowProgress && !Instance.Options.Persistent && !Headless)
+    {
+        <div class="flare-toast-progress"
+             style="animation-duration: @(Instance.Options.DurationMs)ms; animation-play-state: @(Instance.IsPaused ? "paused" : "running");">
+        </div>
+    }
+</div>

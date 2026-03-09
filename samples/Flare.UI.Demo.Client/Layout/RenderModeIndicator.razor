@@ -1,0 +1,25 @@
+@{
+    string label;
+    string cssClass;
+
+    if (!RendererInfo.IsInteractive)
+    {
+        label = "Prerender";
+        cssClass = "prerender";
+    }
+    else if (OperatingSystem.IsBrowser())
+    {
+        label = "WebAssembly";
+        cssClass = "wasm";
+    }
+    else
+    {
+        label = "Interactive Server";
+        cssClass = "server";
+    }
+}
+
+<div class="indicator @cssClass">
+    <span class="dot"></span>
+    @label
+</div>

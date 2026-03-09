@@ -1,0 +1,117 @@
+.flare-toast {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    animation: flare-toast-in 300ms ease-out;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    border-left: 4px solid var(--flare-toast-accent, #6b7280);
+}
+
+.flare-toast-info {
+    --flare-toast-accent: #3b82f6;
+}
+
+.flare-toast-success {
+    --flare-toast-accent: #22c55e;
+}
+
+.flare-toast-warning {
+    --flare-toast-accent: #f59e0b;
+}
+
+.flare-toast-error {
+    --flare-toast-accent: #ef4444;
+}
+
+.flare-toast-exiting {
+    animation: flare-toast-out 300ms ease-in forwards;
+}
+
+.flare-toast-body {
+    all: unset;
+    flex: 1;
+}
+
+.flare-toast-clickable {
+    cursor: pointer;
+    border-radius: 0.25rem;
+}
+
+.flare-toast-clickable:hover {
+    text-decoration: underline;
+}
+
+.flare-toast-clickable:focus-visible {
+    outline: 2px solid var(--flare-toast-accent, #3b82f6);
+    outline-offset: 2px;
+}
+
+.flare-toast-close {
+    all: unset;
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: #9ca3af;
+    padding: 0 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.flare-toast-close:hover {
+    color: #1a1a1a;
+}
+
+.flare-toast-close:focus-visible {
+    outline: 2px solid var(--flare-toast-accent, #3b82f6);
+    outline-offset: 2px;
+}
+
+.flare-toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--flare-toast-accent, #6b7280);
+    opacity: 0.5;
+    transform-origin: left;
+    animation: flare-progress linear forwards;
+}
+
+@keyframes flare-toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes flare-toast-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+@keyframes flare-progress {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
+}

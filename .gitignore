@@ -1,0 +1,19 @@
+## .NET
+bin/
+obj/
+nupkg/
+
+## IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Rider
+.idea/
+*.sln.iml

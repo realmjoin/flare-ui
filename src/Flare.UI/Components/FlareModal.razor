@@ -1,0 +1,28 @@
+@namespace Flare
+@implements IAsyncDisposable
+
+<div class="@BackdropClass()" @onclick="HandleBackdropClick" @onkeydown="HandleKeyDown" tabindex="-1" @ref="_backdrop">
+    <div class="@DialogClass()" role="dialog" aria-modal="true"
+         aria-labelledby="@_titleId" @onclick:stopPropagation="true" @ref="_dialog">
+        @if (!string.IsNullOrEmpty(Instance.Options.Title) || Instance.Options.ShowCloseButton)
+        {
+            <div class="@(Headless ? null : "flare-modal-header")">
+                @if (!string.IsNullOrEmpty(Instance.Options.Title))
+                {
+                    <h2 id="@_titleId" class="@(Headless ? null : "flare-modal-title")">@Instance.Options.Title</h2>
+                }
+                @if (Instance.Options.ShowCloseButton)
+                {
+                    <button class="@(Headless ? null : "flare-modal-close")" aria-label="Close"
+                            @onclick="() => Close(ModalResult.Cancel())">&times;</button>
+                }
+            </div>
+        }
+        <div class="@(Headless ? null : "flare-modal-body")">
+            <CascadingValue Value="_modalContext">
+                <DynamicComponent Type="Instance.ComponentType"
+                                  Parameters="Instance.Options.Parameters" />
+            </CascadingValue>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+@namespace Flare
+@implements IDisposable
+
+@ChildContent
+
+@if (_service.Toasts.Count > 0)
+{
+    <div class="@ToastContainerClass()" role="region" aria-label="Notifications">
+        @foreach (var toast in _service.Toasts.ToList())
+        {
+            <FlareToast Instance="toast"
+                        Headless="_options.Headless"
+                        OnDismiss="() => _service.DismissToast(toast.Id)" />
+        }
+    </div>
+}
+
+@if (_service.ActiveModal is not null)
+{
+    <FlareModal Instance="_service.ActiveModal"
+                Headless="_options.Headless"
+                OnClose="result => _service.CloseModal(result)" />
+}
+
+@if (_service.ActiveConfirm is not null)
+{
+    <FlareConfirm Instance="_service.ActiveConfirm"
+                  Headless="_options.Headless"
+                  OnClose="confirmed => _service.CloseConfirm(confirmed)" />
+}

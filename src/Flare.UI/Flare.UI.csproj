@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Flare</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <PackageId>Flare.UI</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Jan Berdel</Authors>
+    <Description>Minimal imperative Toast, Modal, and Confirm components for Blazor. Zero dependencies.</Description>
+    <PackageTags>blazor;toast;modal;confirm;dialog</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.*" />
+  </ItemGroup>
+
+</Project>
