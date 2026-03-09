@@ -28,6 +28,7 @@ public partial class FlareToast : ComponentBase, IDisposable
     private async Task StartTimer()
     {
         _cts?.Cancel();
+        _cts?.Dispose();
         _cts = new CancellationTokenSource();
         var token = _cts.Token;
         _timerStartedAt = Environment.TickCount64;
@@ -68,7 +69,6 @@ public partial class FlareToast : ComponentBase, IDisposable
         if (!Instance.IsPaused) return;
 
         Instance.IsPaused = false;
-        StateHasChanged();
         await StartTimer();
     }
 
