@@ -3,6 +3,7 @@ namespace Flare;
 public sealed class ModalOptions
 {
     public string? Title { get; set; }
+    public string? CssClass { get; set; }
     public bool CloseOnBackdropClick { get; set; } = true;
     public bool CloseOnEscape { get; set; } = true;
     public bool ShowCloseButton { get; set; } = true;

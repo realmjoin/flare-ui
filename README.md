@@ -88,12 +88,23 @@ Any Blazor component can be rendered as a modal. Use the cascading `ModalContext
 var result = await Flare.ModalAsync<EditProfile>(new ModalOptions
 {
     Title = "Edit Profile",
+    CssClass = "my-wide-modal",
     Parameters = new() { ["CurrentName"] = "Jane" },
 });
 
 if (result.Confirmed)
 {
     var name = result.GetData<string>();
+}
+```
+
+Control modal sizing via CSS custom properties on `CssClass`:
+
+```css
+.my-wide-modal {
+    --flare-modal-min-width: 32rem;
+    --flare-modal-width: 40rem;
+    --flare-modal-max-width: 90vw;
 }
 ```
 

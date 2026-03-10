@@ -2,7 +2,7 @@
 @implements IAsyncDisposable
 
 <div class="@BackdropClass()" @onclick="HandleBackdropClick" @onkeydown="HandleKeyDown" tabindex="-1" @ref="_backdrop">
-    <div class="@DialogClass()" role="dialog" aria-modal="true"
+    <div class="@DialogClass() @Instance.Options.CssClass" role="dialog" aria-modal="true"
          aria-labelledby="@_titleId" @onclick:stopPropagation="true" @ref="_dialog">
         @if (!string.IsNullOrEmpty(Instance.Options.Title) || Instance.Options.ShowCloseButton)
         {

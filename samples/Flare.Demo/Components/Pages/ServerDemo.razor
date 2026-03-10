@@ -119,6 +119,7 @@
         var result = await Flare.ModalAsync<DeployConfigModal>(new ModalOptions
         {
             Title = "Deploy Configuration",
+            CssClass = "deploy-config-modal",
             Parameters = new()
             {
                 ["CurrentEnvironment"] = _environment,
