@@ -59,13 +59,13 @@ public partial class FlareConfirm : ComponentBase, IAsyncDisposable
             {
                 await _module.InvokeVoidAsync("destroyFocusTrap", _trap);
             }
-            catch (JSDisconnectedException) { }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
 
         if (_module is not null)
         {
             try { await _module.DisposeAsync(); }
-            catch (JSDisconnectedException) { }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
     }
 }
