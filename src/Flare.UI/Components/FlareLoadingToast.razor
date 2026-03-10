@@ -1,0 +1,24 @@
+@namespace Flare
+
+<div class="@CssClass()" role="status" aria-live="polite">
+    <span class="@(Headless ? null : "flare-loading-toast-body")">
+        @Instance.Message
+        @if (Instance.Progress is not null && !Headless)
+        {
+            <span class="flare-loading-toast-percent">@(Instance.Progress)%</span>
+        }
+    </span>
+    @if (!Headless)
+    {
+        <div class="flare-loading-toast-bar">
+            @if (Instance.Progress is not null)
+            {
+                <div class="flare-loading-toast-bar-fill" style="width: @(Math.Clamp(Instance.Progress.Value, 0, 100))%;"></div>
+            }
+            else
+            {
+                <div class="flare-loading-toast-bar-fill flare-loading-toast-bar-indeterminate"></div>
+            }
+        </div>
+    }
+</div>

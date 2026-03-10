@@ -8,9 +8,13 @@
 
 @ChildContent
 
-@if (_service.Toasts.Count > 0)
+@if (_service.LoadingToasts.Count > 0 || _service.Toasts.Count > 0)
 {
     <div class="@ToastContainerClass()" role="region" aria-label="Notifications">
+        @foreach (var lt in _service.LoadingToasts.ToList())
+        {
+            <FlareLoadingToast @key="lt.Id" Instance="lt" Headless="_options.Headless" />
+        }
         @foreach (var toast in _service.Toasts.ToList())
         {
             <FlareToast @key="toast.Id"

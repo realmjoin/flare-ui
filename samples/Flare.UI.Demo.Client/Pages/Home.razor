@@ -34,6 +34,19 @@
 <hr />
 
 <section class="mb-4">
+    <h2>Loading Toast</h2>
+    <p>Imperative progress toast with delay support. Always renders above regular toasts.</p>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-outline-primary" @onclick="LoadingToastIndeterminate">Indeterminate (3s)</button>
+        <button class="btn btn-outline-primary" @onclick="LoadingToastProgress">With progress</button>
+        <button class="btn btn-outline-secondary" @onclick="LoadingToastImmediate">Immediate (no delay)</button>
+        <button class="btn btn-outline-secondary" @onclick="LoadingToastFast">Fast (no show)</button>
+    </div>
+</section>
+
+<hr />
+
+<section class="mb-4">
     <h2>Confirm</h2>
     <p>Async confirmation that blocks the caller until the user responds.</p>
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
@@ -274,6 +287,36 @@
     {
         using var _ = Flare.StartLoadingBar();
         await Task.Delay(500); // work finishes before default 1500ms delay — bar never shows
+    }
+
+    // Loading toast examples
+    private async Task LoadingToastIndeterminate()
+    {
+        using var _ = Flare.StartLoadingToast("Processing...");
+        await Task.Delay(3000);
+    }
+
+    private async Task LoadingToastProgress()
+    {
+        var toast = Flare.StartLoadingToast("Uploading...", delayMs: 0);
+        for (var i = 0; i <= 100; i += 5)
+        {
+            toast.Update(progress: i);
+            await Task.Delay(100);
+        }
+        toast.Dispose();
+    }
+
+    private async Task LoadingToastImmediate()
+    {
+        using var _ = Flare.StartLoadingToast("Saving...", delayMs: 0);
+        await Task.Delay(2000);
+    }
+
+    private async Task LoadingToastFast()
+    {
+        using var _ = Flare.StartLoadingToast("Quick check...");
+        await Task.Delay(500); // finishes before 1500ms delay — toast never shows
     }
 
     private async Task ShowModalNoTitle()

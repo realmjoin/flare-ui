@@ -13,6 +13,7 @@ internal sealed class FlareService : IFlareService
     internal ModalInstance? ActiveModal;
     internal ConfirmInstance? ActiveConfirm;
     private int _loadingBarActiveCount;
+    internal readonly List<LoadingToastState> LoadingToasts = [];
 
     public event Action? OnChanged;
 
@@ -178,6 +179,47 @@ internal sealed class FlareService : IFlareService
 
         lock (_lock)
             _loadingBarActiveCount = Math.Max(0, _loadingBarActiveCount - 1);
+
+        NotifyChanged();
+    }
+
+    // ── Loading Toast ──────────────────────────────────
+
+    public LoadingToastHandle StartLoadingToast(string message, int delayMs = 1500)
+    {
+        return new LoadingToastHandle(
+            message,
+            OnLoadingToastActivated,
+            OnLoadingToastCompleted,
+            NotifyChanged,
+            delayMs);
+    }
+
+    private void OnLoadingToastActivated(LoadingToastHandle handle)
+    {
+        lock (_lock)
+            LoadingToasts.Add(handle.State);
+
+        NotifyChanged();
+    }
+
+    private async void OnLoadingToastCompleted(LoadingToastHandle handle)
+    {
+        if (!handle.IsActive)
+        {
+            lock (_lock)
+                LoadingToasts.Remove(handle.State);
+
+            return;
+        }
+
+        handle.State.IsExiting = true;
+        NotifyChanged();
+
+        await Task.Delay(300);
+
+        lock (_lock)
+            LoadingToasts.Remove(handle.State);
 
         NotifyChanged();
     }
