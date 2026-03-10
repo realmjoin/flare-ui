@@ -19,6 +19,7 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
     private IJSObjectReference? _trap;
     private ModalContext _modalContext = default!;
     private readonly string _titleId = $"flare-modal-title-{Guid.NewGuid():N}";
+    private bool _disposed;
 
     protected override void OnInitialized()
     {
@@ -27,12 +28,19 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && !_disposed)
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>(
-                "import", "./_content/Flare.UI/flare.js");
-            _trap = await _module.InvokeAsync<IJSObjectReference>(
-                "createFocusTrap", _dialog, null);
+            try
+            {
+                _module = await JS.InvokeAsync<IJSObjectReference>(
+                    "import", "./_content/Flare.UI/flare.js");
+                if (!_disposed)
+                {
+                    _trap = await _module.InvokeAsync<IJSObjectReference>(
+                        "createFocusTrap", _dialog, null);
+                }
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException or JSException) { }
         }
     }
 
@@ -58,6 +66,7 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        _disposed = true;
         if (_trap is not null && _module is not null)
         {
             try

@@ -19,15 +19,23 @@ public partial class FlareConfirm : ComponentBase, IAsyncDisposable
     private IJSObjectReference? _trap;
     private readonly string _titleId = $"flare-confirm-title-{Guid.NewGuid():N}";
     private readonly string _descId = $"flare-confirm-desc-{Guid.NewGuid():N}";
+    private bool _disposed;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && !_disposed)
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>(
-                "import", "./_content/Flare.UI/flare.js");
-            _trap = await _module.InvokeAsync<IJSObjectReference>(
-                "createFocusTrap", _dialog, ".flare-confirm-cancel");
+            try
+            {
+                _module = await JS.InvokeAsync<IJSObjectReference>(
+                    "import", "./_content/Flare.UI/flare.js");
+                if (!_disposed)
+                {
+                    _trap = await _module.InvokeAsync<IJSObjectReference>(
+                        "createFocusTrap", _dialog, ".flare-confirm-cancel");
+                }
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException or JSException) { }
         }
     }
 
@@ -53,6 +61,7 @@ public partial class FlareConfirm : ComponentBase, IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        _disposed = true;
         if (_trap is not null && _module is not null)
         {
             try
