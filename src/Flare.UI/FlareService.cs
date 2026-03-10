@@ -205,23 +205,30 @@ internal sealed class FlareService : IFlareService
 
     private async void OnLoadingToastCompleted(LoadingToastHandle handle)
     {
-        if (!handle.IsActive)
+        try
         {
+            if (!handle.IsActive)
+            {
+                lock (_lock)
+                    LoadingToasts.Remove(handle.State);
+
+                return;
+            }
+
+            handle.State.IsExiting = true;
+            NotifyChanged();
+
+            await Task.Delay(300);
+
             lock (_lock)
                 LoadingToasts.Remove(handle.State);
 
-            return;
+            NotifyChanged();
         }
-
-        handle.State.IsExiting = true;
-        NotifyChanged();
-
-        await Task.Delay(300);
-
-        lock (_lock)
-            LoadingToasts.Remove(handle.State);
-
-        NotifyChanged();
+        catch
+        {
+            // Prevent async void from crashing the process
+        }
     }
 
     // ── Helpers ────────────────────────────────────────
