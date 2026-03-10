@@ -8,11 +8,21 @@
 
     <PackageId>Flare.UI</PackageId>
     <Version>0.1.0</Version>
-    <Authors>Jan Berdel</Authors>
-    <Description>Minimal imperative Toast, Modal, and Confirm components for Blazor. Zero dependencies.</Description>
-    <PackageTags>blazor;toast;modal;confirm;dialog</PackageTags>
+    <Authors>glueckkanja AG</Authors>
+    <Company>glueckkanja AG</Company>
+    <Copyright>Copyright (c) glueckkanja AG</Copyright>
+    <Description>Imperative Toast, Modal, Confirm, Loading Bar, and Loading Toast components for Blazor. Zero dependencies.</Description>
+    <PackageTags>blazor;toast;modal;confirm;dialog;loading-bar;notification</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/realmjoin/flare-ui</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/realmjoin/flare-ui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.*" />
