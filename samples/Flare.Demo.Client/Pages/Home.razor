@@ -1,333 +1,143 @@
 @page "/"
-@rendermode InteractiveAuto
+@rendermode InteractiveWebAssembly
 @inject IFlareService Flare
 
 <FlareProvider>
 
-<PageTitle>Flare Demo</PageTitle>
+<PageTitle>Team Roster - Flare Demo</PageTitle>
 
-<h1>Flare</h1>
-<p class="lead">Imperative Toast, Modal, and Confirm for Blazor. Zero dependencies.</p>
+<h1>Team Roster <small class="text-muted" style="font-size: 0.5em;">demo</small></h1>
+<p class="lead">Manage your team — runs entirely in the browser via WebAssembly.</p>
 
-<section class="mb-4">
-    <h2>Toasts</h2>
-    <p>Fire-and-forget notifications with auto-dismiss, progress bar, and pause-on-hover.</p>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-success" @onclick="ToastSuccess">Success</button>
-        <button class="btn btn-danger" @onclick="ToastError">Error</button>
-        <button class="btn btn-warning" @onclick="ToastWarning">Warning</button>
-        <button class="btn btn-info" @onclick="ToastInfo">Info</button>
-    </div>
-    <div class="mt-2" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastCustomDuration">Custom duration (10s)</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastBurst">Burst (5 at once)</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastPersistent">Persistent</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastDismissable">Dismiss via handle</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastClickable">Clickable</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoProgress">No progress bar</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoPause">No pause on hover</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastNoClose">No close button</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick="ToastRichContent">Rich content</button>
-    </div>
-</section>
-
-<hr />
-
-<section class="mb-4">
-    <h2>Loading Toast</h2>
-    <p>Imperative progress toast with delay support. Always renders above regular toasts.</p>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline-primary" @onclick="LoadingToastIndeterminate">Indeterminate (3s)</button>
-        <button class="btn btn-outline-primary" @onclick="LoadingToastProgress">With progress</button>
-        <button class="btn btn-outline-secondary" @onclick="LoadingToastImmediate">Immediate (no delay)</button>
-        <button class="btn btn-outline-secondary" @onclick="LoadingToastFast">Fast (no show)</button>
-    </div>
-</section>
-
-<hr />
-
-<section class="mb-4">
-    <h2>Confirm</h2>
-    <p>Async confirmation that blocks the caller until the user responds.</p>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline-danger" @onclick="ShowConfirm">Delete item</button>
-        <button class="btn btn-outline-primary" @onclick="ShowConfirmCustom">Custom labels</button>
-        <button class="btn btn-outline-secondary" @onclick="ShowConfirmStrict">No escape / backdrop dismiss</button>
-        <button class="btn btn-outline-secondary" @onclick="ShowConfirmBackdrop">Backdrop dismissable</button>
-    </div>
-    @if (_confirmResult is not null)
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+    <button class="btn btn-primary" @onclick="AddMember">Add member</button>
+    <button class="btn btn-outline-secondary" @onclick="ImportMembers">Import members</button>
+    @if (_members.Count > 0)
     {
-        <p class="mt-2">
-            Result: <strong>@(_confirmResult.Value ? "Confirmed" : "Cancelled")</strong>
-        </p>
+        <button class="btn btn-outline-danger" @onclick="ClearAll">Clear all</button>
     }
-</section>
+</div>
 
-<hr />
-
-<section class="mb-4">
-    <h2>Modal</h2>
-    <p>Render any Blazor component in a dialog. Returns typed data via <code>ModalResult</code>.</p>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline-primary" @onclick="ShowModal">Edit Profile</button>
-        <button class="btn btn-outline-secondary" @onclick="ShowModalStrict">No backdrop / escape / close</button>
-        <button class="btn btn-outline-secondary" @onclick="ShowModalNoTitle">No title / close</button>
-    </div>
-    @if (_modalName is not null)
-    {
-        <p class="mt-2">Returned name: <strong>@_modalName</strong></p>
-    }
-</section>
-
-<hr />
-
-<section class="mb-4">
-    <h2>Loading Bar</h2>
-    <p>Thin progress indicator — indeterminate or percentage. Attach to any element or the viewport.</p>
-
-    <FlareLoadingBar Active="_globalLoading" Fixed />
-
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline-primary" @onclick="ToggleGlobalLoading">
-            @(_globalLoading ? "Stop" : "Start") global loading
-        </button>
-        <button class="btn btn-outline-primary" @onclick="SimulateProgress">Simulate progress</button>
-        <button class="btn btn-outline-secondary" @onclick="ImperativeImmediate">Imperative (2s)</button>
-        <button class="btn btn-outline-secondary" @onclick="ImperativeDelayed">Delayed (3s work)</button>
-        <button class="btn btn-outline-secondary" @onclick="ImperativeFast">Delayed (500ms work — no bar)</button>
-    </div>
-
-    <div class="mt-3" style="position: relative; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 1.5rem;">
-        <FlareLoadingBar Active="_cardLoading" />
-        <h5>Card with loading bar</h5>
-        <p class="mb-2">The bar sits at the top of this container.</p>
-        <button class="btn btn-outline-success btn-sm" @onclick="ToggleCardLoading">
-            @(_cardLoading ? "Stop" : "Start") card loading
-        </button>
-    </div>
-
-    @if (_progress is not null)
-    {
-        <div class="mt-3" style="position: relative; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 1.5rem;">
-            <FlareLoadingBar Active Progress="_progress" />
-            <p class="mb-0">Progress: <strong>@(_progress)%</strong></p>
-        </div>
-    }
-</section>
+@if (_members.Count == 0)
+{
+    <p class="text-muted">No team members yet. Add or import some!</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th style="width: 1px; white-space: nowrap;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var member in _members)
+            {
+                <tr>
+                    <td>@member.Name</td>
+                    <td>@member.Role</td>
+                    <td style="white-space: nowrap;">
+                        <button class="btn btn-sm btn-outline-primary" @onclick="() => EditMember(member)">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveMember(member)">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 </FlareProvider>
 
 @code {
-    private bool? _confirmResult;
-    private string? _modalName;
-    private bool _globalLoading;
-    private bool _cardLoading;
-    private int? _progress;
+    private record Member(string Name, string Role);
 
-    // Toast examples
-    private Task ToastSuccess() => Flare.ToastAsync("Item saved successfully.", ToastLevel.Success);
-    private Task ToastError() => Flare.ToastAsync("Something went wrong!", ToastLevel.Error);
-    private Task ToastWarning() => Flare.ToastAsync("Check your input.", ToastLevel.Warning);
-    private Task ToastInfo() => Flare.ToastAsync("FYI: new version available.");
-
-    private Task ToastCustomDuration() => Flare.ToastAsync("This toast stays for 10 seconds.", new ToastOptions
+    private readonly List<Member> _members = new()
     {
-        Level = ToastLevel.Info,
-        DurationMs = 10_000,
-    });
+        new("Alice Chen", "Engineering Lead"),
+        new("Bob Martinez", "Designer"),
+        new("Carol Zhang", "Backend Developer"),
+    };
 
-    private async Task ToastBurst()
+    private async Task AddMember()
     {
-        for (var i = 1; i <= 5; i++)
-            await Flare.ToastAsync($"Toast #{i} — queue handles overflow.", ToastLevel.Success);
-    }
-
-    private Task ToastPersistent() => Flare.ToastAsync("I won't go away until you dismiss me.", new ToastOptions
-    {
-        Level = ToastLevel.Warning,
-        Persistent = true,
-    });
-
-    private async Task ToastDismissable()
-    {
-        var handle = await Flare.ToastAsync("I'll dismiss myself in 2 seconds...", new ToastOptions
-        {
-            Level = ToastLevel.Info,
-            Persistent = true,
-            ShowCloseButton = false,
-        });
-
-        await Task.Delay(2000);
-        handle.Dismiss();
-    }
-
-    private Task ToastClickable() => Flare.ToastAsync("Click me to navigate!", new ToastOptions
-    {
-        Level = ToastLevel.Info,
-        OnClick = async () => await Flare.ToastAsync("Toast was clicked!", ToastLevel.Success),
-    });
-
-    private Task ToastNoProgress() => Flare.ToastAsync("No progress bar on this one.", new ToastOptions
-    {
-        Level = ToastLevel.Success,
-        ShowProgress = false,
-    });
-
-    private Task ToastNoPause() => Flare.ToastAsync("Hover won't pause me.", new ToastOptions
-    {
-        Level = ToastLevel.Info,
-        PauseOnHover = false,
-    });
-
-    private Task ToastNoClose() => Flare.ToastAsync("No close button — auto-dismisses.", new ToastOptions
-    {
-        Level = ToastLevel.Info,
-        ShowCloseButton = false,
-    });
-
-    private Task ToastRichContent() => Flare.ToastAsync("", new ToastOptions
-    {
-        Level = ToastLevel.Success,
-        Content = @<div>
-            <strong>Deployment complete</strong>
-            <div style="font-size: 0.8rem; opacity: 0.8;">v2.4.1 &mdash; 3 services updated</div>
-        </div>,
-    });
-
-    // Confirm examples
-    private async Task ShowConfirm()
-    {
-        _confirmResult = await Flare.ConfirmAsync("Delete Item", "This action cannot be undone. Are you sure?");
-    }
-
-    private async Task ShowConfirmCustom()
-    {
-        _confirmResult = await Flare.ConfirmAsync("Publish Draft", "Make this post visible to everyone?", new ConfirmOptions
-        {
-            ConfirmText = "Publish",
-            CancelText = "Keep as Draft",
-        });
-    }
-
-    private async Task ShowConfirmStrict()
-    {
-        _confirmResult = await Flare.ConfirmAsync("Mandatory Choice", "You must click a button to proceed.", new ConfirmOptions
-        {
-            CloseOnEscape = false,
-            CloseOnBackdropClick = false,
-        });
-    }
-
-    private async Task ShowConfirmBackdrop()
-    {
-        _confirmResult = await Flare.ConfirmAsync("Backdrop Dismiss", "Click outside to cancel.", new ConfirmOptions
-        {
-            CloseOnBackdropClick = true,
-        });
-    }
-
-    // Modal examples
-    private async Task ShowModal()
-    {
-        var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
-        {
-            Title = "Edit Profile",
-            Parameters = new() { ["CurrentName"] = "Jane Doe" },
-        });
+        var result = await Flare.ModalAsync<MemberModal>(new ModalOptions { Title = "Add Member" });
 
         if (result.Confirmed)
-            _modalName = result.GetData<string>();
-    }
-
-    private async Task ShowModalStrict()
-    {
-        var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
         {
-            Title = "Must use form buttons",
-            CloseOnBackdropClick = false,
-            CloseOnEscape = false,
-            ShowCloseButton = false,
-            Parameters = new() { ["CurrentName"] = "Jane Doe" },
-        });
-
-        if (result.Confirmed)
-            _modalName = result.GetData<string>();
-    }
-
-    // Loading bar examples
-    private void ToggleGlobalLoading() => _globalLoading = !_globalLoading;
-    private void ToggleCardLoading() => _cardLoading = !_cardLoading;
-
-    private async Task SimulateProgress()
-    {
-        _progress = 0;
-        for (var i = 0; i <= 100; i += 5)
-        {
-            _progress = i;
-            StateHasChanged();
-            await Task.Delay(150);
+            dynamic data = result.GetData<dynamic>()!;
+            _members.Add(new Member((string)data.Name, (string)data.Role));
+            await Flare.ToastAsync($"Added {data.Name}.", ToastLevel.Success);
         }
-        await Task.Delay(400);
-        _progress = null;
     }
 
-    private async Task ImperativeImmediate()
+    private async Task EditMember(Member member)
     {
-        using var _ = Flare.StartLoadingBar(delayMs: 0);
-        await Task.Delay(2000);
+        var result = await Flare.ModalAsync<MemberModal>(new ModalOptions
+        {
+            Title = "Edit Member",
+            Parameters = new()
+            {
+                ["CurrentName"] = member.Name,
+                ["CurrentRole"] = member.Role,
+            },
+        });
+
+        if (result.Confirmed)
+        {
+            dynamic data = result.GetData<dynamic>()!;
+            var i = _members.IndexOf(member);
+            _members[i] = new Member((string)data.Name, (string)data.Role);
+            await Flare.ToastAsync($"Updated {data.Name}.", ToastLevel.Success);
+        }
     }
 
-    private async Task ImperativeDelayed()
+    private async Task RemoveMember(Member member)
     {
-        using var _ = Flare.StartLoadingBar();
-        await Task.Delay(3000); // work takes longer than default 1500ms delay — bar appears
+        var confirmed = await Flare.ConfirmAsync("Remove Member", $"Remove {member.Name} from the team?");
+
+        if (confirmed)
+        {
+            _members.Remove(member);
+            await Flare.ToastAsync($"{member.Name} removed.", ToastLevel.Success);
+        }
     }
 
-    private async Task ImperativeFast()
+    private async Task ImportMembers()
     {
-        using var _ = Flare.StartLoadingBar();
-        await Task.Delay(500); // work finishes before default 1500ms delay — bar never shows
-    }
+        var toast = Flare.StartLoadingToast("Importing members...", delayMs: 0);
+        var imported = new[]
+        {
+            new Member("David Kim", "QA Engineer"),
+            new Member("Eva Novak", "Product Manager"),
+            new Member("Frank Osei", "DevOps"),
+        };
 
-    // Loading toast examples
-    private async Task LoadingToastIndeterminate()
-    {
-        using var _ = Flare.StartLoadingToast("Processing...");
-        await Task.Delay(3000);
-    }
-
-    private async Task LoadingToastProgress()
-    {
-        var toast = Flare.StartLoadingToast("Uploading...", delayMs: 0);
-        for (var i = 0; i <= 100; i += 5)
+        for (var i = 0; i <= 100; i += 10)
         {
             toast.Update(progress: i);
-            await Task.Delay(100);
+            await Task.Delay(80);
         }
         toast.Dispose();
+
+        _members.AddRange(imported);
+        await Flare.ToastAsync($"{imported.Length} members imported.", ToastLevel.Success);
     }
 
-    private async Task LoadingToastImmediate()
+    private async Task ClearAll()
     {
-        using var _ = Flare.StartLoadingToast("Saving...", delayMs: 0);
-        await Task.Delay(2000);
-    }
-
-    private async Task LoadingToastFast()
-    {
-        using var _ = Flare.StartLoadingToast("Quick check...");
-        await Task.Delay(500); // finishes before 1500ms delay — toast never shows
-    }
-
-    private async Task ShowModalNoTitle()
-    {
-        var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
+        var confirmed = await Flare.ConfirmAsync("Clear Roster", "Remove all team members?", new ConfirmOptions
         {
-            ShowCloseButton = false,
-            Parameters = new() { ["CurrentName"] = "Jane Doe" },
+            ConfirmText = "Clear All",
+            CancelText = "Keep",
+            CloseOnBackdropClick = false,
         });
 
-        if (result.Confirmed)
-            _modalName = result.GetData<string>();
+        if (confirmed)
+        {
+            _members.Clear();
+            await Flare.ToastAsync("Roster cleared.", ToastLevel.Warning);
+        }
     }
 }

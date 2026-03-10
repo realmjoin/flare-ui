@@ -4,72 +4,135 @@
 
 <FlareProvider>
 
-<PageTitle>Server Mode - Flare Demo</PageTitle>
+<FlareLoadingBar Active="_deploying" Fixed />
 
-<h1>Server Mode</h1>
-<p class="lead">This page always runs via Interactive Server (SignalR). The render mode indicator stays blue.</p>
+<PageTitle>Deploy Pipeline - Flare Demo</PageTitle>
+
+<h1>Deploy Pipeline <small class="text-muted" style="font-size: 0.5em;">demo</small></h1>
+<p class="lead">Ship with confidence — runs on the server via SignalR.</p>
 
 <section class="mb-4">
-    <h2>Toasts</h2>
+    <h2>Deploy</h2>
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-success" @onclick="ToastSuccess">Success</button>
-        <button class="btn btn-danger" @onclick="ToastError">Error</button>
-        <button class="btn btn-warning" @onclick="ToastWarning">Warning</button>
-        <button class="btn btn-info" @onclick="ToastInfo">Info</button>
+        <button class="btn btn-success" @onclick="DeployStaging">Deploy to staging</button>
+        <button class="btn btn-danger" @onclick="DeployProduction">Deploy to production</button>
     </div>
 </section>
 
 <hr />
 
 <section class="mb-4">
-    <h2>Confirm</h2>
+    <h2>Manage</h2>
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline-danger" @onclick="ShowConfirm">Delete item</button>
+        <button class="btn btn-outline-warning" @onclick="Rollback">Rollback</button>
+        <button class="btn btn-outline-primary" @onclick="Configure">Configure</button>
     </div>
-    @if (_confirmResult is not null)
+</section>
+
+<hr />
+
+<section class="mb-4">
+    <h2>History</h2>
+    @if (_log.Count == 0)
     {
-        <p class="mt-2">
-            Result: <strong>@(_confirmResult.Value ? "Confirmed" : "Cancelled")</strong>
-        </p>
+        <p class="text-muted">No deployments yet.</p>
     }
-</section>
-
-<hr />
-
-<section class="mb-4">
-    <h2>Modal</h2>
-    <button class="btn btn-outline-primary" @onclick="ShowModal">Edit Profile</button>
-    @if (_modalName is not null)
+    else
     {
-        <p class="mt-2">Returned name: <strong>@_modalName</strong></p>
+        <ul class="list-group">
+            @foreach (var entry in _log)
+            {
+                <li class="list-group-item">@entry</li>
+            }
+        </ul>
     }
 </section>
 
 </FlareProvider>
 
 @code {
-    private bool? _confirmResult;
-    private string? _modalName;
+    private bool _deploying;
+    private string _environment = "staging";
+    private bool _notifyTeam;
+    private readonly List<string> _log = new();
 
-    private Task ToastSuccess() => Flare.ToastAsync("Item saved successfully.", ToastLevel.Success);
-    private Task ToastError() => Flare.ToastAsync("Something went wrong!", ToastLevel.Error);
-    private Task ToastWarning() => Flare.ToastAsync("Check your input.", ToastLevel.Warning);
-    private Task ToastInfo() => Flare.ToastAsync("FYI: new version available.");
-
-    private async Task ShowConfirm()
+    private async Task DeployStaging()
     {
-        _confirmResult = await Flare.ConfirmAsync("Delete Item", "This action cannot be undone. Are you sure?");
+        var toast = Flare.StartLoadingToast("Building for staging...", delayMs: 0);
+        for (var i = 0; i <= 100; i += 5)
+        {
+            toast.Update(progress: i);
+            await Task.Delay(60);
+        }
+        toast.Dispose();
+
+        _log.Insert(0, $"{DateTime.Now:HH:mm:ss} — Deployed to staging");
+        await Flare.ToastAsync("Staging deploy complete.", ToastLevel.Success);
     }
 
-    private async Task ShowModal()
+    private async Task DeployProduction()
     {
-        var result = await Flare.ModalAsync<EditProfileModal>(new ModalOptions
+        var confirmed = await Flare.ConfirmAsync(
+            "Deploy to Production",
+            "This will affect all users. Are you sure?");
+
+        if (!confirmed) return;
+
+        _deploying = true;
+        StateHasChanged();
+
+        using var _ = Flare.StartLoadingToast("Deploying to production...");
+        await Task.Delay(3000);
+
+        _deploying = false;
+
+        _log.Insert(0, $"{DateTime.Now:HH:mm:ss} — Deployed v2.4.1 to production");
+        await Flare.ToastAsync("", new ToastOptions
         {
-            Title = "Edit Profile",
-            Parameters = new() { ["CurrentName"] = "Jane Doe" },
+            Level = ToastLevel.Success,
+            Content = @<div>
+                <strong>Production deploy complete</strong>
+                <div style="font-size: 0.85rem; opacity: 0.8;">v2.4.1 &mdash; 3 services updated</div>
+            </div>,
+        });
+    }
+
+    private async Task Rollback()
+    {
+        var confirmed = await Flare.ConfirmAsync(
+            "Rollback Deployment",
+            "Revert to the previous version?",
+            new ConfirmOptions
+            {
+                ConfirmText = "Rollback",
+                CancelText = "Keep current",
+            });
+
+        if (!confirmed) return;
+
+        _log.Insert(0, $"{DateTime.Now:HH:mm:ss} — Rolled back to v2.4.0");
+        await Flare.ToastAsync("Rolled back to v2.4.0.", ToastLevel.Warning);
+    }
+
+    private async Task Configure()
+    {
+        var result = await Flare.ModalAsync<DeployConfigModal>(new ModalOptions
+        {
+            Title = "Deploy Configuration",
+            Parameters = new()
+            {
+                ["CurrentEnvironment"] = _environment,
+                ["CurrentNotifyTeam"] = _notifyTeam,
+            },
         });
 
         if (result.Confirmed)
-            _modalName = result.GetData<string>();
+        {
+            dynamic data = result.GetData<dynamic>()!;
+            _environment = (string)data.Environment;
+            _notifyTeam = (bool)data.NotifyTeam;
+            await Flare.ToastAsync(
+                $"Config updated: {_environment}, notify {(_notifyTeam ? "on" : "off")}.");
+        }
     }
 }

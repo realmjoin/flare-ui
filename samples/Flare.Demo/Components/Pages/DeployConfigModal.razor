@@ -1,0 +1,36 @@
+<div>
+    <div class="mb-3">
+        <label class="form-label" for="env-select">Environment</label>
+        <select id="env-select" class="form-select" @bind="Environment">
+            <option value="staging">Staging</option>
+            <option value="production">Production</option>
+        </select>
+    </div>
+
+    <div class="form-check mb-3">
+        <input id="notify-check" class="form-check-input" type="checkbox" @bind="NotifyTeam" />
+        <label class="form-check-label" for="notify-check">Notify team on Slack</label>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button class="btn btn-outline-secondary" @onclick="Modal.Cancel">Cancel</button>
+        <button class="btn btn-primary" @onclick="Save">Apply</button>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] public ModalContext Modal { get; set; } = default!;
+    [Parameter] public string CurrentEnvironment { get; set; } = "staging";
+    [Parameter] public bool CurrentNotifyTeam { get; set; }
+
+    private string Environment = "staging";
+    private bool NotifyTeam;
+
+    protected override void OnInitialized()
+    {
+        Environment = CurrentEnvironment;
+        NotifyTeam = CurrentNotifyTeam;
+    }
+
+    private void Save() => Modal.Ok(new { Environment, NotifyTeam });
+}
