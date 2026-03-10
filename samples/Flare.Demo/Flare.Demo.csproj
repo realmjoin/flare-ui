@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Flare.UI\Flare.UI.csproj" />
-    <ProjectReference Include="..\Flare.UI.Demo.Client\Flare.UI.Demo.Client.csproj" />
+    <ProjectReference Include="..\..\src\Flare\Flare.csproj" />
+    <ProjectReference Include="..\Flare.Demo.Client\Flare.Demo.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

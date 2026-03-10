@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Flare.UI\Flare.UI.csproj" />
+    <ProjectReference Include="..\..\src\Flare\Flare.csproj" />
   </ItemGroup>
 
   <ItemGroup>

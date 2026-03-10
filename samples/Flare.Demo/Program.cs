@@ -1,5 +1,5 @@
 using Flare;
-using Flare.UI.Demo.Components;
+using Flare.Demo.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +27,6 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Flare.UI.Demo.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(Flare.Demo.Client._Imports).Assembly);
 
 app.Run();
