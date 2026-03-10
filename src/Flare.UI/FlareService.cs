@@ -12,6 +12,7 @@ internal sealed class FlareService : IFlareService
     internal readonly List<ToastInstance> Toasts = [];
     internal ModalInstance? ActiveModal;
     internal ConfirmInstance? ActiveConfirm;
+    private int _loadingBarActiveCount;
 
     public event Action? OnChanged;
 
@@ -152,6 +153,33 @@ internal sealed class FlareService : IFlareService
 
         NotifyChanged();
         confirm?.TaskCompletionSource.TrySetResult(confirmed);
+    }
+
+    // ── Loading Bar ────────────────────────────────────
+
+    internal bool IsLoadingBarActive => _loadingBarActiveCount > 0;
+
+    public LoadingBarHandle StartLoadingBar(int delayMs = 1500)
+    {
+        return new LoadingBarHandle(OnHandleActivated, OnHandleCompleted, delayMs);
+    }
+
+    private void OnHandleActivated(LoadingBarHandle handle)
+    {
+        lock (_lock)
+            _loadingBarActiveCount++;
+
+        NotifyChanged();
+    }
+
+    private void OnHandleCompleted(LoadingBarHandle handle)
+    {
+        if (!handle.IsActive) return;
+
+        lock (_lock)
+            _loadingBarActiveCount = Math.Max(0, _loadingBarActiveCount - 1);
+
+        NotifyChanged();
     }
 
     // ── Helpers ────────────────────────────────────────

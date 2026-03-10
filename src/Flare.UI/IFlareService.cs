@@ -15,5 +15,7 @@ public interface IFlareService
     Task<bool> ConfirmAsync(string title, string message);
     Task<bool> ConfirmAsync(string title, string message, ConfirmOptions options);
 
+    LoadingBarHandle StartLoadingBar(int delayMs = 1500);
+
     event Action? OnChanged;
 }

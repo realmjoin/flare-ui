@@ -79,6 +79,9 @@
             @(_globalLoading ? "Stop" : "Start") global loading
         </button>
         <button class="btn btn-outline-primary" @onclick="SimulateProgress">Simulate progress</button>
+        <button class="btn btn-outline-secondary" @onclick="ImperativeImmediate">Imperative (2s)</button>
+        <button class="btn btn-outline-secondary" @onclick="ImperativeDelayed">Delayed (3s work)</button>
+        <button class="btn btn-outline-secondary" @onclick="ImperativeFast">Delayed (500ms work — no bar)</button>
     </div>
 
     <div class="mt-3" style="position: relative; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 1.5rem;">
@@ -253,6 +256,24 @@
         }
         await Task.Delay(400);
         _progress = null;
+    }
+
+    private async Task ImperativeImmediate()
+    {
+        using var _ = Flare.StartLoadingBar(delayMs: 0);
+        await Task.Delay(2000);
+    }
+
+    private async Task ImperativeDelayed()
+    {
+        using var _ = Flare.StartLoadingBar();
+        await Task.Delay(3000); // work takes longer than default 1500ms delay — bar appears
+    }
+
+    private async Task ImperativeFast()
+    {
+        using var _ = Flare.StartLoadingBar();
+        await Task.Delay(500); // work finishes before default 1500ms delay — bar never shows
     }
 
     private async Task ShowModalNoTitle()

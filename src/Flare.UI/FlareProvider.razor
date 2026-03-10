@@ -1,6 +1,11 @@
 @namespace Flare
 @implements IDisposable
 
+@if (_service.IsLoadingBarActive)
+{
+    <FlareLoadingBar Active="true" Fixed="true" Headless="_options.Headless" />
+}
+
 @ChildContent
 
 @if (_service.Toasts.Count > 0)
