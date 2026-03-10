@@ -39,13 +39,13 @@ public sealed class LoadingToastHandle : IDisposable
 
     public void Update(string? message = null, int? progress = null)
     {
-        if (!IsActive) return;
-
         if (message is not null)
             State.Message = message;
 
         State.Progress = progress;
-        _notifyChanged();
+
+        if (IsActive)
+            _notifyChanged();
     }
 
     private async Task DelayThenActivateAsync(int delayMs, CancellationToken ct)
