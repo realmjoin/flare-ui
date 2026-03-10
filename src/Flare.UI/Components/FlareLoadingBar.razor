@@ -1,0 +1,9 @@
+@namespace Flare
+
+@if (Active)
+{
+    <div class="@ContainerClass()" role="progressbar"
+         aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="100">
+        <div class="@BarClass()" style="@BarStyle()"></div>
+    </div>
+}
