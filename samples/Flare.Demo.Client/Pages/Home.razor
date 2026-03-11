@@ -95,7 +95,8 @@ else
 
     private async Task RemoveMember(Member member)
     {
-        var confirmed = await Flare.ConfirmAsync("Remove Member", $"Remove {member.Name} from the team?");
+        var confirmed = await Flare.ConfirmAsync("Remove Member", $"Remove {member.Name} from the team?",
+            new ConfirmOptions { Intent = ConfirmIntent.Danger, ConfirmText = "Remove" });
 
         if (confirmed)
         {
@@ -129,9 +130,9 @@ else
     {
         var confirmed = await Flare.ConfirmAsync("Clear Roster", "Remove all team members?", new ConfirmOptions
         {
+            Intent = ConfirmIntent.Danger,
             ConfirmText = "Clear All",
             CancelText = "Keep",
-            CloseOnBackdropClick = false,
         });
 
         if (confirmed)

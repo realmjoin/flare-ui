@@ -74,7 +74,8 @@
     {
         var confirmed = await Flare.ConfirmAsync(
             "Deploy to Production",
-            "This will affect all users. Are you sure?");
+            "This will affect all users. Are you sure?",
+            new ConfirmOptions { Intent = ConfirmIntent.Danger, ConfirmText = "Deploy" });
 
         if (!confirmed) return;
 
@@ -104,6 +105,7 @@
             "Revert to the previous version?",
             new ConfirmOptions
             {
+                Intent = ConfirmIntent.Danger,
                 ConfirmText = "Rollback",
                 CancelText = "Keep current",
             });

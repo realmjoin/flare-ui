@@ -23,6 +23,7 @@ public sealed class ConfirmDefaults
 {
     public string ConfirmText { get; set; } = "OK";
     public string CancelText { get; set; } = "Cancel";
+    public ConfirmIntent Intent { get; set; } = ConfirmIntent.Primary;
     public bool CloseOnEscape { get; set; } = true;
     public bool CloseOnBackdropClick { get; set; }
 }

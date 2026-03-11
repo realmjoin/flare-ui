@@ -248,10 +248,16 @@ internal sealed class FlareService : IFlareService
     private ResolvedConfirmOptions MergeConfirmOptions(ConfirmOptions perCall)
     {
         var d = _options.Confirm;
+        var intent = perCall.Intent ?? d.Intent;
+        var defaultButton = perCall.DefaultButton
+            ?? (intent == ConfirmIntent.Danger ? DefaultButton.Cancel : DefaultButton.Confirm);
+
         return new ResolvedConfirmOptions
         {
             ConfirmText = perCall.ConfirmText ?? d.ConfirmText,
             CancelText = perCall.CancelText ?? d.CancelText,
+            Intent = intent,
+            DefaultButton = defaultButton,
             CloseOnEscape = perCall.CloseOnEscape ?? d.CloseOnEscape,
             CloseOnBackdropClick = perCall.CloseOnBackdropClick ?? d.CloseOnBackdropClick,
         };

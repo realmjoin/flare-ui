@@ -15,7 +15,6 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
 
     private ElementReference _backdrop;
     private ElementReference _dialog;
-    private IJSObjectReference? _module;
     private IJSObjectReference? _trap;
     private ModalContext _modalContext = default!;
     private readonly string _titleId = $"flare-modal-title-{Guid.NewGuid():N}";
@@ -32,12 +31,11 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
         {
             try
             {
-                _module = await JS.InvokeAsync<IJSObjectReference>(
-                    "import", "./_content/Flare.UI/flare.js");
+                var module = await JS.GetFlareModuleAsync();
                 if (!_disposed)
                 {
-                    _trap = await _module.InvokeAsync<IJSObjectReference>(
-                        "createFocusTrap", _dialog, null);
+                    _trap = await module.InvokeAsync<IJSObjectReference>(
+                        "createFocusTrap", _dialog, Headless ? null : ".flare-modal-body");
                 }
             }
             catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException or JSException) { }
@@ -67,18 +65,13 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         _disposed = true;
-        if (_trap is not null && _module is not null)
+        if (_trap is not null)
         {
             try
             {
-                await _module.InvokeVoidAsync("destroyFocusTrap", _trap);
+                var module = await JS.GetFlareModuleAsync();
+                await module.InvokeVoidAsync("destroyFocusTrap", _trap);
             }
-            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
-        }
-
-        if (_module is not null)
-        {
-            try { await _module.DisposeAsync(); }
             catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
     }

@@ -11,11 +11,11 @@
         }
         <p id="@_descId" class="@(Headless ? null : "flare-confirm-message")">@Instance.Message</p>
         <div class="@(Headless ? null : "flare-confirm-actions")">
-            <button class="@(Headless ? null : "flare-confirm-cancel flare-btn")"
+            <button class="@(Headless ? null : $"flare-confirm-cancel flare-btn {CancelBtnClass()}")"
                     @onclick="() => Close(false)">
                 @Instance.Options.CancelText
             </button>
-            <button class="@(Headless ? null : "flare-confirm-ok flare-btn flare-btn-primary")"
+            <button class="@(Headless ? null : $"flare-confirm-ok flare-btn {ConfirmBtnClass()}")"
                     @onclick="() => Close(true)">
                 @Instance.Options.ConfirmText
             </button>

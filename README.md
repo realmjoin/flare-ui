@@ -62,6 +62,23 @@ var confirmed = await Flare.ConfirmAsync("Publish", "Make this visible?", new Co
     ConfirmText = "Publish",
     CancelText = "Keep as Draft",
 });
+
+// Destructive confirm — red button, Enter defaults to Cancel (safe UX)
+var confirmed = await Flare.ConfirmAsync("Delete Item", "This cannot be undone.", new ConfirmOptions
+{
+    Intent = ConfirmIntent.Danger,
+    ConfirmText = "Delete",
+});
+```
+
+`DefaultButton` controls which button receives initial focus. Enter and Space both activate the focused button:
+- `ConfirmIntent.Primary` → Confirm is focused → Enter confirms
+- `ConfirmIntent.Danger` → Cancel is focused → Enter cancels (prevents accidental destructive actions)
+
+Tab switches focus between buttons. Override the default per-call if needed:
+
+```csharp
+new ConfirmOptions { Intent = ConfirmIntent.Danger, DefaultButton = DefaultButton.Confirm }
 ```
 
 ## Modal
@@ -150,10 +167,23 @@ builder.Services.AddFlare(o =>
 {
     o.ToastPosition = ToastPosition.BottomRight;
     o.MaxToasts = 3;
-    o.Toast.DurationMs = 4000;
     o.Headless = true; // strip all default styles
+
+    // Toast defaults
+    o.Toast.DurationMs = 4000;
+    o.Toast.ShowProgress = false;
+
+    // Modal defaults
+    o.Modal.CloseOnBackdropClick = false;
+
+    // Confirm defaults
+    o.Confirm.Intent = ConfirmIntent.Primary;
+    o.Confirm.ConfirmText = "OK";
+    o.Confirm.CancelText = "Cancel";
 });
 ```
+
+Per-call options override global defaults. Unset properties fall back to the configured defaults.
 
 ## License
 

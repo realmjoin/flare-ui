@@ -19,6 +19,8 @@ public sealed class ResolvedConfirmOptions
 {
     public required string ConfirmText { get; init; }
     public required string CancelText { get; init; }
+    public ConfirmIntent Intent { get; init; }
+    public DefaultButton DefaultButton { get; init; }
     public bool CloseOnEscape { get; init; }
     public bool CloseOnBackdropClick { get; init; }
 }

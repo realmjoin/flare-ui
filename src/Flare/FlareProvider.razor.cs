@@ -1,4 +1,6 @@
+using Flare.Internal;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Flare;
 
@@ -6,6 +8,7 @@ public partial class FlareProvider : ComponentBase, IDisposable
 {
     [Inject] private IFlareService Flare { get; set; } = default!;
     [Inject] private FlareOptions _options { get; set; } = default!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
@@ -14,6 +17,15 @@ public partial class FlareProvider : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         Flare.OnChanged += HandleChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try { await JS.GetFlareModuleAsync(); }
+            catch { }
+        }
     }
 
     private void HandleChanged()

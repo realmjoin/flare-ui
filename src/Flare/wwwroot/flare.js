@@ -4,35 +4,47 @@ export function createFocusTrap(element, initialFocusSelector) {
     const previouslyFocused = document.activeElement;
 
     function handleKeyDown(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            return;
+        }
+
+        // Enter activates the focused button, preventDefault stops the
+        // keyup from re-triggering the opener after the dialog closes.
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (document.activeElement && element.contains(document.activeElement)) {
+                document.activeElement.click();
+            }
+            return;
+        }
+
         if (e.key !== 'Tab') return;
 
+        // Manage Tab cycling manually so focus stays trapped.
+        e.preventDefault();
         const focusable = [...element.querySelectorAll(FOCUSABLE)];
         if (focusable.length === 0) return;
 
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
+        const idx = focusable.indexOf(document.activeElement);
         if (e.shiftKey) {
-            if (document.activeElement === first) {
-                e.preventDefault();
-                last.focus();
-            }
+            focusable[idx <= 0 ? focusable.length - 1 : idx - 1].focus();
         } else {
-            if (document.activeElement === last) {
-                e.preventDefault();
-                first.focus();
-            }
+            focusable[idx >= focusable.length - 1 ? 0 : idx + 1].focus();
         }
     }
 
     element.addEventListener('keydown', handleKeyDown);
 
-    // Set initial focus
-    const target = initialFocusSelector
-        ? element.querySelector(initialFocusSelector)
-        : element.querySelector(FOCUSABLE);
+    // Set initial focus — selector may point to a focusable element directly
+    // (e.g. a button) or a container (e.g. modal body) to scope the search.
+    let target = initialFocusSelector ? element.querySelector(initialFocusSelector) : null;
+    if (target && !target.matches(FOCUSABLE)) {
+        target = target.querySelector(FOCUSABLE);
+    }
+    target ??= element.querySelector(FOCUSABLE);
 
-    try { target?.focus(); } catch { /* element may be detached */ }
+    try { target?.focus({ focusVisible: true }); } catch { /* element may be detached */ }
 
     return { element, handleKeyDown, previouslyFocused };
 }

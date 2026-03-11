@@ -15,7 +15,6 @@ public partial class FlareConfirm : ComponentBase, IAsyncDisposable
 
     private ElementReference _backdrop;
     private ElementReference _dialog;
-    private IJSObjectReference? _module;
     private IJSObjectReference? _trap;
     private readonly string _titleId = $"flare-confirm-title-{Guid.NewGuid():N}";
     private readonly string _descId = $"flare-confirm-desc-{Guid.NewGuid():N}";
@@ -27,11 +26,10 @@ public partial class FlareConfirm : ComponentBase, IAsyncDisposable
         {
             try
             {
-                _module = await JS.InvokeAsync<IJSObjectReference>(
-                    "import", "./_content/Flare.UI/flare.js");
+                var module = await JS.GetFlareModuleAsync();
                 if (!_disposed)
                 {
-                    _trap = await _module.InvokeAsync<IJSObjectReference>(
+                    _trap = await module.InvokeAsync<IJSObjectReference>(
                         "createFocusTrap", _dialog, ".flare-confirm-cancel");
                 }
             }
@@ -59,21 +57,26 @@ public partial class FlareConfirm : ComponentBase, IAsyncDisposable
     private string? BackdropClass() => Headless ? null : "flare-confirm-backdrop";
     private string? DialogClass() => Headless ? null : "flare-confirm-dialog";
 
+    private string ConfirmBtnClass() => Instance.Options.Intent switch
+    {
+        ConfirmIntent.Danger => "flare-btn-danger",
+        _ => "flare-btn-primary",
+    };
+
+    private string CancelBtnClass() =>
+        Instance.Options.DefaultButton == DefaultButton.Cancel && Instance.Options.Intent != ConfirmIntent.Danger
+            ? "flare-btn-primary" : "";
+
     public async ValueTask DisposeAsync()
     {
         _disposed = true;
-        if (_trap is not null && _module is not null)
+        if (_trap is not null)
         {
             try
             {
-                await _module.InvokeVoidAsync("destroyFocusTrap", _trap);
+                var module = await JS.GetFlareModuleAsync();
+                await module.InvokeVoidAsync("destroyFocusTrap", _trap);
             }
-            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
-        }
-
-        if (_module is not null)
-        {
-            try { await _module.DisposeAsync(); }
             catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
     }
