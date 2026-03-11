@@ -18,6 +18,13 @@
     <PackageProjectUrl>https://github.com/realmjoin/flare-ui</PackageProjectUrl>
     <RepositoryUrl>https://github.com/realmjoin/flare-ui</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+
+    <!-- AI-friendly NuGet: XML docs, embedded PDB, Source Link -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <DebugType>embedded</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.*" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.*" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
