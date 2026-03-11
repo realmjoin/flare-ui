@@ -4,12 +4,26 @@ using Microsoft.JSInterop;
 
 namespace Flare;
 
+/// <summary>
+/// Root component that renders toasts, modals, confirm dialogs, and loading indicators.
+/// Wrap your page or layout content with this component.
+/// </summary>
+/// <example>
+/// <code>
+/// &lt;FlareProvider&gt;
+///     @* your content *@
+/// &lt;/FlareProvider&gt;
+/// </code>
+/// </example>
 public partial class FlareProvider : ComponentBase, IDisposable
 {
     [Inject] private IFlareService Flare { get; set; } = default!;
     [Inject] private FlareOptions _options { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
+    /// <summary>
+    /// The application content to render inside the provider.
+    /// </summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private FlareService _service => (FlareService)Flare;
@@ -51,6 +65,7 @@ public partial class FlareProvider : ComponentBase, IDisposable
         return $"flare-toast-container flare-toast-{position}";
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         Flare.OnChanged -= HandleChanged;

@@ -2,6 +2,18 @@ using Flare.Internal;
 
 namespace Flare;
 
+/// <summary>
+/// Controls an active loading toast. Use <see cref="Update"/> to change the message or report progress,
+/// and dispose the handle to dismiss the toast.
+/// </summary>
+/// <example>
+/// <code>
+/// using var toast = Flare.StartLoadingToast("Uploading…");
+/// toast.Update(progress: 50);
+/// toast.Update("Almost done…", progress: 90);
+/// // Toast is dismissed when 'toast' is disposed.
+/// </code>
+/// </example>
 public sealed class LoadingToastHandle : IDisposable
 {
     private readonly Action<LoadingToastHandle> _onActivate;
@@ -37,6 +49,11 @@ public sealed class LoadingToastHandle : IDisposable
         }
     }
 
+    /// <summary>
+    /// Updates the loading toast message and/or progress.
+    /// </summary>
+    /// <param name="message">New message text. Pass <c>null</c> to keep the current message.</param>
+    /// <param name="progress">Progress percentage (0–100). Pass <c>null</c> to show an indeterminate state.</param>
     public void Update(string? message = null, int? progress = null)
     {
         if (message is not null)
@@ -61,6 +78,9 @@ public sealed class LoadingToastHandle : IDisposable
         }
     }
 
+    /// <summary>
+    /// Dismisses the loading toast. If the toast has not yet appeared (still within the delay), it is cancelled silently.
+    /// </summary>
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposed, 1) == 1) return;
