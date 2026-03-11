@@ -24,24 +24,19 @@ internal sealed class FlareService : IFlareService
     // ── Toast ──────────────────────────────────────────
 
     public Task<ToastHandle> ToastAsync(string message)
-        => ToastAsync(message, _options.Toast);
+        => ToastAsync(message, new ToastOptions());
 
     public Task<ToastHandle> ToastAsync(string message, ToastLevel level)
-        => ToastAsync(message, new ToastOptions
-        {
-            Level = level,
-            DurationMs = _options.Toast.DurationMs,
-            ShowProgress = _options.Toast.ShowProgress,
-            PauseOnHover = _options.Toast.PauseOnHover,
-        });
+        => ToastAsync(message, new ToastOptions { Level = level });
 
     public Task<ToastHandle> ToastAsync(string message, ToastOptions options)
     {
+        var merged = MergeToastOptions(options);
         var instance = new ToastInstance
         {
             Id = Guid.NewGuid(),
             Message = message,
-            Options = options,
+            Options = merged,
         };
 
         lock (_lock)
@@ -113,13 +108,14 @@ internal sealed class FlareService : IFlareService
     // ── Confirm ────────────────────────────────────────
 
     public Task<bool> ConfirmAsync(string message)
-        => ConfirmAsync(string.Empty, message, _options.Confirm);
+        => ConfirmAsync(string.Empty, message, new ConfirmOptions());
 
     public Task<bool> ConfirmAsync(string title, string message)
-        => ConfirmAsync(title, message, _options.Confirm);
+        => ConfirmAsync(title, message, new ConfirmOptions());
 
     public Task<bool> ConfirmAsync(string title, string message, ConfirmOptions options)
     {
+        var merged = MergeConfirmOptions(options);
         var tcs = new TaskCompletionSource<bool>();
 
         ConfirmInstance? previous;
@@ -132,7 +128,7 @@ internal sealed class FlareService : IFlareService
                 Id = Guid.NewGuid(),
                 Title = title,
                 Message = message,
-                Options = options,
+                Options = merged,
                 TaskCompletionSource = tcs,
             };
         }
@@ -235,17 +231,45 @@ internal sealed class FlareService : IFlareService
 
     private void NotifyChanged() => OnChanged?.Invoke();
 
-    private ModalOptions MergeModalOptions(ModalOptions? perCall)
+    private ResolvedModalOptions MergeModalOptions(ModalOptions? perCall)
     {
-        if (perCall is null)
-            return new ModalOptions
-            {
-                Title = _options.Modal.Title,
-                CloseOnBackdropClick = _options.Modal.CloseOnBackdropClick,
-                CloseOnEscape = _options.Modal.CloseOnEscape,
-                ShowCloseButton = _options.Modal.ShowCloseButton,
-            };
+        var d = _options.Modal;
+        return new ResolvedModalOptions
+        {
+            Title = perCall?.Title ?? d.Title,
+            CssClass = perCall?.CssClass ?? d.CssClass,
+            CloseOnBackdropClick = perCall?.CloseOnBackdropClick ?? d.CloseOnBackdropClick,
+            CloseOnEscape = perCall?.CloseOnEscape ?? d.CloseOnEscape,
+            ShowCloseButton = perCall?.ShowCloseButton ?? d.ShowCloseButton,
+            Parameters = perCall?.Parameters,
+        };
+    }
 
-        return perCall;
+    private ResolvedConfirmOptions MergeConfirmOptions(ConfirmOptions perCall)
+    {
+        var d = _options.Confirm;
+        return new ResolvedConfirmOptions
+        {
+            ConfirmText = perCall.ConfirmText ?? d.ConfirmText,
+            CancelText = perCall.CancelText ?? d.CancelText,
+            CloseOnEscape = perCall.CloseOnEscape ?? d.CloseOnEscape,
+            CloseOnBackdropClick = perCall.CloseOnBackdropClick ?? d.CloseOnBackdropClick,
+        };
+    }
+
+    private ResolvedToastOptions MergeToastOptions(ToastOptions perCall)
+    {
+        var d = _options.Toast;
+        return new ResolvedToastOptions
+        {
+            Level = perCall.Level ?? d.Level,
+            DurationMs = perCall.DurationMs ?? d.DurationMs,
+            ShowProgress = perCall.ShowProgress ?? d.ShowProgress,
+            PauseOnHover = perCall.PauseOnHover ?? d.PauseOnHover,
+            Persistent = perCall.Persistent ?? d.Persistent,
+            ShowCloseButton = perCall.ShowCloseButton ?? d.ShowCloseButton,
+            Content = perCall.Content,
+            OnClick = perCall.OnClick,
+        };
     }
 }
