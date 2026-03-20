@@ -14,8 +14,13 @@
 <section class="mb-4">
     <h2>Deploy</h2>
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-success" @onclick="DeployStaging">Deploy to staging</button>
-        <button class="btn btn-danger" @onclick="DeployProduction">Deploy to production</button>
+        <FlareDebouncedButton class="btn btn-success" OnAction="DeployStaging">Deploy to staging</FlareDebouncedButton>
+        <FlareConfirmButton class="btn btn-danger" UseModal
+                            ModalHeading="Deploy to Production"
+                            ModalMessage="This will affect all users. Are you sure?"
+                            OnConfirmed="DeployProduction">
+            <Standby>Deploy to production</Standby>
+        </FlareConfirmButton>
     </div>
 </section>
 
@@ -24,7 +29,11 @@
 <section class="mb-4">
     <h2>Manage</h2>
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline-warning" @onclick="Rollback">Rollback</button>
+        <FlareConfirmButton class="btn btn-outline-warning" ArmedClass="btn-warning"
+                            DisableOnConfirm="false" OnConfirmed="Rollback">
+            <Standby>Rollback</Standby>
+            <Armed>Confirm rollback</Armed>
+        </FlareConfirmButton>
         <button class="btn btn-outline-primary" @onclick="Configure">Configure</button>
     </div>
 </section>
@@ -42,7 +51,10 @@
         <ul class="list-group">
             @foreach (var entry in _log)
             {
-                <li class="list-group-item">@entry</li>
+                <li class="list-group-item" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>@entry</span>
+                    <FlareClipboardButton class="btn btn-sm btn-outline-secondary" Value="@entry">Copy</FlareClipboardButton>
+                </li>
             }
         </ul>
     }
@@ -72,13 +84,6 @@
 
     private async Task DeployProduction()
     {
-        var confirmed = await Flare.ConfirmAsync(
-            "Deploy to Production",
-            "This will affect all users. Are you sure?",
-            new ConfirmOptions { Intent = ConfirmIntent.Danger, ConfirmText = "Deploy" });
-
-        if (!confirmed) return;
-
         _deploying = true;
         StateHasChanged();
 
@@ -100,18 +105,6 @@
 
     private async Task Rollback()
     {
-        var confirmed = await Flare.ConfirmAsync(
-            "Rollback Deployment",
-            "Revert to the previous version?",
-            new ConfirmOptions
-            {
-                Intent = ConfirmIntent.Danger,
-                ConfirmText = "Rollback",
-                CancelText = "Keep current",
-            });
-
-        if (!confirmed) return;
-
         _log.Insert(0, $"{DateTime.Now:HH:mm:ss} — Rolled back to v2.4.0");
         await Flare.ToastAsync("Rolled back to v2.4.0.", ToastLevel.Warning);
     }

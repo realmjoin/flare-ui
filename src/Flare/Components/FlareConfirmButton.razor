@@ -1,0 +1,15 @@
+@namespace Flare
+
+<button @attributes="Attributes" disabled="@IsDisabled" @onclick="HandleClick">
+    @if (UseModal)
+    {
+        @Standby
+    }
+    else
+    {
+        <span style="display: inline-grid;">
+            <span style="grid-area: 1/1; @(_isArmed ? "visibility: hidden;" : "")">@Standby</span>
+            <span style="grid-area: 1/1; @(_isArmed ? "" : "visibility: hidden;")">@Armed</span>
+        </span>
+    }
+</button>

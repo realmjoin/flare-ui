@@ -1,6 +1,6 @@
 # Flare.UI
 
-Imperative Toast, Modal, Confirm, Loading Bar, and Loading Toast components for Blazor. Zero dependencies.
+Imperative Toast, Modal, Confirm, Loading Bar, Loading Toast, and reusable Button components for Blazor. Zero dependencies.
 
 ## Install
 
@@ -159,6 +159,88 @@ for (var i = 0; i <= 100; i += 10)
 }
 toast.Dispose();
 ```
+
+## Confirm Button
+
+A two-stage confirmation button that prevents accidental destructive actions. Supports timed mode (arm → confirm) and modal mode (opens a Flare confirm dialog).
+
+```razor
+@* Timed mode — first click arms, second click confirms *@
+<FlareConfirmButton class="btn btn-danger" ArmedClass="btn-warning"
+                    OnConfirmed="HandleDelete">
+    <Standby>Delete record</Standby>
+    <Armed>Confirm delete</Armed>
+</FlareConfirmButton>
+
+@* Modal mode — opens a Flare confirm dialog *@
+<FlareConfirmButton class="btn btn-danger" UseModal
+                    ModalHeading="Purge Cache"
+                    ModalMessage="This will invalidate all cached entries. Continue?"
+                    OnConfirmed="HandlePurge">
+    <Standby>Purge cache</Standby>
+</FlareConfirmButton>
+```
+
+By default the button permanently disables after confirmation. Set `DisableOnConfirm="false"` for repeatable actions:
+
+```razor
+<FlareConfirmButton class="btn btn-outline-warning" ArmedClass="btn-warning"
+                    DisableOnConfirm="false" OnConfirmed="Rollback">
+    <Standby>Rollback</Standby>
+    <Armed>Confirm rollback</Armed>
+</FlareConfirmButton>
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `Standby` | *(required)* | Content in default state |
+| `Armed` | `"Confirm"` | Content in armed state |
+| `OnConfirmed` | | Fires on confirmed action |
+| `UseModal` | `false` | Use confirm dialog instead of timed mode |
+| `ModalHeading` | `"Confirm"` | Dialog title (modal mode) |
+| `ModalMessage` | `null` | Dialog body (modal mode) |
+| `ArmedClass` | `null` | CSS class merged when armed |
+| `ArmDelayMs` | `2000` | Disabled wait before arming |
+| `ArmedWindowMs` | `8000` | Time window to confirm before reset |
+| `DisableOnConfirm` | `true` | Permanently disable after confirmation |
+
+## Debounced Button
+
+Prevents double-click and rapid-fire submits by disabling the button for a cooldown period after each click.
+
+```razor
+<FlareDebouncedButton class="btn btn-primary" OnAction="Save">
+    Save changes
+</FlareDebouncedButton>
+
+<FlareDebouncedButton class="btn btn-success" Timeout="TimeSpan.FromSeconds(3)" OnAction="Submit">
+    Submit
+</FlareDebouncedButton>
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `ChildContent` | *(required)* | Button content |
+| `OnAction` | *(required)* | Fires on click |
+| `Timeout` | `1s` | Cooldown period |
+
+## Clipboard Button
+
+Copies a string to the system clipboard and shows success/error feedback via Flare toast.
+
+```razor
+<FlareClipboardButton class="btn btn-outline-secondary" Value="@SomeText" />
+
+<FlareClipboardButton class="btn btn-sm btn-outline-primary" Value="@ApiKey">
+    Copy API key
+</FlareClipboardButton>
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `Value` | `null` | Text to copy |
+| `ChildContent` | `"Copy to clipboard"` | Custom button content |
+| `OnCopied` | | Fires after copy attempt (`bool` success) |
 
 ## Configuration
 

@@ -11,10 +11,15 @@
 
 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
     <button class="btn btn-primary" @onclick="AddMember">Add member</button>
-    <button class="btn btn-outline-secondary" @onclick="ImportMembers">Import members</button>
+    <FlareDebouncedButton class="btn btn-outline-secondary" OnAction="ImportMembers">Import members</FlareDebouncedButton>
     @if (_members.Count > 0)
     {
-        <button class="btn btn-outline-danger" @onclick="ClearAll">Clear all</button>
+        <FlareConfirmButton class="btn btn-outline-danger" ArmedClass="btn-danger"
+                            OnConfirmed="ClearAll">
+            <Standby>Clear all</Standby>
+            <Armed>Confirm clear</Armed>
+        </FlareConfirmButton>
+        <FlareClipboardButton class="btn btn-outline-secondary" Value="@RosterText" />
     }
 </div>
 
@@ -105,6 +110,9 @@ else
         }
     }
 
+    private string RosterText =>
+        string.Join("\n", _members.Select(m => $"{m.Name} — {m.Role}"));
+
     private async Task ImportMembers()
     {
         var toast = Flare.StartLoadingToast("Importing members...", delayMs: 0);
@@ -128,17 +136,7 @@ else
 
     private async Task ClearAll()
     {
-        var confirmed = await Flare.ConfirmAsync("Clear Roster", "Remove all team members?", new ConfirmOptions
-        {
-            Intent = ConfirmIntent.Danger,
-            ConfirmText = "Clear All",
-            CancelText = "Keep",
-        });
-
-        if (confirmed)
-        {
-            _members.Clear();
-            await Flare.ToastAsync("Roster cleared.", ToastLevel.Warning);
-        }
+        _members.Clear();
+        await Flare.ToastAsync("Roster cleared.", ToastLevel.Warning);
     }
 }
