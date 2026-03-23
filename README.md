@@ -1,6 +1,6 @@
 # Flare.UI
 
-Imperative Toast, Modal, Confirm, Loading Bar, Loading Toast, and reusable Button components for Blazor. Zero dependencies.
+Imperative Toast, Modal, Confirm, Loading Bar, Loading Toast, Clipboard, and reusable Button components for Blazor. Zero dependencies.
 
 ## Install
 
@@ -241,6 +241,31 @@ Copies a string to the system clipboard and shows success/error feedback via Fla
 | `Value` | `null` | Text to copy |
 | `ChildContent` | `"Copy to clipboard"` | Custom button content |
 | `OnCopied` | | Fires after copy attempt (`bool` success) |
+
+## Clipboard Inline
+
+Renders inline content that copies its text to the clipboard on click. Shows a "Copy" tooltip on hover with a pointer cursor. No default styling — bring your own classes.
+
+```razor
+<FlareClipboard Class="text-monospace">@user.ID</FlareClipboard>
+
+<FlareClipboard>@user.FirstName <b>@user.LastName</b></FlareClipboard>
+```
+
+When no `Value` is set, the component reads the rendered text content from the DOM — so mixed markup (like bold text) is copied as plain text automatically.
+
+| Parameter | Default | Description |
+|---|---|---|
+| `ChildContent` | | Content to display (also the copied text) |
+| `Value` | `null` | Explicit text to copy (overrides text extraction) |
+| `Class` | `null` | CSS class(es) on the wrapping `<span>` |
+
+Tooltip colors are customizable via CSS variables:
+
+```css
+--flare-clipboard-tooltip-bg: #333;
+--flare-clipboard-tooltip-color: #fff;
+```
 
 ## Configuration
 
