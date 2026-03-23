@@ -11,8 +11,8 @@
     <Authors>glueckkanja AG</Authors>
     <Company>glueckkanja AG</Company>
     <Copyright>Copyright (c) glueckkanja AG</Copyright>
-    <Description>Imperative Toast, Modal, Confirm, Loading Bar, and Loading Toast components for Blazor. Zero dependencies.</Description>
-    <PackageTags>blazor;toast;modal;confirm;dialog;loading-bar;notification</PackageTags>
+    <Description>Imperative Toast, Modal, Confirm, Loading Bar, Loading Toast, Clipboard, and reusable Button components for Blazor. Zero dependencies.</Description>
+    <PackageTags>blazor;toast;modal;confirm;dialog;loading-bar;clipboard;notification</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/realmjoin/flare-ui</PackageProjectUrl>
