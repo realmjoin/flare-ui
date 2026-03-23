@@ -1,7 +1,13 @@
 <div>
-    <div class="mb-3">
-        <label class="form-label" for="name-input">Name</label>
-        <input id="name-input" class="form-control" @bind="Name" />
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+        <div style="flex: 1;">
+            <label class="form-label" for="first-name-input">First name</label>
+            <input id="first-name-input" class="form-control" @bind="FirstName" />
+        </div>
+        <div style="flex: 1;">
+            <label class="form-label" for="last-name-input">Last name</label>
+            <input id="last-name-input" class="form-control" @bind="LastName" />
+        </div>
     </div>
 
     <div class="mb-3">
@@ -17,21 +23,24 @@
 
 @code {
     [CascadingParameter] public ModalContext Modal { get; set; } = default!;
-    [Parameter] public string CurrentName { get; set; } = "";
+    [Parameter] public string CurrentFirstName { get; set; } = "";
+    [Parameter] public string CurrentLastName { get; set; } = "";
     [Parameter] public string CurrentRole { get; set; } = "";
 
-    private string Name = "";
+    private string FirstName = "";
+    private string LastName = "";
     private string Role = "";
 
     protected override void OnInitialized()
     {
-        Name = CurrentName;
+        FirstName = CurrentFirstName;
+        LastName = CurrentLastName;
         Role = CurrentRole;
     }
 
     private void Save()
     {
-        if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Role)) return;
-        Modal.Ok(new { Name, Role });
+        if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName) || string.IsNullOrWhiteSpace(Role)) return;
+        Modal.Ok(new { FirstName, LastName, Role });
     }
 }

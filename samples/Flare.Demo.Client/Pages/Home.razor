@@ -41,7 +41,7 @@ else
             @foreach (var member in _members)
             {
                 <tr>
-                    <td>@member.Name</td>
+                    <td><FlareClipboard>@member.FirstName <b>@member.LastName</b></FlareClipboard></td>
                     <td>@member.Role</td>
                     <td style="white-space: nowrap;">
                         <button class="btn btn-sm btn-outline-primary" @onclick="() => EditMember(member)">Edit</button>
@@ -56,13 +56,13 @@ else
 </FlareProvider>
 
 @code {
-    private record Member(string Name, string Role);
+    private record Member(string FirstName, string LastName, string Role);
 
     private readonly List<Member> _members = new()
     {
-        new("Alice Chen", "Engineering Lead"),
-        new("Bob Martinez", "Designer"),
-        new("Carol Zhang", "Backend Developer"),
+        new("Alice", "Chen", "Engineering Lead"),
+        new("Bob", "Martinez", "Designer"),
+        new("Carol", "Zhang", "Backend Developer"),
     };
 
     private async Task AddMember()
@@ -72,8 +72,8 @@ else
         if (result.Confirmed)
         {
             dynamic data = result.GetData<dynamic>()!;
-            _members.Add(new Member((string)data.Name, (string)data.Role));
-            await Flare.ToastAsync($"Added {data.Name}.", ToastLevel.Success);
+            _members.Add(new Member((string)data.FirstName, (string)data.LastName, (string)data.Role));
+            await Flare.ToastAsync($"Added {data.FirstName} {data.LastName}.", ToastLevel.Success);
         }
     }
 
@@ -84,7 +84,8 @@ else
             Title = "Edit Member",
             Parameters = new()
             {
-                ["CurrentName"] = member.Name,
+                ["CurrentFirstName"] = member.FirstName,
+                ["CurrentLastName"] = member.LastName,
                 ["CurrentRole"] = member.Role,
             },
         });
@@ -93,34 +94,34 @@ else
         {
             dynamic data = result.GetData<dynamic>()!;
             var i = _members.IndexOf(member);
-            _members[i] = new Member((string)data.Name, (string)data.Role);
-            await Flare.ToastAsync($"Updated {data.Name}.", ToastLevel.Success);
+            _members[i] = new Member((string)data.FirstName, (string)data.LastName, (string)data.Role);
+            await Flare.ToastAsync($"Updated {data.FirstName} {data.LastName}.", ToastLevel.Success);
         }
     }
 
     private async Task RemoveMember(Member member)
     {
-        var confirmed = await Flare.ConfirmAsync("Remove Member", $"Remove {member.Name} from the team?",
+        var confirmed = await Flare.ConfirmAsync("Remove Member", $"Remove {member.FirstName} {member.LastName} from the team?",
             new ConfirmOptions { Intent = ConfirmIntent.Danger, ConfirmText = "Remove" });
 
         if (confirmed)
         {
             _members.Remove(member);
-            await Flare.ToastAsync($"{member.Name} removed.", ToastLevel.Success);
+            await Flare.ToastAsync($"{member.FirstName} {member.LastName} removed.", ToastLevel.Success);
         }
     }
 
     private string RosterText =>
-        string.Join("\n", _members.Select(m => $"{m.Name} — {m.Role}"));
+        string.Join("\n", _members.Select(m => $"{m.FirstName} {m.LastName} — {m.Role}"));
 
     private async Task ImportMembers()
     {
         var toast = Flare.StartLoadingToast("Importing members...", delayMs: 0);
         var imported = new[]
         {
-            new Member("David Kim", "QA Engineer"),
-            new Member("Eva Novak", "Product Manager"),
-            new Member("Frank Osei", "DevOps"),
+            new Member("David", "Kim", "QA Engineer"),
+            new Member("Eva", "Novak", "Product Manager"),
+            new Member("Frank", "Osei", "DevOps"),
         };
 
         for (var i = 0; i <= 100; i += 10)

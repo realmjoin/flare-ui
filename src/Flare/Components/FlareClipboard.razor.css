@@ -1,0 +1,46 @@
+.flare-clipboard {
+    cursor: pointer;
+    position: relative;
+}
+
+.flare-clipboard::before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(4px);
+    border: 5px solid transparent;
+    border-right-color: var(--flare-clipboard-tooltip-bg, #333);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 1;
+}
+
+.flare-clipboard::after {
+    content: "Copy";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(14px);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background: var(--flare-clipboard-tooltip-bg, #333);
+    color: var(--flare-clipboard-tooltip-color, #fff);
+    font-size: 0.75rem;
+    font-weight: normal;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+.flare-clipboard:hover::before {
+    opacity: 1;
+    transform: translateY(-50%) translateX(8px);
+}
+
+.flare-clipboard:hover::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(18px);
+}
