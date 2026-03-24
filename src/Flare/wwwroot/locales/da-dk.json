@@ -15,11 +15,17 @@
     "years": "år",
     "agoFormat": "{0} siden",
     "inFormat": "om {0}",
+    "now": "nu",
+    "earlierToday": "tidligere i dag",
+    "earlierTonight": "tidligere i nat",
     "today": "i dag",
     "tomorrow": "i morgen",
     "yesterday": "i går",
+    "lastNight": "i går nat",
     "inDaysFormat": "om {0} dage",
     "daysAgoFormat": "{0} dage siden",
-    "nightFormat": "{0}, om natten"
+    "tonight": "i nat",
+    "tomorrowNight": "i morgen nat",
+    "nightFormat": "{0} om natten"
   }
 }

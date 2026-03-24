@@ -15,11 +15,17 @@
     "years": "년",
     "agoFormat": "{0} 전",
     "inFormat": "{0} 후",
+    "now": "방금",
+    "earlierToday": "오늘 일찍",
+    "earlierTonight": "오늘 밤 일찍",
     "today": "오늘",
     "tomorrow": "내일",
     "yesterday": "어제",
+    "lastNight": "어젯밤",
     "inDaysFormat": "{0}일 후",
     "daysAgoFormat": "{0}일 전",
-    "nightFormat": "{0} (밤)"
+    "tonight": "오늘 밤",
+    "tomorrowNight": "내일 밤",
+    "nightFormat": "{0} 밤"
   }
 }

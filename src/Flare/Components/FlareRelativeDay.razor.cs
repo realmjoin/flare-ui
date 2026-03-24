@@ -5,8 +5,8 @@ namespace Flare;
 
 /// <summary>
 /// Displays a UTC timestamp relative to the current day, focused on day granularity and time of day.
-/// Ideal for release planning (e.g. "tomorrow, at night", "in 3 days", "2 days ago").
-/// Night is defined as 22:00–05:59 in the client's local timezone.
+/// Ideal for release planning (e.g. "tonight", "in 3 days", "last night").
+/// Night is defined as 23:00–05:59 in the client's local timezone.
 /// Formatting and live updates run entirely in the browser via JS — zero SignalR overhead.
 /// </summary>
 public partial class FlareRelativeDay : ComponentBase
@@ -24,23 +24,44 @@ public partial class FlareRelativeDay : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 
     // ⚠ Logic must stay in sync with formatRelativeDay() in flare-time.js
-    private string FormatFallback()
+    private string FormatFallback() => FormatRelativeDay(Value, DateTimeOffset.UtcNow, Locale.Get("time"));
+
+    internal static bool IsNight(int hour) => hour >= 23 || hour < 6;
+
+    internal static DateTime GetNightDay(DateTimeOffset value) =>
+        value.Hour < 6 ? value.Date.AddDays(-1) : value.Date;
+
+    internal static string FormatRelativeDay(DateTimeOffset value, DateTimeOffset now, IReadOnlyDictionary<string, string> l)
     {
-        var l = Locale.Get("time");
-        var now = DateTimeOffset.UtcNow;
-        var dayDiff = (Value.Date - now.Date).Days;
-        var hour = Value.Hour;
-        var isNight = hour >= 22 || hour < 6;
+        var dayDiff = (value.Date - now.Date).Days;
+        var isPast = value < now;
+        var isNight = IsNight(value.Hour);
+        var isNowNight = IsNight(now.Hour);
 
-        var dayPart = dayDiff switch
+        if (isNight)
         {
-            0 => l["today"],
-            1 => l["tomorrow"],
-            -1 => l["yesterday"],
-            > 1 => l["inDaysFormat"].Replace("{0}", dayDiff.ToString()),
-            _ => l["daysAgoFormat"].Replace("{0}", (-dayDiff).ToString()),
-        };
+            var referenceNightDay = isNowNight ? GetNightDay(now) : now.Date;
+            var nightDiff = (GetNightDay(value) - referenceNightDay).Days;
 
-        return isNight ? l["nightFormat"].Replace("{0}", dayPart) : dayPart;
+            return (nightDiff, isPast) switch
+            {
+                (0, true) => isNowNight ? l["earlierTonight"] : l["tonight"],
+                (0, false) => l["tonight"],
+                (1, _) => l["tomorrowNight"],
+                (-1, _) => l["lastNight"],
+                (> 1, _) => l["nightFormat"].Replace("{0}", l["inDaysFormat"].Replace("{0}", nightDiff.ToString())),
+                (_, _) => l["nightFormat"].Replace("{0}", l["daysAgoFormat"].Replace("{0}", (-nightDiff).ToString())),
+            };
+        }
+
+        return (dayDiff, isPast) switch
+        {
+            (0, true) => l["earlierToday"],
+            (0, false) => l["today"],
+            (1, _) => l["tomorrow"],
+            (-1, _) => l["yesterday"],
+            (> 1, _) => l["inDaysFormat"].Replace("{0}", dayDiff.ToString()),
+            (_, _) => l["daysAgoFormat"].Replace("{0}", (-dayDiff).ToString()),
+        };
     }
 }

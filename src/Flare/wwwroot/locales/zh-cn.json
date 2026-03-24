@@ -15,11 +15,17 @@
     "years": "年",
     "agoFormat": "{0}前",
     "inFormat": "{0}后",
+    "now": "刚刚",
+    "earlierToday": "今天早些时候",
+    "earlierTonight": "今晚早些时候",
     "today": "今天",
     "tomorrow": "明天",
     "yesterday": "昨天",
+    "lastNight": "昨晚",
     "inDaysFormat": "{0}天后",
     "daysAgoFormat": "{0}天前",
+    "tonight": "今晚",
+    "tomorrowNight": "明晚",
     "nightFormat": "{0}（夜间）"
   }
 }

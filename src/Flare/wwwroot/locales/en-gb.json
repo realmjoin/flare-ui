@@ -15,11 +15,17 @@
     "years": "years",
     "agoFormat": "{0} ago",
     "inFormat": "in {0}",
+    "now": "now",
+    "earlierToday": "earlier today",
+    "earlierTonight": "earlier tonight",
     "today": "today",
     "tomorrow": "tomorrow",
     "yesterday": "yesterday",
+    "lastNight": "last night",
     "inDaysFormat": "in {0} days",
     "daysAgoFormat": "{0} days ago",
-    "nightFormat": "{0}, at night"
+    "tonight": "tonight",
+    "tomorrowNight": "tomorrow night",
+    "nightFormat": "{0} at night"
   }
 }

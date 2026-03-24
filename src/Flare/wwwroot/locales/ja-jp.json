@@ -15,11 +15,17 @@
     "years": "年",
     "agoFormat": "{0}前",
     "inFormat": "{0}後",
+    "now": "たった今",
+    "earlierToday": "今日の早い時間",
+    "earlierTonight": "今夜の早い時間",
     "today": "今日",
     "tomorrow": "明日",
     "yesterday": "昨日",
+    "lastNight": "昨夜",
     "inDaysFormat": "{0}日後",
     "daysAgoFormat": "{0}日前",
+    "tonight": "今夜",
+    "tomorrowNight": "明日の夜",
     "nightFormat": "{0}（夜間）"
   }
 }

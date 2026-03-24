@@ -15,11 +15,17 @@
     "years": "let",
     "agoFormat": "před {0}",
     "inFormat": "za {0}",
+    "now": "nyní",
+    "earlierToday": "dříve dnes",
+    "earlierTonight": "dříve dnes v noci",
     "today": "dnes",
     "tomorrow": "zítra",
     "yesterday": "včera",
+    "lastNight": "včera v noci",
     "inDaysFormat": "za {0} dní",
     "daysAgoFormat": "před {0} dny",
-    "nightFormat": "{0}, v noci"
+    "tonight": "dnes v noci",
+    "tomorrowNight": "zítra v noci",
+    "nightFormat": "{0} v noci"
   }
 }

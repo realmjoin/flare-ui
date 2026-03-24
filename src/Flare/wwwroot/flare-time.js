@@ -44,6 +44,18 @@ function formatRelativeTime(utcIso) {
     return fmt.replace('{0}', text);
 }
 
+function isNight(hour) {
+    return hour >= 23 || hour < 6;
+}
+
+function getNightDay(date, hour) {
+    const nightDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    if (hour < 6) {
+        nightDay.setDate(nightDay.getDate() - 1);
+    }
+    return nightDay;
+}
+
 // ⚠ Logic must stay in sync with FlareRelativeDay.razor.cs
 function formatRelativeDay(utcIso) {
     const l = L();
@@ -53,18 +65,31 @@ function formatRelativeDay(utcIso) {
     const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const valueLocal = new Date(utc.getFullYear(), utc.getMonth(), utc.getDate());
     const localHour = utc.getHours();
+    const nowHour = now.getHours();
 
     const dayDiff = Math.round((valueLocal - todayLocal) / 86400000);
-    const isNight = localHour >= 22 || localHour < 6;
+    const isPast = utc < now;
+    const isNightValue = isNight(localHour);
+    const isNowNight = isNight(nowHour);
 
-    let dayPart;
-    if (dayDiff === 0) dayPart = l.today;
-    else if (dayDiff === 1) dayPart = l.tomorrow;
-    else if (dayDiff === -1) dayPart = l.yesterday;
-    else if (dayDiff > 1) dayPart = l.inDaysFormat.replace('{0}', dayDiff);
-    else dayPart = l.daysAgoFormat.replace('{0}', -dayDiff);
+    if (isNightValue) {
+        const referenceNightDay = isNowNight ? getNightDay(now, nowHour) : todayLocal;
+        const nightDiff = Math.round((getNightDay(utc, localHour) - referenceNightDay) / 86400000);
 
-    return isNight ? l.nightFormat.replace('{0}', dayPart) : dayPart;
+        if (nightDiff === 0) return isPast ? (isNowNight ? l.earlierTonight : l.tonight) : l.tonight;
+        if (nightDiff === 1) return l.tomorrowNight;
+        if (nightDiff === -1) return l.lastNight;
+        const dayPart = nightDiff > 1
+            ? l.inDaysFormat.replace('{0}', nightDiff)
+            : l.daysAgoFormat.replace('{0}', -nightDiff);
+        return l.nightFormat.replace('{0}', dayPart);
+    }
+
+    if (dayDiff === 0) return isPast ? l.earlierToday : l.today;
+    if (dayDiff === 1) return l.tomorrow;
+    if (dayDiff === -1) return l.yesterday;
+    if (dayDiff > 1) return l.inDaysFormat.replace('{0}', dayDiff);
+    return l.daysAgoFormat.replace('{0}', -dayDiff);
 }
 
 // Returns true if any element is in seconds range (needs fast ticking).

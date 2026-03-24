@@ -15,11 +15,17 @@
     "years": "vuotta",
     "agoFormat": "{0} sitten",
     "inFormat": "{0} kuluttua",
+    "now": "nyt",
+    "earlierToday": "aiemmin tänään",
+    "earlierTonight": "aiemmin tänä yönä",
     "today": "tänään",
     "tomorrow": "huomenna",
     "yesterday": "eilen",
+    "lastNight": "eilen yöllä",
     "inDaysFormat": "{0} päivän kuluttua",
     "daysAgoFormat": "{0} päivää sitten",
-    "nightFormat": "{0}, yöllä"
+    "tonight": "tänä yönä",
+    "tomorrowNight": "huomenna yöllä",
+    "nightFormat": "{0} yöllä"
   }
 }

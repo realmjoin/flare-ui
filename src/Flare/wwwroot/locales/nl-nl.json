@@ -15,11 +15,17 @@
     "years": "jaar",
     "agoFormat": "{0} geleden",
     "inFormat": "over {0}",
+    "now": "nu",
+    "earlierToday": "eerder vandaag",
+    "earlierTonight": "eerder vanavond",
     "today": "vandaag",
     "tomorrow": "morgen",
     "yesterday": "gisteren",
+    "lastNight": "gisternacht",
     "inDaysFormat": "over {0} dagen",
     "daysAgoFormat": "{0} dagen geleden",
-    "nightFormat": "{0}, 's nachts"
+    "tonight": "vannacht",
+    "tomorrowNight": "morgennacht",
+    "nightFormat": "{0} 's nachts"
   }
 }

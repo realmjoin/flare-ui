@@ -15,11 +15,17 @@
     "years": "anos",
     "agoFormat": "há {0}",
     "inFormat": "em {0}",
+    "now": "agora",
+    "earlierToday": "mais cedo hoje",
+    "earlierTonight": "mais cedo esta noite",
     "today": "hoje",
     "tomorrow": "amanhã",
     "yesterday": "ontem",
+    "lastNight": "ontem à noite",
     "inDaysFormat": "em {0} dias",
     "daysAgoFormat": "há {0} dias",
-    "nightFormat": "{0}, à noite"
+    "tonight": "hoje à noite",
+    "tomorrowNight": "amanhã à noite",
+    "nightFormat": "{0} à noite"
   }
 }

@@ -15,11 +15,17 @@
     "years": "yıl",
     "agoFormat": "{0} önce",
     "inFormat": "{0} sonra",
+    "now": "şimdi",
+    "earlierToday": "bugün daha önce",
+    "earlierTonight": "bu gece daha önce",
     "today": "bugün",
     "tomorrow": "yarın",
     "yesterday": "dün",
+    "lastNight": "dün gece",
     "inDaysFormat": "{0} gün sonra",
     "daysAgoFormat": "{0} gün önce",
-    "nightFormat": "{0}, gece"
+    "tonight": "bu gece",
+    "tomorrowNight": "yarın gece",
+    "nightFormat": "{0} gece"
   }
 }

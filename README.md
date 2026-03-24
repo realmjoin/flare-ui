@@ -310,13 +310,46 @@ Updates automatically — 1-second ticks while any element is in seconds range, 
 
 ## Relative Day
 
-Displays a UTC timestamp relative to the current day, focused on day granularity with an optional night indicator (22:00–05:59).
+Displays a UTC timestamp relative to the current day, focused on day granularity with an optional night indicator (23:00–05:59).
 
 ```razor
 <FlareRelativeDay Value="@item.ScheduledUtc" />
 ```
 
-Renders output like "today", "tomorrow, at night", "in 3 days", "yesterday".
+Renders output like "earlier today", "tonight", "tomorrow night", "last night", "in 3 days".
+
+Night phrasing is human-oriented rather than calendar-oriented: from daytime, the upcoming night is labeled "tonight", including times after midnight such as 01:00 or 03:00 on the next calendar day.
+
+**Expectation model**
+
+- Daytime is `06:00–22:59`
+- Nighttime is `23:00–05:59`
+- Daytime labels are calendar-based: `earlier today`, `today`, `tomorrow`, `yesterday`
+- Night labels are night-period-based: `earlier tonight`, `tonight`, `last night`, `tomorrow night`
+
+| Now | Target | Expected |
+|---|---|---|
+| day | later same day, daytime | `today` |
+| day | later same day, night | `tonight` |
+| day | next calendar day, `00:00–05:59` | `tonight` |
+| day | next calendar day, daytime | `tomorrow` |
+| day | next distinct night period | `tomorrow night` |
+| day | previous night period | `last night` |
+| night | earlier in same continuous night | `earlier tonight` |
+| night | later in same continuous night | `tonight` |
+| night | next daytime | `today` or `tomorrow`, depending on calendar day |
+| night | previous distinct night period | `last night` |
+
+Examples:
+
+| Now | Target | Expected |
+|---|---|---|
+| `2026-06-15 14:00` | `2026-06-16 00:30` | `tonight` |
+| `2026-06-15 14:00` | `2026-06-16 03:00` | `tonight` |
+| `2026-06-15 14:00` | `2026-06-16 23:30` | `tomorrow night` |
+| `2026-06-15 14:00` | `2026-06-15 03:00` | `last night` |
+| `2026-06-16 03:00` | `2026-06-15 23:00` | `earlier tonight` |
+| `2026-06-16 03:00` | `2026-06-16 12:00` | `today` |
 
 ## Timezone
 
@@ -347,6 +380,8 @@ builder.Services.AddFlare(o => o.Locale = "ja-jp");
 **Fallback resolution:** exact tag → base language (e.g. `de` → `de-de`) → `en-us`.
 
 Locale files are JSON in `wwwroot/locales/`. During server prerender, strings are read from embedded resources. On the client, the matching JSON file is fetched at runtime.
+
+The relative-day locale contract includes dedicated keys for person-friendly night phrasing such as `earlierTonight`, `tonight`, `tomorrowNight`, and `lastNight`, with `nightFormat` used only for longer ranges like "in 3 days at night".
 
 ## License
 

@@ -15,11 +15,17 @@
     "years": "ปี",
     "agoFormat": "{0} ที่แล้ว",
     "inFormat": "ใน {0}",
+    "now": "ตอนนี้",
+    "earlierToday": "วันนี้ก่อนหน้านี้",
+    "earlierTonight": "คืนนี้ก่อนหน้านี้",
     "today": "วันนี้",
     "tomorrow": "พรุ่งนี้",
     "yesterday": "เมื่อวาน",
+    "lastNight": "เมื่อคืน",
     "inDaysFormat": "ใน {0} วัน",
     "daysAgoFormat": "{0} วันที่แล้ว",
+    "tonight": "คืนนี้",
+    "tomorrowNight": "คืนพรุ่งนี้",
     "nightFormat": "{0} ตอนกลางคืน"
   }
 }

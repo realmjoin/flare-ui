@@ -15,11 +15,17 @@
     "years": "سنوات",
     "agoFormat": "منذ {0}",
     "inFormat": "بعد {0}",
+    "now": "الآن",
+    "earlierToday": "في وقت سابق اليوم",
+    "earlierTonight": "في وقت سابق الليلة",
     "today": "اليوم",
     "tomorrow": "غداً",
     "yesterday": "أمس",
+    "lastNight": "ليلة أمس",
     "inDaysFormat": "بعد {0} أيام",
     "daysAgoFormat": "منذ {0} أيام",
-    "nightFormat": "{0}، ليلاً"
+    "tonight": "الليلة",
+    "tomorrowNight": "غداً ليلاً",
+    "nightFormat": "{0} ليلاً"
   }
 }

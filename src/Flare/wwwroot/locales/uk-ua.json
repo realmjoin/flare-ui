@@ -15,11 +15,17 @@
     "years": "років",
     "agoFormat": "{0} тому",
     "inFormat": "через {0}",
+    "now": "зараз",
+    "earlierToday": "раніше сьогодні",
+    "earlierTonight": "раніше сьогодні вночі",
     "today": "сьогодні",
     "tomorrow": "завтра",
     "yesterday": "вчора",
+    "lastNight": "вчора вночі",
     "inDaysFormat": "через {0} днів",
     "daysAgoFormat": "{0} днів тому",
-    "nightFormat": "{0}, вночі"
+    "tonight": "сьогодні вночі",
+    "tomorrowNight": "завтра вночі",
+    "nightFormat": "{0} вночі"
   }
 }

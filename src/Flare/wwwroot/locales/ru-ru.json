@@ -15,11 +15,17 @@
     "years": "лет",
     "agoFormat": "{0} назад",
     "inFormat": "через {0}",
+    "now": "сейчас",
+    "earlierToday": "ранее сегодня",
+    "earlierTonight": "ранее сегодня ночью",
     "today": "сегодня",
     "tomorrow": "завтра",
     "yesterday": "вчера",
+    "lastNight": "вчера ночью",
     "inDaysFormat": "через {0} дней",
     "daysAgoFormat": "{0} дней назад",
-    "nightFormat": "{0}, ночью"
+    "tonight": "сегодня ночью",
+    "tomorrowNight": "завтра ночью",
+    "nightFormat": "{0} ночью"
   }
 }
