@@ -1,6 +1,6 @@
 # Flare.UI
 
-Imperative Toast, Modal, Confirm, Loading Bar, Loading Toast, Clipboard, and reusable Button components for Blazor. Zero dependencies.
+Batteries-included Blazor component library for toasts, modals, confirm dialogs, loading bars, loading toasts, clipboard, relative time, relative day, timezone detection, and reusable button primitives — with built-in localization for 25 languages. Zero dependencies.
 
 ## Install
 
@@ -275,6 +275,8 @@ builder.Services.AddFlare(o =>
     o.ToastPosition = ToastPosition.BottomRight;
     o.MaxToasts = 3;
     o.Headless = true; // strip all default styles
+    o.Locale = "de-de"; // BCP 47 tag (default: "en-us")
+    o.Debug = builder.Environment.IsDevelopment(); // verbose JS logging
 
     // Toast defaults
     o.Toast.DurationMs = 4000;
@@ -290,7 +292,61 @@ builder.Services.AddFlare(o =>
 });
 ```
 
+> **WASM note:** In a Blazor WebAssembly project, use `builder.HostEnvironment.IsDevelopment()` instead.
+
 Per-call options override global defaults. Unset properties fall back to the configured defaults.
+
+## Relative Time
+
+Displays a UTC timestamp as a live-updating relative time string. Formatting runs entirely in the browser via JS — zero SignalR overhead. Shows the absolute timestamp as a tooltip.
+
+```razor
+<FlareRelativeTime Value="@item.CreatedUtc" />
+```
+
+Renders output like "just now", "5 minutes ago", "in 2 hours", "3 days ago".
+
+Updates automatically — 1-second ticks while any element is in seconds range, 10-second ticks otherwise. Pauses when the tab is hidden.
+
+## Relative Day
+
+Displays a UTC timestamp relative to the current day, focused on day granularity with an optional night indicator (22:00–05:59).
+
+```razor
+<FlareRelativeDay Value="@item.ScheduledUtc" />
+```
+
+Renders output like "today", "tomorrow, at night", "in 3 days", "yesterday".
+
+## Timezone
+
+Detects the client's IANA timezone and converts UTC timestamps to client-local time. Useful when you need formatted dates rather than relative strings.
+
+```csharp
+@inject IFlareTimezoneService Tz
+
+@if (Tz.IsInitialized)
+{
+    <span>@Tz.ToClientTime(item.CreatedUtc).ToString("yyyy-MM-dd HH:mm")</span>
+    <span>Timezone: @Tz.IanaTimezone</span>
+}
+```
+
+The service initializes automatically when `<FlareProvider>` renders on the client.
+
+## Localization
+
+Flare ships 25 locale files using BCP 47 tags. Set the locale at startup:
+
+```csharp
+builder.Services.AddFlare(o => o.Locale = "ja-jp");
+```
+
+**Included locales:** en-us, en-gb, de-de, de-at, de-ch, fr-fr, es-es, it-it, pt-br, nl-nl, pl-pl, ja-jp, ko-kr, zh-cn, tr-tr, ru-ru, sv-se, nb-no, da-dk, fi-fi, cs-cz, uk-ua, ar-sa, hi-in, th-th.
+
+**Fallback resolution:** exact tag → base language (e.g. `de` → `de-de`) → `en-us`.
+
+Locale files are JSON in `wwwroot/locales/`. During server prerender, strings are read from embedded resources. On the client, the matching JSON file is fetched at runtime.
 
 ## License
 
