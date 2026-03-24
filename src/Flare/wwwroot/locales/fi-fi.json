@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "juuri nyt",
+    "second": "sekunti",
+    "seconds": "sekuntia",
+    "minute": "minuutti",
+    "minutes": "minuuttia",
+    "hour": "tunti",
+    "hours": "tuntia",
+    "day": "päivä",
+    "days": "päivää",
+    "month": "kuukausi",
+    "months": "kuukautta",
+    "year": "vuosi",
+    "years": "vuotta",
+    "agoFormat": "{0} sitten",
+    "inFormat": "{0} kuluttua",
+    "today": "tänään",
+    "tomorrow": "huomenna",
+    "yesterday": "eilen",
+    "inDaysFormat": "{0} päivän kuluttua",
+    "daysAgoFormat": "{0} päivää sitten",
+    "nightFormat": "{0}, yöllä"
+  }
+}

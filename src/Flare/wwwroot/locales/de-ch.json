@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "gerade eben",
+    "second": "Sekunde",
+    "seconds": "Sekunden",
+    "minute": "Minute",
+    "minutes": "Minuten",
+    "hour": "Stunde",
+    "hours": "Stunden",
+    "day": "Tag",
+    "days": "Tage",
+    "month": "Monat",
+    "months": "Monate",
+    "year": "Jahr",
+    "years": "Jahre",
+    "agoFormat": "vor {0}",
+    "inFormat": "in {0}",
+    "today": "heute",
+    "tomorrow": "morgen",
+    "yesterday": "gestern",
+    "inDaysFormat": "in {0} Tagen",
+    "daysAgoFormat": "vor {0} Tagen",
+    "nightFormat": "{0}, nachts"
+  }
+}

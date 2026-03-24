@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "az önce",
+    "second": "saniye",
+    "seconds": "saniye",
+    "minute": "dakika",
+    "minutes": "dakika",
+    "hour": "saat",
+    "hours": "saat",
+    "day": "gün",
+    "days": "gün",
+    "month": "ay",
+    "months": "ay",
+    "year": "yıl",
+    "years": "yıl",
+    "agoFormat": "{0} önce",
+    "inFormat": "{0} sonra",
+    "today": "bugün",
+    "tomorrow": "yarın",
+    "yesterday": "dün",
+    "inDaysFormat": "{0} gün sonra",
+    "daysAgoFormat": "{0} gün önce",
+    "nightFormat": "{0}, gece"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "только что",
+    "second": "секунда",
+    "seconds": "секунд",
+    "minute": "минута",
+    "minutes": "минут",
+    "hour": "час",
+    "hours": "часов",
+    "day": "день",
+    "days": "дней",
+    "month": "месяц",
+    "months": "месяцев",
+    "year": "год",
+    "years": "лет",
+    "agoFormat": "{0} назад",
+    "inFormat": "через {0}",
+    "today": "сегодня",
+    "tomorrow": "завтра",
+    "yesterday": "вчера",
+    "inDaysFormat": "через {0} дней",
+    "daysAgoFormat": "{0} дней назад",
+    "nightFormat": "{0}, ночью"
+  }
+}

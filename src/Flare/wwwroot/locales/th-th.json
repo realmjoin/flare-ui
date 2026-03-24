@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "เมื่อกี้",
+    "second": "วินาที",
+    "seconds": "วินาที",
+    "minute": "นาที",
+    "minutes": "นาที",
+    "hour": "ชั่วโมง",
+    "hours": "ชั่วโมง",
+    "day": "วัน",
+    "days": "วัน",
+    "month": "เดือน",
+    "months": "เดือน",
+    "year": "ปี",
+    "years": "ปี",
+    "agoFormat": "{0} ที่แล้ว",
+    "inFormat": "ใน {0}",
+    "today": "วันนี้",
+    "tomorrow": "พรุ่งนี้",
+    "yesterday": "เมื่อวาน",
+    "inDaysFormat": "ใน {0} วัน",
+    "daysAgoFormat": "{0} วันที่แล้ว",
+    "nightFormat": "{0} ตอนกลางคืน"
+  }
+}

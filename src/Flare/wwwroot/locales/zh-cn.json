@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "刚刚",
+    "second": "秒",
+    "seconds": "秒",
+    "minute": "分钟",
+    "minutes": "分钟",
+    "hour": "小时",
+    "hours": "小时",
+    "day": "天",
+    "days": "天",
+    "month": "个月",
+    "months": "个月",
+    "year": "年",
+    "years": "年",
+    "agoFormat": "{0}前",
+    "inFormat": "{0}后",
+    "today": "今天",
+    "tomorrow": "明天",
+    "yesterday": "昨天",
+    "inDaysFormat": "{0}天后",
+    "daysAgoFormat": "{0}天前",
+    "nightFormat": "{0}（夜间）"
+  }
+}

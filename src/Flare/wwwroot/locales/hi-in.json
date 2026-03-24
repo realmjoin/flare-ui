@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "अभी",
+    "second": "सेकंड",
+    "seconds": "सेकंड",
+    "minute": "मिनट",
+    "minutes": "मिनट",
+    "hour": "घंटा",
+    "hours": "घंटे",
+    "day": "दिन",
+    "days": "दिन",
+    "month": "महीना",
+    "months": "महीने",
+    "year": "साल",
+    "years": "साल",
+    "agoFormat": "{0} पहले",
+    "inFormat": "{0} में",
+    "today": "आज",
+    "tomorrow": "आने वाला कल",
+    "yesterday": "बीता कल",
+    "inDaysFormat": "{0} दिन में",
+    "daysAgoFormat": "{0} दिन पहले",
+    "nightFormat": "{0}, रात में"
+  }
+}

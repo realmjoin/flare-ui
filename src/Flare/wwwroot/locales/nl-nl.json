@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "zojuist",
+    "second": "seconde",
+    "seconds": "seconden",
+    "minute": "minuut",
+    "minutes": "minuten",
+    "hour": "uur",
+    "hours": "uur",
+    "day": "dag",
+    "days": "dagen",
+    "month": "maand",
+    "months": "maanden",
+    "year": "jaar",
+    "years": "jaar",
+    "agoFormat": "{0} geleden",
+    "inFormat": "over {0}",
+    "today": "vandaag",
+    "tomorrow": "morgen",
+    "yesterday": "gisteren",
+    "inDaysFormat": "over {0} dagen",
+    "daysAgoFormat": "{0} dagen geleden",
+    "nightFormat": "{0}, 's nachts"
+  }
+}

@@ -16,7 +16,7 @@ internal sealed class FlareTimezoneService : IFlareTimezoneService
     {
         if (IsInitialized) return;
 
-        var module = await js.GetFlareModuleAsync();
+        var module = await js.GetFlareTimeModuleAsync();
         var iana = await module.InvokeAsync<string>("getClientTimezone");
 
         _ianaTimezone = iana;

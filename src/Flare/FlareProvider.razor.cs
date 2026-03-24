@@ -43,6 +43,12 @@ public partial class FlareProvider : ComponentBase, IDisposable
 
             await ((FlareTimezoneService)Timezone).InitializeAsync(JS);
 
+            var localeModule = await JS.GetFlareLocaleModuleAsync();
+            await localeModule.InvokeVoidAsync("init", _options.Locale, _options.Debug);
+
+            var timeModule = await JS.GetFlareTimeModuleAsync();
+            await timeModule.InvokeVoidAsync("init");
+
             StateHasChanged();
         }
     }

@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "just now",
+    "second": "second",
+    "seconds": "seconds",
+    "minute": "minute",
+    "minutes": "minutes",
+    "hour": "hour",
+    "hours": "hours",
+    "day": "day",
+    "days": "days",
+    "month": "month",
+    "months": "months",
+    "year": "year",
+    "years": "years",
+    "agoFormat": "{0} ago",
+    "inFormat": "in {0}",
+    "today": "today",
+    "tomorrow": "tomorrow",
+    "yesterday": "yesterday",
+    "inDaysFormat": "in {0} days",
+    "daysAgoFormat": "{0} days ago",
+    "nightFormat": "{0}, at night"
+  }
+}

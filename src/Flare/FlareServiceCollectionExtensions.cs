@@ -32,6 +32,7 @@ public static class FlareServiceCollectionExtensions
         configure?.Invoke(options);
 
         services.AddSingleton(options);
+        services.AddSingleton(new Internal.FlareLocaleProvider(options.Locale));
         services.AddScoped<IFlareService, FlareService>();
         services.AddScoped<IFlareTimezoneService, FlareTimezoneService>();
         return services;

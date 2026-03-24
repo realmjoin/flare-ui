@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "الآن",
+    "second": "ثانية",
+    "seconds": "ثوانٍ",
+    "minute": "دقيقة",
+    "minutes": "دقائق",
+    "hour": "ساعة",
+    "hours": "ساعات",
+    "day": "يوم",
+    "days": "أيام",
+    "month": "شهر",
+    "months": "أشهر",
+    "year": "سنة",
+    "years": "سنوات",
+    "agoFormat": "منذ {0}",
+    "inFormat": "بعد {0}",
+    "today": "اليوم",
+    "tomorrow": "غداً",
+    "yesterday": "أمس",
+    "inDaysFormat": "بعد {0} أيام",
+    "daysAgoFormat": "منذ {0} أيام",
+    "nightFormat": "{0}، ليلاً"
+  }
+}

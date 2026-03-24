@@ -35,6 +35,17 @@ public sealed class FlareOptions
     /// Default settings applied to all toasts unless overridden per call.
     /// </summary>
     public ToastDefaults Toast { get; set; } = new();
+
+    /// <summary>
+    /// BCP 47 locale tag for localized Flare components (e.g. "en-us", "de-de").
+    /// Defaults to <c>"en-us"</c>. The matching locale JSON file is lazy-loaded at runtime.
+    /// </summary>
+    public string Locale { get; set; } = "en-us";
+
+    /// <summary>
+    /// Enables debug logging in browser console for Flare JS modules. Defaults to <c>false</c>.
+    /// </summary>
+    public bool Debug { get; set; }
 }
 
 /// <summary>

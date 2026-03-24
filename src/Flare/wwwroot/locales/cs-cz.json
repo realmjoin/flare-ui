@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "právě teď",
+    "second": "sekunda",
+    "seconds": "sekund",
+    "minute": "minuta",
+    "minutes": "minut",
+    "hour": "hodina",
+    "hours": "hodin",
+    "day": "den",
+    "days": "dní",
+    "month": "měsíc",
+    "months": "měsíců",
+    "year": "rok",
+    "years": "let",
+    "agoFormat": "před {0}",
+    "inFormat": "za {0}",
+    "today": "dnes",
+    "tomorrow": "zítra",
+    "yesterday": "včera",
+    "inDaysFormat": "za {0} dní",
+    "daysAgoFormat": "před {0} dny",
+    "nightFormat": "{0}, v noci"
+  }
+}

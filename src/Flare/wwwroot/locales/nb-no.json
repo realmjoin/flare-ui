@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "akkurat nå",
+    "second": "sekund",
+    "seconds": "sekunder",
+    "minute": "minutt",
+    "minutes": "minutter",
+    "hour": "time",
+    "hours": "timer",
+    "day": "dag",
+    "days": "dager",
+    "month": "måned",
+    "months": "måneder",
+    "year": "år",
+    "years": "år",
+    "agoFormat": "{0} siden",
+    "inFormat": "om {0}",
+    "today": "i dag",
+    "tomorrow": "i morgen",
+    "yesterday": "i går",
+    "inDaysFormat": "om {0} dager",
+    "daysAgoFormat": "{0} dager siden",
+    "nightFormat": "{0}, om natten"
+  }
+}

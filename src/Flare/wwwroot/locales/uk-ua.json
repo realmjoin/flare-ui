@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "щойно",
+    "second": "секунда",
+    "seconds": "секунд",
+    "minute": "хвилина",
+    "minutes": "хвилин",
+    "hour": "година",
+    "hours": "годин",
+    "day": "день",
+    "days": "днів",
+    "month": "місяць",
+    "months": "місяців",
+    "year": "рік",
+    "years": "років",
+    "agoFormat": "{0} тому",
+    "inFormat": "через {0}",
+    "today": "сьогодні",
+    "tomorrow": "завтра",
+    "yesterday": "вчора",
+    "inDaysFormat": "через {0} днів",
+    "daysAgoFormat": "{0} днів тому",
+    "nightFormat": "{0}, вночі"
+  }
+}

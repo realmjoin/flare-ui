@@ -1,0 +1,25 @@
+{
+  "time": {
+    "justNow": "방금",
+    "second": "초",
+    "seconds": "초",
+    "minute": "분",
+    "minutes": "분",
+    "hour": "시간",
+    "hours": "시간",
+    "day": "일",
+    "days": "일",
+    "month": "개월",
+    "months": "개월",
+    "year": "년",
+    "years": "년",
+    "agoFormat": "{0} 전",
+    "inFormat": "{0} 후",
+    "today": "오늘",
+    "tomorrow": "내일",
+    "yesterday": "어제",
+    "inDaysFormat": "{0}일 후",
+    "daysAgoFormat": "{0}일 전",
+    "nightFormat": "{0} (밤)"
+  }
+}
