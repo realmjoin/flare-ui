@@ -33,6 +33,7 @@ public static class FlareServiceCollectionExtensions
 
         services.AddSingleton(options);
         services.AddScoped<IFlareService, FlareService>();
+        services.AddScoped<IFlareTimezoneService, FlareTimezoneService>();
         return services;
     }
 }

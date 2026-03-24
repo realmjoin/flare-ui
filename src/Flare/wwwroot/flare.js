@@ -54,3 +54,7 @@ export function destroyFocusTrap(trap) {
     trap.element.removeEventListener('keydown', trap.handleKeyDown);
     try { trap.previouslyFocused?.focus(); } catch { /* element may be detached */ }
 }
+
+export function getClientTimezone() {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}

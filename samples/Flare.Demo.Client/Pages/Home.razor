@@ -1,6 +1,7 @@
 @page "/"
 @rendermode InteractiveWebAssembly
 @inject IFlareService Flare
+@inject IFlareTimezoneService Tz
 
 <FlareProvider>
 
@@ -34,6 +35,7 @@ else
             <tr>
                 <th>Name</th>
                 <th>Role</th>
+                <th>Added</th>
                 <th style="width: 1px; white-space: nowrap;"></th>
             </tr>
         </thead>
@@ -43,6 +45,7 @@ else
                 <tr>
                     <td><FlareClipboard>@member.FirstName <b>@member.LastName</b></FlareClipboard></td>
                     <td>@member.Role</td>
+                    <td style="white-space: nowrap; font-size: 0.85rem;" title="@member.AddedUtc.ToString("o")">@FormatAdded(member.AddedUtc)</td>
                     <td style="white-space: nowrap;">
                         <button class="btn btn-sm btn-outline-primary" @onclick="() => EditMember(member)">Edit</button>
                         <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveMember(member)">Remove</button>
@@ -56,13 +59,13 @@ else
 </FlareProvider>
 
 @code {
-    private record Member(string FirstName, string LastName, string Role);
+    private record Member(string FirstName, string LastName, string Role, DateTimeOffset AddedUtc);
 
     private readonly List<Member> _members = new()
     {
-        new("Alice", "Chen", "Engineering Lead"),
-        new("Bob", "Martinez", "Designer"),
-        new("Carol", "Zhang", "Backend Developer"),
+        new("Alice", "Chen", "Engineering Lead", DateTimeOffset.UtcNow.AddDays(-12)),
+        new("Bob", "Martinez", "Designer", DateTimeOffset.UtcNow.AddDays(-5)),
+        new("Carol", "Zhang", "Backend Developer", DateTimeOffset.UtcNow.AddHours(-3)),
     };
 
     private async Task AddMember()
@@ -72,7 +75,7 @@ else
         if (result.Confirmed)
         {
             dynamic data = result.GetData<dynamic>()!;
-            _members.Add(new Member((string)data.FirstName, (string)data.LastName, (string)data.Role));
+            _members.Add(new Member((string)data.FirstName, (string)data.LastName, (string)data.Role, DateTimeOffset.UtcNow));
             await Flare.ToastAsync($"Added {data.FirstName} {data.LastName}.", ToastLevel.Success);
         }
     }
@@ -94,7 +97,7 @@ else
         {
             dynamic data = result.GetData<dynamic>()!;
             var i = _members.IndexOf(member);
-            _members[i] = new Member((string)data.FirstName, (string)data.LastName, (string)data.Role);
+            _members[i] = new Member((string)data.FirstName, (string)data.LastName, (string)data.Role, member.AddedUtc);
             await Flare.ToastAsync($"Updated {data.FirstName} {data.LastName}.", ToastLevel.Success);
         }
     }
@@ -114,14 +117,17 @@ else
     private string RosterText =>
         string.Join("\n", _members.Select(m => $"{m.FirstName} {m.LastName} — {m.Role}"));
 
+    private string FormatAdded(DateTimeOffset utc) =>
+        Tz.IsInitialized ? Tz.ToClientTime(utc).ToString("yyyy-MM-dd HH:mm") : utc.ToString("yyyy-MM-dd HH:mm") + " UTC";
+
     private async Task ImportMembers()
     {
         var toast = Flare.StartLoadingToast("Importing members...", delayMs: 0);
         var imported = new[]
         {
-            new Member("David", "Kim", "QA Engineer"),
-            new Member("Eva", "Novak", "Product Manager"),
-            new Member("Frank", "Osei", "DevOps"),
+            new Member("David", "Kim", "QA Engineer", DateTimeOffset.UtcNow),
+            new Member("Eva", "Novak", "Product Manager", DateTimeOffset.UtcNow),
+            new Member("Frank", "Osei", "DevOps", DateTimeOffset.UtcNow),
         };
 
         for (var i = 0; i <= 100; i += 10)

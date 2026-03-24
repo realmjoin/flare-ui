@@ -20,6 +20,7 @@ public partial class FlareProvider : ComponentBase, IDisposable
     [Inject] private IFlareService Flare { get; set; } = default!;
     [Inject] private FlareOptions _options { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private IFlareTimezoneService Timezone { get; set; } = default!;
 
     /// <summary>
     /// The application content to render inside the provider.
@@ -39,6 +40,10 @@ public partial class FlareProvider : ComponentBase, IDisposable
         {
             try { await JS.GetFlareModuleAsync(); }
             catch { }
+
+            await ((FlareTimezoneService)Timezone).InitializeAsync(JS);
+
+            StateHasChanged();
         }
     }
 
