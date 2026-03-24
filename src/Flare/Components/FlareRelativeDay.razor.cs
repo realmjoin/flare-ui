@@ -12,6 +12,8 @@ namespace Flare;
 public partial class FlareRelativeDay : ComponentBase
 {
     [Inject] private FlareLocaleProvider Locale { get; set; } = default!;
+    [Inject] private FlareOptions Options { get; set; } = default!;
+    [Inject] private IFlareTimezoneService Timezone { get; set; } = default!;
 
     /// <summary>
     /// The UTC timestamp to display.
@@ -24,12 +26,20 @@ public partial class FlareRelativeDay : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 
     // ⚠ Logic must stay in sync with formatRelativeDay() in flare-time.js
-    private string FormatFallback() => FormatRelativeDay(Value, DateTimeOffset.UtcNow, Locale.Get("time"));
+    private string FormatFallback()
+    {
+        // Day boundaries and night detection depend on local time — convert when the client timezone is known.
+        var value = Timezone.IsInitialized ? Timezone.ToClientTime(Value) : Value;
+        var now = Timezone.IsInitialized ? Timezone.ToClientTime(DateTimeOffset.UtcNow) : DateTimeOffset.UtcNow;
+        return FormatRelativeDay(value, now, Locale.Get("time"));
+    }
 
     internal static bool IsNight(int hour) => hour >= 23 || hour < 6;
 
     internal static DateTime GetNightDay(DateTimeOffset value) =>
         value.Hour < 6 ? value.Date.AddDays(-1) : value.Date;
+
+    private string FormatTitle() => Timezone.ToClientTime(Value).ToString(Options.RelativeTimeTitleFormat);
 
     internal static string FormatRelativeDay(DateTimeOffset value, DateTimeOffset now, IReadOnlyDictionary<string, string> l)
     {

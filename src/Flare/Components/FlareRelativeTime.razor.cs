@@ -11,6 +11,8 @@ namespace Flare;
 public partial class FlareRelativeTime : ComponentBase
 {
     [Inject] private FlareLocaleProvider Locale { get; set; } = default!;
+    [Inject] private FlareOptions Options { get; set; } = default!;
+    [Inject] private IFlareTimezoneService Timezone { get; set; } = default!;
 
     /// <summary>
     /// The UTC timestamp to display relative to now.
@@ -45,4 +47,6 @@ public partial class FlareRelativeTime : ComponentBase
 
     private static string Plural(int count, string singular, string plural) =>
         $"{count} {(count == 1 ? singular : plural)}";
+
+    private string FormatTitle() => Timezone.ToClientTime(Value).ToString(Options.RelativeTimeTitleFormat);
 }

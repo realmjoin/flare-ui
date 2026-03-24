@@ -46,6 +46,13 @@ public sealed class FlareOptions
     /// Enables debug logging in browser console for Flare JS modules. Defaults to <c>false</c>.
     /// </summary>
     public bool Debug { get; set; }
+
+    /// <summary>
+    /// .NET format string for the tooltip on relative time/day components showing the absolute local time.
+    /// Uses standard <see cref="DateTime.ToString(string)"/> formatting.
+    /// Defaults to <c>"yyyy-MM-dd HH:mm:ss '(local)'"</c>.
+    /// </summary>
+    public string RelativeTimeTitleFormat { get; set; } = "yyyy-MM-dd HH:mm:ss '(local)'";
 }
 
 /// <summary>

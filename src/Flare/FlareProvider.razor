@@ -6,7 +6,7 @@
     <FlareLoadingBar Active="true" Fixed="true" Headless="_options.Headless" />
 }
 
-@ChildContent
+<div class="flare-root">@ChildContent</div>
 
 @if (_service.LoadingToasts.Count > 0 || _service.Toasts.Count > 0)
 {

@@ -46,3 +46,49 @@
     transform: translateX(-50%);
     align-items: center;
 }
+
+/* Shared tooltip — any element with class="flare-title" and data-flare-title="..." */
+::deep .flare-title {
+    position: relative;
+}
+
+::deep .flare-title::after {
+    content: attr(data-flare-title);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background: var(--flare-tooltip-bg, #333);
+    color: var(--flare-tooltip-color, #fff);
+    font-size: 0.75rem;
+    font-weight: normal;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s 0.35s, transform 0.15s 0.35s;
+}
+
+::deep .flare-title::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + 0px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border: 6px solid transparent;
+    border-top-color: var(--flare-tooltip-bg, #333);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s 0.35s, transform 0.15s 0.35s;
+}
+
+::deep .flare-title:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+::deep .flare-title:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
