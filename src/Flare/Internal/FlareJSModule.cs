@@ -8,6 +8,7 @@ internal static class FlareJSModule
     private static readonly ConditionalWeakTable<IJSRuntime, Task<IJSObjectReference>> Cache = new();
     private static readonly ConditionalWeakTable<IJSRuntime, Task<IJSObjectReference>> LocaleCache = new();
     private static readonly ConditionalWeakTable<IJSRuntime, Task<IJSObjectReference>> TimeCache = new();
+    private static readonly ConditionalWeakTable<IJSRuntime, Task<IJSObjectReference>> TooltipCache = new();
 
     internal static Task<IJSObjectReference> GetFlareModuleAsync(this IJSRuntime js)
     {
@@ -25,5 +26,11 @@ internal static class FlareJSModule
     {
         return TimeCache.GetValue(js, static rt =>
             rt.InvokeAsync<IJSObjectReference>("import", "./_content/Flare.UI/flare-time.js").AsTask());
+    }
+
+    internal static Task<IJSObjectReference> GetFlareTooltipModuleAsync(this IJSRuntime js)
+    {
+        return TooltipCache.GetValue(js, static rt =>
+            rt.InvokeAsync<IJSObjectReference>("import", "./_content/Flare.UI/flare-tooltip.js").AsTask());
     }
 }

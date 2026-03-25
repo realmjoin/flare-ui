@@ -49,6 +49,9 @@ public partial class FlareProvider : ComponentBase, IDisposable
             var timeModule = await JS.GetFlareTimeModuleAsync();
             await timeModule.InvokeVoidAsync("init");
 
+            var tooltipModule = await JS.GetFlareTooltipModuleAsync();
+            await tooltipModule.InvokeVoidAsync("init");
+
             StateHasChanged();
         }
     }

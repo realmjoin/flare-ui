@@ -8,6 +8,8 @@
 
 <div class="flare-root">@ChildContent</div>
 
+<div id="flare-tooltip" popover="manual" class="flare-tooltip" role="tooltip"></div>
+
 @if (_service.LoadingToasts.Count > 0 || _service.Toasts.Count > 0)
 {
     <div class="@ToastContainerClass()" role="region" aria-label="Notifications">
