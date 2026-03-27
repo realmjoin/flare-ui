@@ -1,13 +1,10 @@
 @page "/"
-@rendermode InteractiveWebAssembly
 @inject IFlareService Flare
-
-<FlareProvider>
 
 <PageTitle>Team Roster - Flare Demo</PageTitle>
 
 <h1>Team Roster <small class="text-muted" style="font-size: 0.5em;">demo</small></h1>
-<p class="lead">Manage your team — runs entirely in the browser via WebAssembly.</p>
+<p class="lead">Manage your team — all state lives in the browser.</p>
 
 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
     <button class="btn btn-primary" @onclick="AddMember">Add member</button>
@@ -56,8 +53,6 @@ else
         </tbody>
     </table>
 }
-
-</FlareProvider>
 
 @code {
     private record Member(string FirstName, string LastName, string Role, DateTimeOffset AddedUtc, DateTimeOffset ScheduledUtc);

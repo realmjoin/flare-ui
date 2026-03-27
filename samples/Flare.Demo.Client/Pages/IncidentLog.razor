@@ -1,18 +1,16 @@
-@page "/incidents"
-@rendermode InteractiveServer
+@page "/incident-log"
 @inject IFlareService Flare
+@inject HttpClient Http
 
-<FlareProvider>
-
-<FlareLoadingBar Active="_syncing" Fixed />
+<FlareLoadingBar Active="_loading" Fixed />
 
 <PageTitle>Incident Log - Flare Demo</PageTitle>
 
 <h1>Incident Log <small class="text-muted" style="font-size: 0.5em;">demo</small></h1>
-<p class="lead">Track and resolve incidents — runs on the server via SignalR.</p>
+<p class="lead">Track and resolve incidents — all state lives on the server via REST API.</p>
 
 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-    <FlareDebouncedButton class="btn btn-primary" OnAction="SyncIncidents">Sync incidents</FlareDebouncedButton>
+    <FlareDebouncedButton class="btn btn-primary" OnAction="FetchIncidents">Sync incidents</FlareDebouncedButton>
     <FlareDebouncedButton class="btn btn-outline-secondary" OnAction="SimulateIncident">Simulate incident</FlareDebouncedButton>
     @if (_incidents.Count > 0)
     {
@@ -74,68 +72,51 @@ else
     </table>
 }
 
-</FlareProvider>
-
 @code {
     private record Incident(string Id, string Service, string Message, string Severity, DateTimeOffset OpenedUtc);
 
-    private bool _syncing;
-    private int _counter;
+    private bool _loading;
+    private List<Incident> _incidents = [];
 
-    private readonly List<Incident> _incidents = new()
+    protected override async Task OnInitializedAsync() => await FetchIncidents();
+
+    private async Task FetchIncidents()
     {
-        new("INC-001", "api-gateway", "Elevated 5xx error rate", "Critical", DateTimeOffset.UtcNow.AddMinutes(-47)),
-        new("INC-002", "auth-service", "Token refresh latency spike", "Warning", DateTimeOffset.UtcNow.AddMinutes(-12)),
-        new("INC-003", "cdn", "Cache hit ratio below threshold", "Info", DateTimeOffset.UtcNow.AddMinutes(-3)),
-    };
-
-    private static readonly string[] Services = ["api-gateway", "auth-service", "cdn", "payments", "search", "notifications"];
-    private static readonly string[] Messages =
-    [
-        "Health check failing", "Memory usage above 90%", "Request queue backing up",
-        "Certificate expiring soon", "Disk space low", "Connection pool exhausted",
-    ];
-    private static readonly string[] Severities = ["Critical", "Warning", "Info"];
-
-    private async Task SyncIncidents()
-    {
-        _syncing = true;
+        _loading = true;
         StateHasChanged();
 
-        using var toast = Flare.StartLoadingToast("Syncing incidents...", delayMs: 0);
-        for (var i = 0; i <= 100; i += 10)
+        try
         {
-            toast.Update(progress: i);
-            await Task.Delay(60);
+            _incidents = await Http.GetFromJsonAsync<List<Incident>>("/api/incidents") ?? [];
         }
-
-        _syncing = false;
-        await Flare.ToastAsync("Incidents synced.", ToastLevel.Success);
+        finally
+        {
+            _loading = false;
+        }
     }
 
     private async Task SimulateIncident()
     {
-        _counter++;
-        var rng = Random.Shared;
-        var inc = new Incident(
-            $"INC-{(_incidents.Count + _counter):D3}",
-            Services[rng.Next(Services.Length)],
-            Messages[rng.Next(Messages.Length)],
-            Severities[rng.Next(Severities.Length)],
-            DateTimeOffset.UtcNow);
+        var response = await Http.PostAsync("/api/incidents/simulate", null);
+        var inc = await response.Content.ReadFromJsonAsync<Incident>();
 
-        _incidents.Insert(0, inc);
-        await Flare.ToastAsync($"New incident: {inc.Id}", inc.Severity == "Critical" ? ToastLevel.Error : ToastLevel.Warning);
+        if (inc is not null)
+        {
+            _incidents.Insert(0, inc);
+            await Flare.ToastAsync($"New incident: {inc.Id}", inc.Severity == "Critical" ? ToastLevel.Error : ToastLevel.Warning);
+        }
     }
 
     private async Task Resolve(Incident inc)
     {
+        await Http.PostAsync($"/api/incidents/{inc.Id}/resolve", null);
         _incidents.Remove(inc);
         await Flare.ToastAsync($"Resolved {inc.Id}.", ToastLevel.Success);
     }
 
     private async Task AcknowledgeAll()
     {
+        await Http.PostAsync("/api/incidents/acknowledge-all", null);
         var count = _incidents.Count;
         _incidents.Clear();
         await Flare.ToastAsync($"Acknowledged {count} incident(s).", ToastLevel.Success);

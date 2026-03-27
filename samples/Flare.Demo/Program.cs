@@ -1,4 +1,5 @@
 using Flare;
+using Flare.Demo.Api;
 using Flare.Demo.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,12 @@ builder.Services.AddFlare(o =>
     o.Debug = builder.Environment.IsDevelopment();
 });
 
+builder.Services.AddScoped(sp =>
+{
+    var nav = sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
+    return new HttpClient { BaseAddress = new Uri(nav.BaseUri) };
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -23,6 +30,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseAntiforgery();
+
+app.MapIncidentApi();
+app.MapDeployApi();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

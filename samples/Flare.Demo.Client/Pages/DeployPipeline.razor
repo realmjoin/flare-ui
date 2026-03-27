@@ -1,15 +1,13 @@
-@page "/server"
-@rendermode InteractiveServer
+@page "/deploy"
 @inject IFlareService Flare
-
-<FlareProvider>
+@inject HttpClient Http
 
 <FlareLoadingBar Active="_deploying" Fixed />
 
 <PageTitle>Deploy Pipeline - Flare Demo</PageTitle>
 
 <h1>Deploy Pipeline <small class="text-muted" style="font-size: 0.5em;">demo</small></h1>
-<p class="lead">Ship with confidence — runs on the server via SignalR.</p>
+<p class="lead">Ship with confidence — all state lives on the server via REST API.</p>
 
 <section class="mb-4">
     <h2>Deploy</h2>
@@ -60,25 +58,36 @@
     }
 </section>
 
-</FlareProvider>
-
 @code {
+    private record DeployResult(string Entry);
+    private record DeployConfig(string Environment, bool NotifyTeam);
+
     private bool _deploying;
     private string _environment = "staging";
     private bool _notifyTeam;
-    private readonly List<string> _log = new();
+    private List<string> _log = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _log = await Http.GetFromJsonAsync<List<string>>("/api/deploy/log") ?? [];
+        var config = await Http.GetFromJsonAsync<DeployConfig>("/api/deploy/config");
+        if (config is not null)
+        {
+            _environment = config.Environment;
+            _notifyTeam = config.NotifyTeam;
+        }
+    }
 
     private async Task DeployStaging()
     {
-        var toast = Flare.StartLoadingToast("Building for staging...", delayMs: 0);
-        for (var i = 0; i <= 100; i += 5)
-        {
-            toast.Update(progress: i);
-            await Task.Delay(60);
-        }
-        toast.Dispose();
+        using var toast = Flare.StartLoadingToast("Building for staging...", delayMs: 0);
 
-        _log.Insert(0, $"{DateTime.Now:HH:mm:ss} — Deployed to staging");
+        var response = await Http.PostAsync("/api/deploy/staging", null);
+        var result = await response.Content.ReadFromJsonAsync<DeployResult>();
+
+        if (result is not null)
+            _log.Insert(0, result.Entry);
+
         await Flare.ToastAsync("Staging deploy complete.", ToastLevel.Success);
     }
 
@@ -87,25 +96,39 @@
         _deploying = true;
         StateHasChanged();
 
-        using var _ = Flare.StartLoadingToast("Deploying to production...");
-        await Task.Delay(3000);
-
-        _deploying = false;
-
-        _log.Insert(0, $"{DateTime.Now:HH:mm:ss} — Deployed v2.4.1 to production");
-        await Flare.ToastAsync("", new ToastOptions
+        try
         {
-            Level = ToastLevel.Success,
-            Content = @<div>
-                <strong>Production deploy complete</strong>
-                <div style="font-size: 0.85rem; opacity: 0.8;">v2.4.1 &mdash; 3 services updated</div>
-            </div>,
-        });
+            using var toast = Flare.StartLoadingToast("Deploying to production...");
+
+            var response = await Http.PostAsync("/api/deploy/production", null);
+            var result = await response.Content.ReadFromJsonAsync<DeployResult>();
+
+            if (result is not null)
+                _log.Insert(0, result.Entry);
+
+            await Flare.ToastAsync("", new ToastOptions
+            {
+                Level = ToastLevel.Success,
+                Content = @<div>
+                    <strong>Production deploy complete</strong>
+                    <div style="font-size: 0.85rem; opacity: 0.8;">v2.4.1 &mdash; 3 services updated</div>
+                </div>,
+            });
+        }
+        finally
+        {
+            _deploying = false;
+        }
     }
 
     private async Task Rollback()
     {
-        _log.Insert(0, $"{DateTime.Now:HH:mm:ss} — Rolled back to v2.4.0");
+        var response = await Http.PostAsync("/api/deploy/rollback", null);
+        var result = await response.Content.ReadFromJsonAsync<DeployResult>();
+
+        if (result is not null)
+            _log.Insert(0, result.Entry);
+
         await Flare.ToastAsync("Rolled back to v2.4.0.", ToastLevel.Warning);
     }
 
@@ -127,6 +150,8 @@
             dynamic data = result.GetData<dynamic>()!;
             _environment = (string)data.Environment;
             _notifyTeam = (bool)data.NotifyTeam;
+
+            await Http.PutAsJsonAsync("/api/deploy/config", new DeployConfig(_environment, _notifyTeam));
             await Flare.ToastAsync(
                 $"Config updated: {_environment}, notify {(_notifyTeam ? "on" : "off")}.");
         }

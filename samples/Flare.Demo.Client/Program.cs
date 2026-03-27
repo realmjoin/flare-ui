@@ -10,4 +10,6 @@ builder.Services.AddFlare(o =>
     o.Debug = builder.HostEnvironment.IsDevelopment();
 });
 
+builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
 await builder.Build().RunAsync();
