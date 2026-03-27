@@ -1,0 +1,150 @@
+@page "/incidents"
+@rendermode InteractiveServer
+@inject IFlareService Flare
+
+<FlareProvider>
+
+<FlareLoadingBar Active="_syncing" Fixed />
+
+<PageTitle>Incident Log - Flare Demo</PageTitle>
+
+<h1>Incident Log <small class="text-muted" style="font-size: 0.5em;">demo</small></h1>
+<p class="lead">Track and resolve incidents — runs on the server via SignalR.</p>
+
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+    <FlareDebouncedButton class="btn btn-primary" OnAction="SyncIncidents">Sync incidents</FlareDebouncedButton>
+    <FlareDebouncedButton class="btn btn-outline-secondary" OnAction="SimulateIncident">Simulate incident</FlareDebouncedButton>
+    @if (_incidents.Count > 0)
+    {
+        <FlareConfirmButton class="btn btn-outline-danger" ArmedClass="btn-danger"
+                            UseModal ModalHeading="Acknowledge All"
+                            ModalMessage="This will acknowledge all open incidents. Continue?"
+                            OnConfirmed="AcknowledgeAll">
+            <Standby>Acknowledge all</Standby>
+        </FlareConfirmButton>
+    }
+</div>
+
+@if (_incidents.Count == 0)
+{
+    <p class="text-muted">No incidents. Simulate one to get started!</p>
+}
+else
+{
+    <table class="table table-hover" style="vertical-align: middle;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Service</th>
+                <th>Message</th>
+                <th>Severity</th>
+                <th>Opened</th>
+                <th style="width: 1px; white-space: nowrap;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var inc in _incidents)
+            {
+                <tr>
+                    <td style="white-space: nowrap; font-family: monospace; font-size: 0.85rem;">
+                        <FlareClipboard>@inc.Id</FlareClipboard>
+                    </td>
+                    <td>@inc.Service</td>
+                    <td>@inc.Message</td>
+                    <td>
+                        <span class="badge @SeverityBadge(inc.Severity)">@inc.Severity</span>
+                    </td>
+                    <td style="white-space: nowrap; font-size: 0.85rem;">
+                        <FlareRelativeTime Value="@inc.OpenedUtc" />
+                    </td>
+                    <td style="white-space: nowrap;">
+                        <FlareConfirmButton class="btn btn-sm btn-outline-success" ArmedClass="btn-success"
+                                            OnConfirmed="() => Resolve(inc)">
+                            <Standby>Resolve</Standby>
+                            <Armed>Confirm</Armed>
+                        </FlareConfirmButton>
+                        <FlareClipboardButton class="btn btn-sm btn-outline-secondary"
+                                              Value="@($"{inc.Id} — {inc.Service}: {inc.Message}")">
+                            Copy
+                        </FlareClipboardButton>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+</FlareProvider>
+
+@code {
+    private record Incident(string Id, string Service, string Message, string Severity, DateTimeOffset OpenedUtc);
+
+    private bool _syncing;
+    private int _counter;
+
+    private readonly List<Incident> _incidents = new()
+    {
+        new("INC-001", "api-gateway", "Elevated 5xx error rate", "Critical", DateTimeOffset.UtcNow.AddMinutes(-47)),
+        new("INC-002", "auth-service", "Token refresh latency spike", "Warning", DateTimeOffset.UtcNow.AddMinutes(-12)),
+        new("INC-003", "cdn", "Cache hit ratio below threshold", "Info", DateTimeOffset.UtcNow.AddMinutes(-3)),
+    };
+
+    private static readonly string[] Services = ["api-gateway", "auth-service", "cdn", "payments", "search", "notifications"];
+    private static readonly string[] Messages =
+    [
+        "Health check failing", "Memory usage above 90%", "Request queue backing up",
+        "Certificate expiring soon", "Disk space low", "Connection pool exhausted",
+    ];
+    private static readonly string[] Severities = ["Critical", "Warning", "Info"];
+
+    private async Task SyncIncidents()
+    {
+        _syncing = true;
+        StateHasChanged();
+
+        using var toast = Flare.StartLoadingToast("Syncing incidents...", delayMs: 0);
+        for (var i = 0; i <= 100; i += 10)
+        {
+            toast.Update(progress: i);
+            await Task.Delay(60);
+        }
+
+        _syncing = false;
+        await Flare.ToastAsync("Incidents synced.", ToastLevel.Success);
+    }
+
+    private async Task SimulateIncident()
+    {
+        _counter++;
+        var rng = Random.Shared;
+        var inc = new Incident(
+            $"INC-{(_incidents.Count + _counter):D3}",
+            Services[rng.Next(Services.Length)],
+            Messages[rng.Next(Messages.Length)],
+            Severities[rng.Next(Severities.Length)],
+            DateTimeOffset.UtcNow);
+
+        _incidents.Insert(0, inc);
+        await Flare.ToastAsync($"New incident: {inc.Id}", inc.Severity == "Critical" ? ToastLevel.Error : ToastLevel.Warning);
+    }
+
+    private async Task Resolve(Incident inc)
+    {
+        _incidents.Remove(inc);
+        await Flare.ToastAsync($"Resolved {inc.Id}.", ToastLevel.Success);
+    }
+
+    private async Task AcknowledgeAll()
+    {
+        var count = _incidents.Count;
+        _incidents.Clear();
+        await Flare.ToastAsync($"Acknowledged {count} incident(s).", ToastLevel.Success);
+    }
+
+    private static string SeverityBadge(string severity) => severity switch
+    {
+        "Critical" => "text-bg-danger",
+        "Warning" => "text-bg-warning",
+        _ => "text-bg-info",
+    };
+}
