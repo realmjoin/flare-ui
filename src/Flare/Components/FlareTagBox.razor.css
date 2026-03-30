@@ -1,0 +1,156 @@
+.flare-tagbox {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    width: 100%;
+    min-height: 2.375rem;
+    padding: 0.3125rem 0.5rem;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    cursor: text;
+    transition: border-color 150ms, box-shadow 150ms;
+    box-sizing: border-box;
+}
+
+.flare-tagbox:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.flare-tagbox-disabled {
+    background: #f9fafb;
+    cursor: not-allowed;
+}
+
+.flare-tagbox-disabled:focus-within {
+    border-color: #d1d5db;
+    box-shadow: none;
+}
+
+/* Tags */
+.flare-tagbox-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.375rem;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    white-space: nowrap;
+    animation: flare-tag-in 120ms ease-out;
+}
+
+.flare-tagbox-tag-removable {
+    cursor: pointer;
+}
+
+.flare-tagbox-tag-removable:hover {
+    background: #dbeafe;
+}
+
+.flare-tagbox-tag:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 1px;
+}
+
+.flare-tagbox-tag-x {
+    font-size: 0.875rem;
+    line-height: 1;
+    color: #3b82f6;
+}
+
+/* Inline input */
+.flare-tagbox-input {
+    all: unset;
+    flex: 1 1 4rem;
+    min-width: 4rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #1a1a1a;
+    padding: 0.0625rem 0;
+}
+
+.flare-tagbox-input::placeholder {
+    color: #9ca3af;
+}
+
+.flare-tagbox-input:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Dropdown (same visual style as typeahead) */
+.flare-tagbox-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    margin-top: 0.25rem;
+    max-height: 15rem;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    overflow-y: auto;
+    padding: 0.25rem 0;
+    list-style: none;
+    animation: flare-typeahead-in 120ms ease-out;
+}
+
+.flare-tagbox-option {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: #374151;
+    cursor: pointer;
+    transition: background 80ms;
+}
+
+.flare-tagbox-option:hover {
+    background: #f3f4f6;
+}
+
+.flare-tagbox-option-active {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.flare-tagbox-option-active:hover {
+    background: #dbeafe;
+}
+
+.flare-tagbox-loading,
+.flare-tagbox-empty {
+    padding: 0.75rem;
+    font-size: 0.8125rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+@keyframes flare-tag-in {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes flare-typeahead-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

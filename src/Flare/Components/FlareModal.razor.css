@@ -3,8 +3,9 @@
     inset: 0;
     z-index: 9000;
     display: flex;
-    align-items: center;
+    align-items: safe center;
     justify-content: center;
+    overflow-y: auto;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(2px);
     animation: flare-fade-in 200ms ease-out;
@@ -16,10 +17,9 @@
     border-radius: 0.75rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
     max-width: var(--flare-modal-max-width, 90vw);
-    max-height: 85vh;
     width: var(--flare-modal-width, fit-content);
     min-width: var(--flare-modal-min-width, 20rem);
-    overflow-y: auto;
+    margin: 2rem auto;
     animation: flare-scale-in 200ms ease-out;
 }
 

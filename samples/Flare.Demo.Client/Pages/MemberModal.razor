@@ -11,8 +11,26 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label" for="role-input">Role</label>
-        <input id="role-input" class="form-control" @bind="Role" />
+        <label class="form-label">Role</label>
+        <FlareTypeahead TItem="string"
+                        Items="_roles"
+                        TextSelector="r => r"
+                        @bind-Value="Role"
+                        Placeholder="Search roles…"
+                        DebounceMs="0"
+                        MinLength="0" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Skills</label>
+        <FlareTagBox TItem="string"
+                     Items="KnownSkills"
+                     TextSelector="s => s"
+                     CreateItem="s => s"
+                     @bind-Values="Skills"
+                     Placeholder="Add skills…"
+                     DebounceMs="0"
+                     MinLength="0" />
     </div>
 
     <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
@@ -25,22 +43,41 @@
     [CascadingParameter] public ModalContext Modal { get; set; } = default!;
     [Parameter] public string CurrentFirstName { get; set; } = "";
     [Parameter] public string CurrentLastName { get; set; } = "";
-    [Parameter] public string CurrentRole { get; set; } = "";
+    [Parameter] public string? CurrentRole { get; set; }
+    [Parameter] public IReadOnlyList<string> CurrentSkills { get; set; } = [];
 
     private string FirstName = "";
     private string LastName = "";
-    private string Role = "";
+    private string? Role;
+    private IReadOnlyList<string> Skills = [];
+
+    static readonly List<string> _roles =
+    [
+        "Engineering Lead", "Backend Developer", "Frontend Developer", "Full-Stack Developer",
+        "Designer", "UX Researcher", "Product Manager", "QA Engineer",
+        "DevOps", "Site Reliability Engineer", "Data Scientist", "Security Engineer",
+        "Engineering Manager", "Technical Writer", "Solutions Architect"
+    ];
+
+    public static readonly List<string> KnownSkills =
+    [
+        "C#", "TypeScript", "JavaScript", "Python", "Rust", "Go", "Java",
+        "Blazor", "React", "Vue", "Angular", "ASP.NET", "Node.js",
+        "PostgreSQL", "Redis", "Docker", "Kubernetes", "AWS", "Azure", "GCP",
+        "GraphQL", "gRPC", "Terraform", "CI/CD", "Figma"
+    ];
 
     protected override void OnInitialized()
     {
         FirstName = CurrentFirstName;
         LastName = CurrentLastName;
         Role = CurrentRole;
+        Skills = CurrentSkills.ToList();
     }
 
     private void Save()
     {
-        if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName) || string.IsNullOrWhiteSpace(Role)) return;
-        Modal.Ok(new { FirstName, LastName, Role });
+        if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName) || Role is null) return;
+        Modal.Ok(new { FirstName, LastName, Role, Skills });
     }
 }

@@ -31,6 +31,7 @@ else
             <tr>
                 <th>Name</th>
                 <th>Role</th>
+                <th>Skills</th>
                 <th>Added</th>
                 <th>Scheduled</th>
                 <th style="width: 1px; white-space: nowrap;"></th>
@@ -42,6 +43,12 @@ else
                 <tr>
                     <td><FlareClipboard>@member.FirstName <b>@member.LastName</b></FlareClipboard></td>
                     <td>@member.Role</td>
+                    <td style="font-size: 0.8rem;">
+                        @foreach (var skill in member.Skills)
+                        {
+                            <span class="badge text-bg-light me-1">@skill</span>
+                        }
+                    </td>
                     <td style="white-space: nowrap; font-size: 0.85rem;"><FlareRelativeTime Value="@member.AddedUtc" /></td>
                     <td style="white-space: nowrap; font-size: 0.85rem;"><FlareRelativeDay Value="@member.ScheduledUtc" /></td>
                     <td style="white-space: nowrap;">
@@ -55,13 +62,13 @@ else
 }
 
 @code {
-    private record Member(string FirstName, string LastName, string Role, DateTimeOffset AddedUtc, DateTimeOffset ScheduledUtc);
+    private record Member(string FirstName, string LastName, string Role, IReadOnlyList<string> Skills, DateTimeOffset AddedUtc, DateTimeOffset ScheduledUtc);
 
     private readonly List<Member> _members = new()
     {
-        new("Alice", "Chen", "Engineering Lead", DateTimeOffset.UtcNow.AddDays(-12), DateTimeOffset.UtcNow.AddDays(-2)),
-        new("Bob", "Martinez", "Designer", DateTimeOffset.UtcNow.AddDays(-5), DateTimeOffset.UtcNow.AddDays(1).Date.AddHours(3)),
-        new("Carol", "Zhang", "Backend Developer", DateTimeOffset.UtcNow.AddHours(-3), DateTimeOffset.UtcNow.AddDays(3).Date.AddHours(23)),
+        new("Alice", "Chen", "Engineering Lead", ["C#", "Blazor", "Azure"], DateTimeOffset.UtcNow.AddDays(-12), DateTimeOffset.UtcNow.AddDays(-2)),
+        new("Bob", "Martinez", "Designer", ["Figma", "CSS"], DateTimeOffset.UtcNow.AddDays(-5), DateTimeOffset.UtcNow.AddDays(1).Date.AddHours(3)),
+        new("Carol", "Zhang", "Backend Developer", ["C#", "PostgreSQL", "Docker"], DateTimeOffset.UtcNow.AddHours(-3), DateTimeOffset.UtcNow.AddDays(3).Date.AddHours(23)),
     };
 
     private async Task AddMember()
@@ -71,8 +78,10 @@ else
         if (result.Confirmed)
         {
             dynamic data = result.GetData<dynamic>()!;
-            _members.Add(new Member((string)data.FirstName, (string)data.LastName, (string)data.Role, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(2)));
+            var skills = ((IReadOnlyList<string>)data.Skills);
+            _members.Add(new Member((string)data.FirstName, (string)data.LastName, (string)data.Role, skills, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(2)));
             await Flare.ToastAsync($"Added {data.FirstName} {data.LastName}.", ToastLevel.Success);
+            await ToastNewSkills(skills);
         }
     }
 
@@ -86,15 +95,18 @@ else
                 ["CurrentFirstName"] = member.FirstName,
                 ["CurrentLastName"] = member.LastName,
                 ["CurrentRole"] = member.Role,
+                ["CurrentSkills"] = member.Skills,
             },
         });
 
         if (result.Confirmed)
         {
             dynamic data = result.GetData<dynamic>()!;
+            var skills = ((IReadOnlyList<string>)data.Skills);
             var i = _members.IndexOf(member);
-            _members[i] = new Member((string)data.FirstName, (string)data.LastName, (string)data.Role, member.AddedUtc, member.ScheduledUtc);
+            _members[i] = new Member((string)data.FirstName, (string)data.LastName, (string)data.Role, skills, member.AddedUtc, member.ScheduledUtc);
             await Flare.ToastAsync($"Updated {data.FirstName} {data.LastName}.", ToastLevel.Success);
+            await ToastNewSkills(skills);
         }
     }
 
@@ -118,9 +130,9 @@ else
         var toast = Flare.StartLoadingToast("Importing members...", delayMs: 0);
         var imported = new[]
         {
-            new Member("David", "Kim", "QA Engineer", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(5)),
-            new Member("Eva", "Novak", "Product Manager", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(1).Date.AddHours(22)),
-            new Member("Frank", "Osei", "DevOps", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(7)),
+            new Member("David", "Kim", "QA Engineer", ["TypeScript", "CI/CD"], DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(5)),
+            new Member("Eva", "Novak", "Product Manager", ["Figma"], DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(1).Date.AddHours(22)),
+            new Member("Frank", "Osei", "DevOps", ["Docker", "Kubernetes", "Terraform"], DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(7)),
         };
 
         for (var i = 0; i <= 100; i += 10)
@@ -138,5 +150,15 @@ else
     {
         _members.Clear();
         await Flare.ToastAsync("Roster cleared.", ToastLevel.Warning);
+    }
+
+    private async Task ToastNewSkills(IReadOnlyList<string> skills)
+    {
+        var newTags = skills.Where(s => !MemberModal.KnownSkills.Contains(s)).ToList();
+        if (newTags.Count > 0)
+        {
+            MemberModal.KnownSkills.AddRange(newTags);
+            await Flare.ToastAsync($"New skills created: {string.Join(", ", newTags)}");
+        }
     }
 }

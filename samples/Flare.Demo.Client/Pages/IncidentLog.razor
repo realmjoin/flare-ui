@@ -23,6 +23,19 @@
     }
 </div>
 
+@if (_incidents.Count > 0)
+{
+    <div style="max-width: 20rem; margin-bottom: 1rem;">
+        <FlareTypeahead TItem="string"
+                        Items="_serviceNames"
+                        TextSelector="s => s"
+                        @bind-Value="_serviceFilter"
+                        Placeholder="Filter by service…"
+                        DebounceMs="0"
+                        MinLength="0" />
+    </div>
+}
+
 @if (_incidents.Count == 0)
 {
     <p class="text-muted">No incidents. Simulate one to get started!</p>
@@ -41,7 +54,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var inc in _incidents)
+            @foreach (var inc in FilteredIncidents)
             {
                 <tr>
                     <td style="white-space: nowrap; font-family: monospace; font-size: 0.85rem;">
@@ -77,6 +90,12 @@ else
 
     private bool _loading;
     private List<Incident> _incidents = [];
+    private string? _serviceFilter;
+
+    private List<string> _serviceNames => _incidents.Select(i => i.Service).Distinct().Order().ToList();
+
+    private IEnumerable<Incident> FilteredIncidents =>
+        _serviceFilter is not null ? _incidents.Where(i => i.Service == _serviceFilter) : _incidents;
 
     protected override async Task OnInitializedAsync() => await FetchIncidents();
 

@@ -7,6 +7,18 @@
         </select>
     </div>
 
+    <div class="mb-3">
+        <label class="form-label">Services to deploy</label>
+        <FlareTagBox TItem="string"
+                     Items="KnownServices"
+                     TextSelector="s => s"
+                     CreateItem="s => s"
+                     @bind-Values="Services"
+                     Placeholder="Select or create services…"
+                     DebounceMs="0"
+                     MinLength="0" />
+    </div>
+
     <div class="form-check mb-3">
         <input id="notify-check" class="form-check-input" type="checkbox" @bind="NotifyTeam" />
         <label class="form-check-label" for="notify-check">Notify team on Slack</label>
@@ -22,15 +34,25 @@
     [CascadingParameter] public ModalContext Modal { get; set; } = default!;
     [Parameter] public string CurrentEnvironment { get; set; } = "staging";
     [Parameter] public bool CurrentNotifyTeam { get; set; }
+    [Parameter] public IReadOnlyList<string> CurrentServices { get; set; } = [];
 
     private string Environment = "staging";
     private bool NotifyTeam;
+    private IReadOnlyList<string> Services = [];
+
+    public static readonly List<string> KnownServices =
+    [
+        "api-gateway", "auth-service", "billing-service", "email-service",
+        "notification-service", "order-service", "payment-service",
+        "search-service", "user-service", "web-frontend"
+    ];
 
     protected override void OnInitialized()
     {
         Environment = CurrentEnvironment;
         NotifyTeam = CurrentNotifyTeam;
+        Services = CurrentServices.ToList();
     }
 
-    private void Save() => Modal.Ok(new { Environment, NotifyTeam });
+    private void Save() => Modal.Ok(new { Environment, NotifyTeam, Services });
 }

@@ -1,0 +1,80 @@
+@namespace Flare
+@typeparam TItem
+@implements IAsyncDisposable
+
+<div class="@RootClass()" @ref="_root">
+    <input @ref="_input"
+           @attributes="Attributes"
+           type="text"
+           role="combobox"
+           autocomplete="off"
+           aria-expanded="@(_isOpen && _items.Count > 0)"
+           aria-activedescendant="@ActiveDescendant()"
+           aria-controls="@_listboxId"
+           aria-autocomplete="list"
+           class="@InputClass()"
+           placeholder="@Placeholder"
+           disabled="@Disabled"
+           value="@_text"
+           @oninput="HandleInput"
+           @onkeydown="HandleKeyDown"
+           @onkeydown:stopPropagation="@_isOpen"
+           @onfocus="HandleFocus"
+           @onblur="HandleBlur" />
+
+    @if (!string.IsNullOrEmpty(_text) && !Disabled)
+    {
+        <button class="@(Headless ? null : "flare-typeahead-clear")"
+                tabindex="-1"
+                aria-label="Clear"
+                @onpointerdown="HandleClear"
+                @onpointerdown:preventDefault>
+            &times;
+        </button>
+    }
+
+    @if (_isOpen && _items.Count > 0)
+    {
+        <ul id="@_listboxId" role="listbox" class="@ListboxClass()">
+            @for (var i = 0; i < _items.Count; i++)
+            {
+                var index = i;
+                var item = _items[i];
+                <li id="@OptionId(index)"
+                    role="option"
+                    class="@OptionClass(index)"
+                    aria-selected="@(index == _highlightedIndex)"
+                    @onpointerdown="() => SelectItem(item)"
+                    @onpointerdown:preventDefault>
+                    @if (ItemTemplate is not null)
+                    {
+                        @ItemTemplate(item)
+                    }
+                    else
+                    {
+                        @GetText(item)
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else if (_isOpen && _loading)
+    {
+        <div class="@(Headless ? null : "flare-typeahead-dropdown flare-typeahead-loading")">
+            @(LoadingText ?? "Searching…")
+        </div>
+    }
+    else if (_isOpen && _searched && _items.Count == 0 && !string.IsNullOrWhiteSpace(_text))
+    {
+        <div class="@(Headless ? null : "flare-typeahead-dropdown flare-typeahead-empty")">
+            @if (CreateItem is not null)
+            {
+                <span>Press Enter to create <strong>@_text.Trim()</strong></span>
+            }
+            else
+            {
+                @(NotFoundText ?? "No results found")
+            }
+        </div>
+    }
+</div>

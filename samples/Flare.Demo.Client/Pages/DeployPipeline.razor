@@ -65,6 +65,7 @@
     private bool _deploying;
     private string _environment = "staging";
     private bool _notifyTeam;
+    private IReadOnlyList<string> _services = ["api-gateway", "web-frontend"];
     private List<string> _log = [];
 
     protected override async Task OnInitializedAsync()
@@ -142,6 +143,7 @@
             {
                 ["CurrentEnvironment"] = _environment,
                 ["CurrentNotifyTeam"] = _notifyTeam,
+                ["CurrentServices"] = _services,
             },
         });
 
@@ -150,10 +152,18 @@
             dynamic data = result.GetData<dynamic>()!;
             _environment = (string)data.Environment;
             _notifyTeam = (bool)data.NotifyTeam;
+            _services = (IReadOnlyList<string>)data.Services;
 
             await Http.PutAsJsonAsync("/api/deploy/config", new DeployConfig(_environment, _notifyTeam));
             await Flare.ToastAsync(
-                $"Config updated: {_environment}, notify {(_notifyTeam ? "on" : "off")}.");
+                $"Config updated: {_environment}, {_services.Count} service(s), notify {(_notifyTeam ? "on" : "off")}.");
+
+            var newServices = _services.Where(s => !DeployConfigModal.KnownServices.Contains(s)).ToList();
+            if (newServices.Count > 0)
+            {
+                DeployConfigModal.KnownServices.AddRange(newServices);
+                await Flare.ToastAsync($"New services created: {string.Join(", ", newServices)}");
+            }
         }
     }
 }
