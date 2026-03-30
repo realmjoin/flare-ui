@@ -1,3 +1,5 @@
+@inject HttpClient Http
+
 <div>
     <div class="mb-3">
         <label class="form-label" for="env-select">Environment</label>
@@ -9,14 +11,13 @@
 
     <div class="mb-3">
         <label class="form-label">Services to deploy</label>
-        <FlareTagBox TItem="string"
-                     Items="KnownServices"
-                     TextSelector="s => s"
-                     CreateItem="s => s"
-                     @bind-Values="Services"
-                     Placeholder="Select or create services…"
-                     DebounceMs="0"
-                     MinLength="0" />
+        <FlareCheckList TItem="string"
+                        ProviderFunc="LoadServices"
+                        TextSelector="s => s"
+                        @bind-Values="Services"
+                        Placeholder="Search services…"
+                        MaxHeight="14rem"
+                        ShowCount />
     </div>
 
     <div class="form-check mb-3">
@@ -40,18 +41,20 @@
     private bool NotifyTeam;
     private IReadOnlyList<string> Services = [];
 
-    public static readonly List<string> KnownServices =
-    [
-        "api-gateway", "auth-service", "billing-service", "email-service",
-        "notification-service", "order-service", "payment-service",
-        "search-service", "user-service", "web-frontend"
-    ];
-
     protected override void OnInitialized()
     {
         Environment = CurrentEnvironment;
         NotifyTeam = CurrentNotifyTeam;
         Services = CurrentServices.ToList();
+    }
+
+    private record ServicePage(string[] Items, int TotalCount);
+
+    private async Task<CheckListResult<string>> LoadServices(string filter, int skip, int take, CancellationToken ct)
+    {
+        var url = $"/api/deploy/services?filter={Uri.EscapeDataString(filter)}&skip={skip}&take={take}";
+        var page = await Http.GetFromJsonAsync<ServicePage>(url, ct);
+        return new CheckListResult<string>(page?.Items ?? [], page?.TotalCount ?? 0);
     }
 
     private void Save() => Modal.Ok(new { Environment, NotifyTeam, Services });

@@ -222,9 +222,85 @@ A multi-select tagging control with typeahead search. Selected items appear as r
 
 Keyboard: Arrow keys navigate, Enter/Comma selects, Backspace removes last tag, Escape closes.
 
+## Check List
+
+A searchable, scrollable multi-select list with virtualized rendering. Uses Blazor's `Virtualize` component — only visible rows are rendered, so it handles 100k+ items with no DOM pressure. Three data modes: static `Items`, async `SearchFunc`, or server-paged `ProviderFunc`.
+
+```razor
+@* Client-side with fixed height *@
+<FlareCheckList TItem="string"
+                Items="_services"
+                TextSelector="s => s"
+                @bind-Values="SelectedServices"
+                Placeholder="Filter services…"
+                MaxHeight="16rem"
+                ShowCount />
+
+@* Async remote search (loads full result set) *@
+<FlareCheckList TItem="UserGroup"
+                SearchFunc="SearchGroups"
+                TextSelector="g => g.Name"
+                @bind-Values="AssignedGroups"
+                Placeholder="Search groups…"
+                MaxHeight="20rem"
+                ShowCount>
+    <ItemTemplate>
+        <div>
+            <strong>@context.Name</strong>
+            <div style="font-size: 0.75rem; color: #6b7280;">@context.Description</div>
+        </div>
+    </ItemTemplate>
+</FlareCheckList>
+
+@* Server-side paging — only the visible page is fetched *@
+<FlareCheckList TItem="string"
+                ProviderFunc="LoadServices"
+                TextSelector="s => s"
+                @bind-Values="SelectedServices"
+                Placeholder="Search services…"
+                MaxHeight="16rem"
+                ShowCount />
+
+@code {
+    private async Task<CheckListResult<string>> LoadServices(
+        string filter, int skip, int take, CancellationToken ct)
+    {
+        var url = $"/api/services?filter={Uri.EscapeDataString(filter)}&skip={skip}&take={take}";
+        var page = await Http.GetFromJsonAsync<ServicePage>(url, ct);
+        return new CheckListResult<string>(page!.Items, page.TotalCount);
+    }
+}
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `Items` | `null` | Static collection to filter client-side (`IEnumerable<TItem>`) |
+| `SearchFunc` | `null` | Async search `(string query, CancellationToken ct) → IEnumerable<TItem>` |
+| `ProviderFunc` | `null` | Server-paged provider `(filter, skip, take, ct) → CheckListResult<TItem>` |
+| `TextSelector` | *(required)* | Extracts display text from an item |
+| `Values` / `ValuesChanged` | | Two-way binding for selected items |
+| `ValuesExpression` | `null` | Expression for `EditForm` integration |
+| `Comparer` | `Default` | Equality comparer for selection state |
+| `KeySelector` | `null` | Extracts a unique key for stable virtual scroll tracking (falls back to `TextSelector`) |
+| `ItemTemplate` | `null` | Custom render template for each row |
+| `Placeholder` | `null` | Search input placeholder |
+| `MaxHeight` | `null` | CSS max-height for scroll area (`null` = auto-expand) |
+| `ItemSize` | `40` | Row height in px for virtual scroll |
+| `DebounceMs` | `300` | Debounce delay before remote search |
+| `ShowSearch` | `true` | Show/hide the filter input |
+| `ShowCount` | `false` | Show "N selected" footer |
+| `SelectedFirst` | `false` | Sort checked items to top |
+| `MaxItems` | `0` | Max selectable items (`0` = unlimited) |
+| `LoadingText` | `"Loading…"` | Text shown while loading |
+| `NotFoundText` | `"No items found"` | Text shown when empty |
+| `Disabled` | `false` | Disables the control |
+| `Headless` | `false` | Strips all built-in CSS |
+
+Keyboard: Escape clears filter. Click row to toggle.
+
 ## EditForm Integration
 
-Both `FlareTypeahead` and `FlareTagBox` integrate with Blazor's `EditForm`. When used inside an `EditForm`, `@bind-Value` / `@bind-Values` automatically generates the expression parameter — the component picks up the cascading `EditContext`, notifies field changes, and applies validation CSS classes (`modified`, `valid`, `invalid`).
+`FlareTypeahead`, `FlareTagBox`, and `FlareCheckList` integrate with Blazor's `EditForm`. When used inside an `EditForm`, `@bind-Value` / `@bind-Values` automatically generates the expression parameter. The component picks up the cascading `EditContext`, notifies field changes on selection, and applies validation CSS classes (`modified`, `valid`, `invalid`).
 
 ```razor
 <EditForm Model="_model" OnValidSubmit="Save">

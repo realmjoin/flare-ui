@@ -1,0 +1,89 @@
+@namespace Flare
+@typeparam TItem
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+<div class="@RootClass()">
+    @if (ShowSearch)
+    {
+        <div class="@(Headless ? null : "flare-checklist-search")">
+            <input type="text"
+                   role="searchbox"
+                   autocomplete="off"
+                   class="@(Headless ? null : "flare-checklist-search-input")"
+                   placeholder="@Placeholder"
+                   disabled="@Disabled"
+                   value="@_filterText"
+                   @oninput="HandleFilterInput"
+                   @onkeydown="HandleKeyDown" />
+            @if (!string.IsNullOrEmpty(_filterText) && !Disabled)
+            {
+                <button class="@(Headless ? null : "flare-checklist-search-clear")"
+                        tabindex="-1"
+                        aria-label="Clear filter"
+                        @onclick="ClearFilter">&times;</button>
+            }
+        </div>
+    }
+
+    <div class="@(Headless ? null : "flare-checklist-list")"
+         style="@ListStyle()"
+         role="listbox"
+         aria-multiselectable="true"
+         tabindex="0">
+        <Virtualize @ref="_virtualizer"
+                    ItemsProvider="ProvideItems"
+                    ItemSize="ItemSize"
+                    Context="item">
+            <ItemContent>
+                <div @key="GetKey(item)"
+                     class="@RowClass(item)"
+                     role="option"
+                     aria-selected="@IsSelected(item)"
+                     @onclick="() => ToggleItem(item)">
+                    <span class="@(Headless ? null : (IsSelected(item) ? "flare-checklist-check flare-checklist-checked" : "flare-checklist-check"))"
+                          aria-hidden="true">
+                        @if (IsSelected(item))
+                        {
+                            <text>&#x2713;</text>
+                        }
+                    </span>
+                    <span class="@(Headless ? null : "flare-checklist-content")">
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                        else
+                        {
+                            @GetText(item)
+                        }
+                    </span>
+                </div>
+            </ItemContent>
+            <Placeholder>
+                <div class="@(Headless ? null : "flare-checklist-row flare-checklist-row-placeholder")"
+                     style="height: @(ItemSize)px;">
+                </div>
+            </Placeholder>
+        </Virtualize>
+
+        @if (_loading && _totalCount == 0)
+        {
+            <div class="@(Headless ? null : "flare-checklist-loading")">
+                @(LoadingText ?? "Loading…")
+            </div>
+        }
+        else if (_searched && _totalCount == 0)
+        {
+            <div class="@(Headless ? null : "flare-checklist-empty")">
+                @(NotFoundText ?? "No items found")
+            </div>
+        }
+    </div>
+
+    @if (ShowCount)
+    {
+        <div class="@(Headless ? null : "flare-checklist-footer")">
+            @_selectedValues.Count selected@(MaxItems > 0 ? $" / {MaxItems} max" : "")
+        </div>
+    }
+</div>
