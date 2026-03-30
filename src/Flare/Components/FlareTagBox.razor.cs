@@ -29,7 +29,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
     /// <summary>
     /// Static list of items to filter client-side. Uses <see cref="TextSelector"/> for matching.
     /// </summary>
-    [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
 
     /// <summary>
     /// Extracts display text from an item. Required.
@@ -75,6 +75,9 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
 
     /// <summary>Whether the control is disabled.</summary>
     [Parameter] public bool Disabled { get; set; }
+
+    /// <summary>Additional CSS class(es) applied to the root container element.</summary>
+    [Parameter] public string? Class { get; set; }
 
     /// <summary>When true, all built-in CSS classes are omitted.</summary>
     [Parameter] public bool Headless { get; set; }
@@ -396,7 +399,14 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
 
     private string OptionId(int index) => $"{_listboxId}-opt-{index}";
 
-    private string? RootClass() => Headless ? null : $"flare-tagbox{(Disabled ? " flare-tagbox-disabled" : "")}";
+    private string? RootClass()
+    {
+        if (Headless)
+            return string.IsNullOrEmpty(Class) ? null : Class;
+
+        var root = Disabled ? "flare-tagbox flare-tagbox-disabled" : "flare-tagbox";
+        return string.IsNullOrEmpty(Class) ? root : $"{root} {Class}";
+    }
     private string? InputClass() => Headless ? null : "flare-tagbox-input";
     private string? ListboxClass() => Headless ? null : "flare-tagbox-dropdown";
 
@@ -409,6 +419,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
         {
             if (InputAttributes is null) return null;
             var attrs = new Dictionary<string, object>(InputAttributes);
+            attrs.Remove("class");
             attrs.Remove("disabled");
             attrs.Remove("placeholder");
             return attrs.Count > 0 ? attrs : null;

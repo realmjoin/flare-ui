@@ -156,13 +156,14 @@ A single-value autocomplete control that searches items as the user types.
 
 | Parameter | Default | Description |
 |---|---|---|
-| `Items` | `null` | Static list to filter client-side |
+| `Items` | `null` | Static collection to filter client-side (`IEnumerable<TItem>`) |
 | `SearchFunc` | `null` | Async search `(string query, CancellationToken ct) → IEnumerable<TItem>` |
 | `TextSelector` | *(required)* | Extracts display text from an item |
 | `Value` / `ValueChanged` | | Two-way binding for the selected item |
 | `ItemTemplate` | `null` | Custom render template for dropdown items |
 | `CreateItem` | `null` | Factory to create a new item from free text |
 | `Placeholder` | `null` | Input placeholder |
+| `Class` | `null` | CSS class(es) on the root container |
 | `DebounceMs` | `300` | Debounce delay before searching |
 | `MinLength` | `1` | Minimum characters to trigger search |
 | `LoadingText` | `"Searching…"` | Text shown while loading |
@@ -199,7 +200,7 @@ A multi-select tagging control with typeahead search. Selected items appear as r
 
 | Parameter | Default | Description |
 |---|---|---|
-| `Items` | `null` | Static list to filter client-side |
+| `Items` | `null` | Static collection to filter client-side (`IEnumerable<TItem>`) |
 | `SearchFunc` | `null` | Async search `(string query, CancellationToken ct) → IEnumerable<TItem>` |
 | `TextSelector` | *(required)* | Extracts display text from an item |
 | `Values` / `ValuesChanged` | | Two-way binding for selected items |
@@ -208,6 +209,7 @@ A multi-select tagging control with typeahead search. Selected items appear as r
 | `TagTemplate` | `null` | Custom render template for tags |
 | `CreateItem` | `null` | Factory to create a new item from free text |
 | `Placeholder` | `null` | Input placeholder (hidden when tags exist) |
+| `Class` | `null` | CSS class(es) on the root container |
 | `DebounceMs` | `300` | Debounce delay before searching |
 | `MinLength` | `1` | Minimum characters to trigger search |
 | `MaxTags` | `0` | Max selectable items (`0` = unlimited) |
