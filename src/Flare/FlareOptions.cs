@@ -84,6 +84,11 @@ public sealed class ModalDefaults
     /// Whether to display the close (X) button in the modal header. Defaults to <c>true</c>.
     /// </summary>
     public bool ShowCloseButton { get; set; } = true;
+
+    /// <summary>
+    /// Whether navigating to a different page closes the modal (returning a cancel result). Defaults to <c>true</c>.
+    /// </summary>
+    public bool CloseOnNavigation { get; set; } = true;
 }
 
 /// <summary>
@@ -115,6 +120,11 @@ public sealed class ConfirmDefaults
     /// Whether clicking the backdrop closes the dialog (returning <c>false</c>). Defaults to <c>false</c>.
     /// </summary>
     public bool CloseOnBackdropClick { get; set; }
+
+    /// <summary>
+    /// Whether navigating to a different page closes the dialog (returning <c>false</c>). Defaults to <c>true</c>.
+    /// </summary>
+    public bool CloseOnNavigation { get; set; } = true;
 }
 
 /// <summary>

@@ -36,4 +36,9 @@ public sealed class ConfirmOptions
     /// Whether clicking the backdrop closes the dialog (returning <c>false</c>).
     /// </summary>
     public bool? CloseOnBackdropClick { get; set; }
+
+    /// <summary>
+    /// Whether navigating to a different page closes the dialog (returning <c>false</c>).
+    /// </summary>
+    public bool? CloseOnNavigation { get; set; }
 }

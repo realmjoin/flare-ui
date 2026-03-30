@@ -32,6 +32,11 @@ public sealed class ModalOptions
     public bool? ShowCloseButton { get; set; }
 
     /// <summary>
+    /// Whether navigating to a different page closes the modal (returning a cancel result).
+    /// </summary>
+    public bool? CloseOnNavigation { get; set; }
+
+    /// <summary>
     /// Dictionary of parameters passed to the rendered component.
     /// Keys must match <c>[Parameter]</c> property names on the component.
     /// </summary>

@@ -1,5 +1,6 @@
 using Flare.Internal;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 
 namespace Flare;
@@ -21,6 +22,7 @@ public partial class FlareProvider : ComponentBase, IDisposable
     [Inject] private FlareOptions _options { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
     [Inject] private IFlareTimezoneService Timezone { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
 
     /// <summary>
     /// The application content to render inside the provider.
@@ -32,6 +34,7 @@ public partial class FlareProvider : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         Flare.OnChanged += HandleChanged;
+        Navigation.LocationChanged += HandleLocationChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -61,6 +64,15 @@ public partial class FlareProvider : ComponentBase, IDisposable
         InvokeAsync(StateHasChanged);
     }
 
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        if (_service.ActiveModal is { Options.CloseOnNavigation: true })
+            _service.CloseModal(ModalResult.Cancel());
+
+        if (_service.ActiveConfirm is { Options.CloseOnNavigation: true })
+            _service.CloseConfirm(false);
+    }
+
     private string? ToastContainerClass()
     {
         if (_options.Headless) return null;
@@ -83,5 +95,6 @@ public partial class FlareProvider : ComponentBase, IDisposable
     public void Dispose()
     {
         Flare.OnChanged -= HandleChanged;
+        Navigation.LocationChanged -= HandleLocationChanged;
     }
 }

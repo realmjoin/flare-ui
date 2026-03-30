@@ -11,6 +11,7 @@ public sealed class ResolvedModalOptions
     public bool CloseOnBackdropClick { get; init; }
     public bool CloseOnEscape { get; init; }
     public bool ShowCloseButton { get; init; }
+    public bool CloseOnNavigation { get; init; }
     public Dictionary<string, object?>? Parameters { get; init; }
 }
 
@@ -23,6 +24,7 @@ public sealed class ResolvedConfirmOptions
     public DefaultButton DefaultButton { get; init; }
     public bool CloseOnEscape { get; init; }
     public bool CloseOnBackdropClick { get; init; }
+    public bool CloseOnNavigation { get; init; }
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]

@@ -241,6 +241,7 @@ internal sealed class FlareService : IFlareService
             CloseOnBackdropClick = perCall?.CloseOnBackdropClick ?? d.CloseOnBackdropClick,
             CloseOnEscape = perCall?.CloseOnEscape ?? d.CloseOnEscape,
             ShowCloseButton = perCall?.ShowCloseButton ?? d.ShowCloseButton,
+            CloseOnNavigation = perCall?.CloseOnNavigation ?? d.CloseOnNavigation,
             Parameters = perCall?.Parameters,
         };
     }
@@ -260,6 +261,7 @@ internal sealed class FlareService : IFlareService
             DefaultButton = defaultButton,
             CloseOnEscape = perCall.CloseOnEscape ?? d.CloseOnEscape,
             CloseOnBackdropClick = perCall.CloseOnBackdropClick ?? d.CloseOnBackdropClick,
+            CloseOnNavigation = perCall.CloseOnNavigation ?? d.CloseOnNavigation,
         };
     }
 
