@@ -1,6 +1,6 @@
 # Flare.UI
 
-Batteries-included Blazor component library for toasts, modals, confirm dialogs, loading bars, loading toasts, clipboard, relative time, relative day, timezone detection, and reusable button primitives — with built-in localization for 25 languages. Zero dependencies.
+Batteries-included Blazor component library for toasts, modals, confirm dialogs, loading bars, loading toasts, typeahead, tag box, clipboard, relative time, relative day, timezone detection, and reusable button primitives — with built-in localization for 25 languages. Zero dependencies.
 
 ## Install
 
@@ -124,6 +124,99 @@ Control modal sizing via CSS custom properties on `CssClass`:
     --flare-modal-max-width: 90vw;
 }
 ```
+
+## Typeahead
+
+A single-value autocomplete control that searches items as the user types.
+
+```razor
+@* Client-side filtering *@
+<FlareTypeahead TItem="string"
+                Items="_roles"
+                TextSelector="r => r"
+                @bind-Value="SelectedRole"
+                Placeholder="Search roles…"
+                MinLength="0" />
+
+@* Async search *@
+<FlareTypeahead TItem="User"
+                SearchFunc="SearchUsers"
+                TextSelector="u => u.Name"
+                @bind-Value="SelectedUser"
+                Placeholder="Search users…" />
+
+@* Free-text creation *@
+<FlareTypeahead TItem="string"
+                Items="_tags"
+                TextSelector="t => t"
+                CreateItem="t => t"
+                @bind-Value="Tag"
+                Placeholder="Type or pick a tag…" />
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `Items` | `null` | Static list to filter client-side |
+| `SearchFunc` | `null` | Async search `(string query, CancellationToken ct) → IEnumerable<TItem>` |
+| `TextSelector` | *(required)* | Extracts display text from an item |
+| `Value` / `ValueChanged` | | Two-way binding for the selected item |
+| `ItemTemplate` | `null` | Custom render template for dropdown items |
+| `CreateItem` | `null` | Factory to create a new item from free text |
+| `Placeholder` | `null` | Input placeholder |
+| `DebounceMs` | `300` | Debounce delay before searching |
+| `MinLength` | `1` | Minimum characters to trigger search |
+| `LoadingText` | `"Searching…"` | Text shown while loading |
+| `NotFoundText` | `"No results found"` | Text shown when empty |
+| `Disabled` | `false` | Disables the control |
+| `Headless` | `false` | Strips all built-in CSS |
+
+Keyboard: Arrow keys navigate, Enter selects, Escape/Tab closes.
+
+## Tag Box
+
+A multi-select tagging control with typeahead search. Selected items appear as removable tags.
+
+```razor
+@* Client-side with free-text creation *@
+<FlareTagBox TItem="string"
+             Items="_knownSkills"
+             TextSelector="s => s"
+             CreateItem="s => s"
+             @bind-Values="Skills"
+             Placeholder="Add skills…"
+             MaxTags="5" />
+
+@* Async search with custom templates *@
+<FlareTagBox TItem="User"
+             SearchFunc="SearchUsers"
+             TextSelector="u => u.Name"
+             @bind-Values="TeamMembers"
+             Placeholder="Add members…">
+    <ItemTemplate>@context.Name — @context.Role</ItemTemplate>
+    <TagTemplate>@context.Name</TagTemplate>
+</FlareTagBox>
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `Items` | `null` | Static list to filter client-side |
+| `SearchFunc` | `null` | Async search `(string query, CancellationToken ct) → IEnumerable<TItem>` |
+| `TextSelector` | *(required)* | Extracts display text from an item |
+| `Values` / `ValuesChanged` | | Two-way binding for selected items |
+| `Comparer` | `Default` | Equality comparer for duplicate prevention |
+| `ItemTemplate` | `null` | Custom render template for dropdown items |
+| `TagTemplate` | `null` | Custom render template for tags |
+| `CreateItem` | `null` | Factory to create a new item from free text |
+| `Placeholder` | `null` | Input placeholder (hidden when tags exist) |
+| `DebounceMs` | `300` | Debounce delay before searching |
+| `MinLength` | `1` | Minimum characters to trigger search |
+| `MaxTags` | `0` | Max selectable items (`0` = unlimited) |
+| `LoadingText` | `"Searching…"` | Text shown while loading |
+| `NotFoundText` | `"No results found"` | Text shown when empty |
+| `Disabled` | `false` | Disables the control |
+| `Headless` | `false` | Strips all built-in CSS |
+
+Keyboard: Arrow keys navigate, Enter/Comma selects, Backspace removes last tag, Escape closes.
 
 ## Loading Bar
 
@@ -284,7 +377,6 @@ builder.Services.AddFlare(o =>
 
     // Modal defaults
     o.Modal.CloseOnBackdropClick = false;
-
     // Confirm defaults
     o.Confirm.Intent = ConfirmIntent.Primary;
     o.Confirm.ConfirmText = "OK";
