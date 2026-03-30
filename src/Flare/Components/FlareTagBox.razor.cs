@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using Flare.Internal;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
@@ -19,6 +21,14 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
 
     /// <summary>Fires when the selected items change.</summary>
     [Parameter] public EventCallback<IReadOnlyList<TItem>> ValuesChanged { get; set; }
+
+    /// <summary>
+    /// Expression identifying the bound values. Used for <see cref="EditForm"/> integration
+    /// (validation CSS classes and field change notifications).
+    /// </summary>
+    [Parameter] public Expression<Func<IReadOnlyList<TItem>>>? ValuesExpression { get; set; }
+
+    [CascadingParameter] private EditContext? EditContext { get; set; }
 
     /// <summary>
     /// Async function that returns matching items for the given search text.
@@ -102,6 +112,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
     private CancellationTokenSource? _searchCts;
 
     private readonly string _listboxId = $"flare-tb-list-{Guid.NewGuid():N}";
+    private FieldIdentifier? _fieldIdentifier;
 
     private IEqualityComparer<TItem> ItemComparer => Comparer ?? EqualityComparer<TItem>.Default;
 
@@ -110,6 +121,10 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
     protected override void OnParametersSet()
     {
         _values = Values.ToList();
+
+        _fieldIdentifier = EditContext is not null && ValuesExpression is not null
+            ? FieldIdentifier.Create(ValuesExpression)
+            : null;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -343,6 +358,8 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
     private async Task NotifyChanged()
     {
         await ValuesChanged.InvokeAsync(_values.AsReadOnly());
+        if (_fieldIdentifier is { } fi)
+            EditContext!.NotifyFieldChanged(fi);
     }
 
     private void FocusInput()
@@ -401,11 +418,19 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
 
     private string? RootClass()
     {
+        var validation = _fieldIdentifier is { } fi ? EditContext!.FieldCssClass(fi) : null;
+
         if (Headless)
-            return string.IsNullOrEmpty(Class) ? null : Class;
+            return Join(Class, validation);
 
         var root = Disabled ? "flare-tagbox flare-tagbox-disabled" : "flare-tagbox";
-        return string.IsNullOrEmpty(Class) ? root : $"{root} {Class}";
+        return Join(root, Class, validation);
+
+        static string? Join(params string?[] parts)
+        {
+            var result = string.Join(' ', parts.Where(p => !string.IsNullOrEmpty(p)));
+            return result.Length > 0 ? result : null;
+        }
     }
     private string? InputClass() => Headless ? null : "flare-tagbox-input";
     private string? ListboxClass() => Headless ? null : "flare-tagbox-dropdown";

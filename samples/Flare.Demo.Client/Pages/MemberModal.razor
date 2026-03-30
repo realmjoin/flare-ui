@@ -1,12 +1,18 @@
-<div>
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="_model" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+
     <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
         <div style="flex: 1;">
             <label class="form-label" for="first-name-input">First name</label>
-            <input id="first-name-input" class="form-control" @bind="FirstName" />
+            <InputText id="first-name-input" class="form-control" @bind-Value="_model.FirstName" />
+            <ValidationMessage For="() => _model.FirstName" />
         </div>
         <div style="flex: 1;">
             <label class="form-label" for="last-name-input">Last name</label>
-            <input id="last-name-input" class="form-control" @bind="LastName" />
+            <InputText id="last-name-input" class="form-control" @bind-Value="_model.LastName" />
+            <ValidationMessage For="() => _model.LastName" />
         </div>
     </div>
 
@@ -15,10 +21,11 @@
         <FlareTypeahead TItem="string"
                         Items="_roles"
                         TextSelector="r => r"
-                        @bind-Value="Role"
+                        @bind-Value="_model.Role"
                         Placeholder="Search roles…"
                         DebounceMs="0"
                         MinLength="0" />
+        <ValidationMessage For="() => _model.Role" />
     </div>
 
     <div class="mb-3">
@@ -27,17 +34,18 @@
                      Items="KnownSkills"
                      TextSelector="s => s"
                      CreateItem="s => s"
-                     @bind-Values="Skills"
+                     @bind-Values="_model.Skills"
                      Placeholder="Add skills…"
                      DebounceMs="0"
                      MinLength="0" />
+        <ValidationMessage For="() => _model.Skills" />
     </div>
 
     <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-        <button class="btn btn-outline-secondary" @onclick="Modal.Cancel">Cancel</button>
-        <button class="btn btn-primary" @onclick="Save">Save</button>
+        <button type="button" class="btn btn-outline-secondary" @onclick="Modal.Cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </div>
-</div>
+</EditForm>
 
 @code {
     [CascadingParameter] public ModalContext Modal { get; set; } = default!;
@@ -46,10 +54,7 @@
     [Parameter] public string? CurrentRole { get; set; }
     [Parameter] public IReadOnlyList<string> CurrentSkills { get; set; } = [];
 
-    private string FirstName = "";
-    private string LastName = "";
-    private string? Role;
-    private IReadOnlyList<string> Skills = [];
+    private MemberModel _model = new();
 
     static readonly List<string> _roles =
     [
@@ -69,15 +74,26 @@
 
     protected override void OnInitialized()
     {
-        FirstName = CurrentFirstName;
-        LastName = CurrentLastName;
-        Role = CurrentRole;
-        Skills = CurrentSkills.ToList();
+        _model = new MemberModel
+        {
+            FirstName = CurrentFirstName,
+            LastName = CurrentLastName,
+            Role = CurrentRole,
+            Skills = CurrentSkills.ToList(),
+        };
     }
 
     private void Save()
     {
-        if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName) || Role is null) return;
-        Modal.Ok(new { FirstName, LastName, Role, Skills });
+        Modal.Ok(new { _model.FirstName, _model.LastName, _model.Role, _model.Skills });
+    }
+
+    private class MemberModel
+    {
+        [Required] public string FirstName { get; set; } = "";
+        [Required] public string LastName { get; set; } = "";
+        [Required] public string? Role { get; set; }
+        [MinLength(1, ErrorMessage = "Add at least one skill.")]
+        public IReadOnlyList<string> Skills { get; set; } = [];
     }
 }

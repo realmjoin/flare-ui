@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using Flare.Internal;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
@@ -19,6 +21,14 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
 
     /// <summary>Fires when the selected item changes.</summary>
     [Parameter] public EventCallback<TItem?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Expression identifying the bound value. Used for <see cref="EditForm"/> integration
+    /// (validation CSS classes and field change notifications).
+    /// </summary>
+    [Parameter] public Expression<Func<TItem?>>? ValueExpression { get; set; }
+
+    [CascadingParameter] private EditContext? EditContext { get; set; }
 
     /// <summary>
     /// Async function that returns matching items for the given search text.
@@ -89,6 +99,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
     private CancellationTokenSource? _searchCts;
 
     private readonly string _listboxId = $"flare-ta-list-{Guid.NewGuid():N}";
+    private FieldIdentifier? _fieldIdentifier;
 
     protected override void OnParametersSet()
     {
@@ -102,6 +113,10 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         {
             _text = "";
         }
+
+        _fieldIdentifier = EditContext is not null && ValueExpression is not null
+            ? FieldIdentifier.Create(ValueExpression)
+            : null;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -302,6 +317,8 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
     {
         Value = item;
         await ValueChanged.InvokeAsync(item);
+        if (_fieldIdentifier is { } fi)
+            EditContext!.NotifyFieldChanged(fi);
     }
 
     private void CloseDropdown()
@@ -345,13 +362,21 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
 
     private string OptionId(int index) => $"{_listboxId}-opt-{index}";
 
-    private string? RootClass() => (Headless, Class) switch
+    private string? RootClass()
     {
-        (true, null or "") => null,
-        (true, _) => Class,
-        (false, null or "") => "flare-typeahead",
-        _ => $"flare-typeahead {Class}",
-    };
+        var validation = _fieldIdentifier is { } fi ? EditContext!.FieldCssClass(fi) : null;
+
+        return (Headless, Class, validation) switch
+        {
+            (true, null or "", null or "") => null,
+            (true, _, _) => Join(Class, validation),
+            (false, null or "", null or "") => "flare-typeahead",
+            _ => Join("flare-typeahead", Class, validation),
+        };
+
+        static string Join(params string?[] parts) =>
+            string.Join(' ', parts.Where(p => !string.IsNullOrEmpty(p)));
+    }
     private string? InputClass() => Headless ? null : "flare-typeahead-input";
     private string? ListboxClass() => Headless ? null : "flare-typeahead-dropdown";
 

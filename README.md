@@ -160,6 +160,7 @@ A single-value autocomplete control that searches items as the user types.
 | `SearchFunc` | `null` | Async search `(string query, CancellationToken ct) → IEnumerable<TItem>` |
 | `TextSelector` | *(required)* | Extracts display text from an item |
 | `Value` / `ValueChanged` | | Two-way binding for the selected item |
+| `ValueExpression` | `null` | Expression for `EditForm` integration (validation + field notifications) |
 | `ItemTemplate` | `null` | Custom render template for dropdown items |
 | `CreateItem` | `null` | Factory to create a new item from free text |
 | `Placeholder` | `null` | Input placeholder |
@@ -204,6 +205,7 @@ A multi-select tagging control with typeahead search. Selected items appear as r
 | `SearchFunc` | `null` | Async search `(string query, CancellationToken ct) → IEnumerable<TItem>` |
 | `TextSelector` | *(required)* | Extracts display text from an item |
 | `Values` / `ValuesChanged` | | Two-way binding for selected items |
+| `ValuesExpression` | `null` | Expression for `EditForm` integration (validation + field notifications) |
 | `Comparer` | `Default` | Equality comparer for duplicate prevention |
 | `ItemTemplate` | `null` | Custom render template for dropdown items |
 | `TagTemplate` | `null` | Custom render template for tags |
@@ -219,6 +221,32 @@ A multi-select tagging control with typeahead search. Selected items appear as r
 | `Headless` | `false` | Strips all built-in CSS |
 
 Keyboard: Arrow keys navigate, Enter/Comma selects, Backspace removes last tag, Escape closes.
+
+## EditForm Integration
+
+Both `FlareTypeahead` and `FlareTagBox` integrate with Blazor's `EditForm`. When used inside an `EditForm`, `@bind-Value` / `@bind-Values` automatically generates the expression parameter — the component picks up the cascading `EditContext`, notifies field changes, and applies validation CSS classes (`modified`, `valid`, `invalid`).
+
+```razor
+<EditForm Model="_model" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+
+    <FlareTypeahead TItem="string"
+                    Items="_roles"
+                    TextSelector="r => r"
+                    @bind-Value="_model.Role"
+                    Placeholder="Pick a role…" />
+    <ValidationMessage For="() => _model.Role" />
+
+    <FlareTagBox TItem="string"
+                 Items="_skills"
+                 TextSelector="s => s"
+                 @bind-Values="_model.Skills"
+                 Placeholder="Add skills…" />
+    <ValidationMessage For="() => _model.Skills" />
+</EditForm>
+```
+
+No `InputBase<T>` inheritance — the existing API stays intact.
 
 ## Loading Bar
 
