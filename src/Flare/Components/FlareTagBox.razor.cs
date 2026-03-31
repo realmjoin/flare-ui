@@ -165,18 +165,22 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
         _searchCts = new CancellationTokenSource();
         var token = _searchCts.Token;
 
-        _loading = true;
-        StateHasChanged();
-
         try
         {
-            if (DebounceMs > 0)
+            // Only debounce for async SearchFunc; sync Items filtering is instant
+            if (DebounceMs > 0 && SearchFunc is not null)
+            {
+                _loading = false;
+                _searched = false;
                 await Task.Delay(DebounceMs, token);
+            }
 
             IEnumerable<TItem> results;
 
             if (SearchFunc is not null)
             {
+                _loading = true;
+                StateHasChanged();
                 results = await SearchFunc(query, token);
             }
             else if (Items is not null)
@@ -197,6 +201,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
             _searched = true;
             _loading = false;
             _highlightedIndex = -1;
+            StateHasChanged();
         }
         catch (TaskCanceledException) { }
         catch
@@ -204,6 +209,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
             _items = [];
             _loading = false;
             _searched = true;
+            StateHasChanged();
         }
     }
 
@@ -340,7 +346,10 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
         try
         {
             if (_module is not null)
+            {
+                await _module.InvokeVoidAsync("setText", _root, "");
                 await _module.InvokeVoidAsync("focusInput", _root);
+            }
         }
         catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
     }
