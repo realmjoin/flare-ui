@@ -72,6 +72,15 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
     /// <summary>Text shown when no items match. Defaults to "No items found".</summary>
     [Parameter] public string? NotFoundText { get; set; }
 
+    /// <summary>Hint shown below the list when item count reaches <see cref="TruncatedThreshold"/>.</summary>
+    [Parameter] public string? TruncatedText { get; set; }
+
+    /// <summary>
+    /// When <see cref="TruncatedText"/> is set, only show it if the loaded item count
+    /// is greater than or equal to this value. Defaults to 0 (always show when TruncatedText is set).
+    /// </summary>
+    [Parameter] public int TruncatedThreshold { get; set; }
+
     /// <summary>Debounce delay in milliseconds before triggering a remote search. Defaults to 300.</summary>
     [Parameter] public int DebounceMs { get; set; } = 300;
 
@@ -109,16 +118,23 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 
     private Virtualize<TItem>? _virtualizer;
+    private readonly ItemsProviderDelegate<TItem> _itemsProvider;
     private string _filterText = "";
     private List<TItem> _cachedItems = [];
     private List<TItem> _selectedValues = [];
     private int _totalCount;
     private bool _loading;
     private bool _searched;
+    private bool _needsRefresh;
     private CancellationTokenSource? _debounceCts;
     private FieldIdentifier? _fieldIdentifier;
     private List<TItem> _pinnedItems = [];
     private int _serverTotal;
+
+    public FlareCheckList()
+    {
+        _itemsProvider = ProvideItems;
+    }
 
     private IEqualityComparer<TItem> ItemComparer => Comparer ?? EqualityComparer<TItem>.Default;
 
@@ -127,107 +143,49 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
     protected override void OnParametersSet()
     {
         if (!Values.SequenceEqual(_selectedValues, ItemComparer))
+        {
             _selectedValues = Values.ToList();
+
+            if (_searched && _selectedValues.Count > 0)
+            {
+                PatchMissingSelected();
+                _needsRefresh = true;
+            }
+        }
 
         _fieldIdentifier = EditContext is not null && ValuesExpression is not null
             ? FieldIdentifier.Create(ValuesExpression)
             : null;
     }
 
-    /// <summary>
-    /// Central ItemsProvider delegate for <see cref="Virtualize{TItem}"/>.
-    /// Routes to the appropriate data source.
-    /// </summary>
-    private async ValueTask<ItemsProviderResult<TItem>> ProvideItems(ItemsProviderRequest request)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Server-side paging mode
-        if (ProviderFunc is not null)
+        if (_needsRefresh)
         {
-            _loading = true;
-            StateHasChanged();
-
-            try
+            _needsRefresh = false;
+            if (_virtualizer is not null)
             {
-                // On the very first fetch, snapshot the pre-selected values as pinned items.
-                // These form a permanent prefix in the virtual index space.
-                if (_pinnedItems.Count == 0 && _selectedValues.Count > 0 && request.StartIndex == 0)
-                    _pinnedItems = _selectedValues.ToList();
-
-                var pinCount = _pinnedItems.Count;
-                var output = new List<TItem>();
-
-                // Serve pinned items for the portion of the request that falls in the prefix.
-                if (request.StartIndex < pinCount)
-                {
-                    var pinSlice = _pinnedItems
-                        .Skip(request.StartIndex)
-                        .Take(request.Count)
-                        .ToList();
-                    output.AddRange(pinSlice);
-                }
-
-                // If the request extends past the pinned prefix, fetch from the server.
-                var remaining = request.Count - output.Count;
-                if (remaining > 0)
-                {
-                    var serverStart = Math.Max(0, request.StartIndex - pinCount);
-                    var result = await ProviderFunc(_filterText, serverStart, remaining, request.CancellationToken);
-                    if (request.CancellationToken.IsCancellationRequested)
-                        return default;
-
-                    _serverTotal = result.TotalCount;
-
-                    // Deduplicate server items against the pinned prefix.
-                    var comparer = ItemComparer;
-                    var pinnedSet = new HashSet<TItem>(_pinnedItems, comparer);
-                    output.AddRange(result.Items.Where(i => !pinnedSet.Contains(i)));
-                }
-
-                _totalCount = pinCount + _serverTotal;
-                _searched = true;
-                _loading = false;
+                await _virtualizer.RefreshDataAsync();
                 StateHasChanged();
-                return new ItemsProviderResult<TItem>(output, _totalCount);
-            }
-            catch (TaskCanceledException)
-            {
-                return default;
-            }
-            catch
-            {
-                _totalCount = 0;
-                _loading = false;
-                _searched = true;
-                StateHasChanged();
-                return new ItemsProviderResult<TItem>([], 0);
             }
         }
-
-        // SearchFunc or Items mode — serve from cached list
-        if (!_searched)
-        {
-            await LoadFullList(request.CancellationToken);
-            if (request.CancellationToken.IsCancellationRequested)
-                return default;
-        }
-
-        var items = GetDisplayItems();
-        _totalCount = items.Count;
-        var page = items.Skip(request.StartIndex).Take(request.Count).ToList();
-        return new ItemsProviderResult<TItem>(page, items.Count);
     }
 
-    private async Task LoadFullList(CancellationToken token)
+    protected override async Task OnInitializedAsync()
+    {
+        if (ProviderFunc is null)
+            await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
     {
         _loading = true;
-        StateHasChanged();
 
         try
         {
             if (SearchFunc is not null)
             {
-                var results = await SearchFunc(_filterText, token);
-                if (token.IsCancellationRequested) return;
+                var results = await SearchFunc(_filterText, CancellationToken.None);
                 _cachedItems = results.ToList();
             }
             else if (Items is not null)
@@ -239,34 +197,88 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
                 _cachedItems = [];
             }
 
-            // Prepend selected items not present in the data source.
-            if (_selectedValues.Count > 0)
-            {
-                var comparer = ItemComparer;
-                var missing = _selectedValues
-                    .Where(v => !_cachedItems.Any(i => comparer.Equals(i, v)))
-                    .ToList();
-                if (missing.Count > 0)
-                    _cachedItems.InsertRange(0, missing);
-            }
-
+            PatchMissingSelected();
+            _totalCount = GetFilteredItems().Count;
             _searched = true;
-            _loading = false;
         }
         catch (TaskCanceledException) { }
         catch
         {
             _cachedItems = [];
-            _loading = false;
+            _totalCount = 0;
             _searched = true;
+        }
+        finally
+        {
+            _loading = false;
+            _needsRefresh = true;
         }
     }
 
-    private List<TItem> GetDisplayItems()
+    private ValueTask<ItemsProviderResult<TItem>> ProvideItems(ItemsProviderRequest request)
+    {
+        if (ProviderFunc is not null)
+            return ProvideItemsFromServer(request);
+
+        var items = GetFilteredItems();
+        var page = items.Skip(request.StartIndex).Take(request.Count).ToList();
+        return ValueTask.FromResult(new ItemsProviderResult<TItem>(page, items.Count));
+    }
+
+    private async ValueTask<ItemsProviderResult<TItem>> ProvideItemsFromServer(ItemsProviderRequest request)
+    {
+        _loading = true;
+
+        try
+        {
+            if (_pinnedItems.Count == 0 && _selectedValues.Count > 0 && request.StartIndex == 0)
+                _pinnedItems = _selectedValues.ToList();
+
+            var pinCount = _pinnedItems.Count;
+            var output = new List<TItem>();
+
+            if (request.StartIndex < pinCount)
+                output.AddRange(_pinnedItems.Skip(request.StartIndex).Take(request.Count));
+
+            var remaining = request.Count - output.Count;
+            if (remaining > 0)
+            {
+                var serverStart = Math.Max(0, request.StartIndex - pinCount);
+                var pinnedSet = new HashSet<TItem>(_pinnedItems, ItemComparer);
+
+                // Over-fetch to compensate for pinned items that will be deduped out.
+                var fetchCount = remaining + pinnedSet.Count;
+                var result = await ProviderFunc!(_filterText, serverStart, fetchCount, request.CancellationToken);
+                if (request.CancellationToken.IsCancellationRequested)
+                    return default;
+
+                _serverTotal = result.TotalCount;
+                output.AddRange(result.Items.Where(i => !pinnedSet.Contains(i)).Take(remaining));
+            }
+
+            _totalCount = pinCount + _serverTotal;
+            _searched = true;
+            _loading = false;
+            return new ItemsProviderResult<TItem>(output, _totalCount);
+        }
+        catch (TaskCanceledException)
+        {
+            _loading = false;
+            return default;
+        }
+        catch
+        {
+            _totalCount = 0;
+            _loading = false;
+            _searched = true;
+            return new ItemsProviderResult<TItem>([], 0);
+        }
+    }
+
+    private List<TItem> GetFilteredItems()
     {
         var items = _cachedItems;
 
-        // Client-side filtering for Items mode
         if (Items is not null && !string.IsNullOrEmpty(_filterText))
         {
             var q = _filterText;
@@ -284,19 +296,29 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         return items;
     }
 
+    private void PatchMissingSelected()
+    {
+        if (_selectedValues.Count == 0) return;
+        var comparer = ItemComparer;
+        var missing = _selectedValues
+            .Where(v => !_cachedItems.Any(i => comparer.Equals(i, v)))
+            .ToList();
+        if (missing.Count > 0)
+            _cachedItems.InsertRange(0, missing);
+    }
+
     private async Task HandleFilterInput(ChangeEventArgs e)
     {
         _filterText = e.Value?.ToString() ?? "";
 
-        if (ProviderFunc is not null || SearchFunc is not null)
+        if (ProviderFunc is null && SearchFunc is null)
         {
-            // Remote modes: debounce then refresh virtualizer
-            await DebouncedRefresh();
+            _totalCount = GetFilteredItems().Count;
+            _needsRefresh = true;
         }
         else
         {
-            // Client-side: refresh immediately
-            await RefreshVirtualizer();
+            await DebouncedRefresh();
         }
     }
 
@@ -316,7 +338,11 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
                 _searched = false;
                 _pinnedItems = [];
                 _serverTotal = 0;
-                await RefreshVirtualizer();
+
+                if (ProviderFunc is null)
+                    await LoadDataAsync();
+                else
+                    await RefreshVirtualizer();
             }
         }
         catch (TaskCanceledException) { }
@@ -330,7 +356,7 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         StateHasChanged();
     }
 
-    private void HandleKeyDown(KeyboardEventArgs e)
+    private void HandleKeyUp(KeyboardEventArgs e)
     {
         if (e.Key == "Escape" && !string.IsNullOrEmpty(_filterText))
             _ = ClearFilterAsync();
@@ -348,7 +374,11 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         _searched = false;
         _pinnedItems = [];
         _serverTotal = 0;
-        await RefreshVirtualizer();
+
+        if (ProviderFunc is null)
+            await LoadDataAsync();
+        else
+            await RefreshVirtualizer();
     }
 
     private async Task ToggleItem(TItem item)
@@ -373,7 +403,11 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
             EditContext!.NotifyFieldChanged(fi);
 
         if (SelectedFirst)
-            await RefreshVirtualizer();
+        {
+            if (ProviderFunc is not null)
+                _pinnedItems = [];
+            _needsRefresh = true;
+        }
     }
 
     private bool IsSelected(TItem item)

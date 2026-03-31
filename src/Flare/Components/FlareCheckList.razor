@@ -14,7 +14,8 @@
                    disabled="@Disabled"
                    value="@_filterText"
                    @oninput="HandleFilterInput"
-                   @onkeydown="HandleKeyDown" />
+                   onkeydown="if(event.key==='Enter')event.preventDefault()"
+                   @onkeyup="HandleKeyUp" />
             @if (!string.IsNullOrEmpty(_filterText) && !Disabled)
             {
                 <button class="@(Headless ? null : "flare-checklist-search-clear")"
@@ -31,7 +32,7 @@
          aria-multiselectable="true"
          tabindex="0">
         <Virtualize @ref="_virtualizer"
-                    ItemsProvider="ProvideItems"
+                    ItemsProvider="_itemsProvider"
                     ItemSize="ItemSize"
                     Context="item">
             <ItemContent>
@@ -76,6 +77,13 @@
         {
             <div class="@(Headless ? null : "flare-checklist-empty")">
                 @(NotFoundText ?? "No items found")
+            </div>
+        }
+
+        @if (_searched && _totalCount > 0 && TruncatedText is not null && (TruncatedThreshold <= 0 || _totalCount >= TruncatedThreshold))
+        {
+            <div class="@(Headless ? null : "flare-checklist-truncated")">
+                @TruncatedText
             </div>
         }
     </div>
