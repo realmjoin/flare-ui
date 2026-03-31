@@ -8,6 +8,7 @@ namespace Flare;
 public partial class FlareConfirm : ComponentBase, IAsyncDisposable
 {
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private FlareOptions Options { get; set; } = default!;
 
     [Parameter, EditorRequired] public ConfirmInstance Instance { get; set; } = default!;
     [Parameter] public bool Headless { get; set; }

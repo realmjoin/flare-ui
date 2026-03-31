@@ -11,14 +11,28 @@
         }
         <p id="@_descId" class="@(Headless ? null : "flare-confirm-message")">@Instance.Message</p>
         <div class="@(Headless ? null : "flare-confirm-actions")">
-            <button class="@(Headless ? null : $"flare-confirm-cancel flare-btn {CancelBtnClass()}")"
-                    @onclick="() => Close(false)">
-                @Instance.Options.CancelText
-            </button>
-            <button class="@(Headless ? null : $"flare-confirm-ok flare-btn {ConfirmBtnClass()}")"
-                    @onclick="() => Close(true)">
-                @Instance.Options.ConfirmText
-            </button>
+            @if (Options.Confirm.ButtonOrder == ConfirmButtonOrder.ConfirmLeft)
+            {
+                <button class="@(Headless ? null : $"flare-confirm-ok flare-btn {ConfirmBtnClass()}")"
+                        @onclick="() => Close(true)">
+                    @Instance.Options.ConfirmText
+                </button>
+                <button class="@(Headless ? null : $"flare-confirm-cancel flare-btn {CancelBtnClass()}")"
+                        @onclick="() => Close(false)">
+                    @Instance.Options.CancelText
+                </button>
+            }
+            else
+            {
+                <button class="@(Headless ? null : $"flare-confirm-cancel flare-btn {CancelBtnClass()}")"
+                        @onclick="() => Close(false)">
+                    @Instance.Options.CancelText
+                </button>
+                <button class="@(Headless ? null : $"flare-confirm-ok flare-btn {ConfirmBtnClass()}")"
+                        @onclick="() => Close(true)">
+                    @Instance.Options.ConfirmText
+                </button>
+            }
         </div>
     </div>
 </div>

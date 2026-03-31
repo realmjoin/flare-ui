@@ -125,6 +125,11 @@ public sealed class ConfirmDefaults
     /// Whether navigating to a different page closes the dialog (returning <c>false</c>). Defaults to <c>true</c>.
     /// </summary>
     public bool CloseOnNavigation { get; set; } = true;
+
+    /// <summary>
+    /// Visual order of the confirm and cancel buttons. Defaults to <see cref="ConfirmButtonOrder.ConfirmRight"/>.
+    /// </summary>
+    public ConfirmButtonOrder ButtonOrder { get; set; } = ConfirmButtonOrder.ConfirmRight;
 }
 
 /// <summary>
