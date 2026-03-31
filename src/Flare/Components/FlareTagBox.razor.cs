@@ -136,9 +136,9 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
             {
                 _module = await JS.GetFlareTypeaheadModuleAsync();
                 _dotnetRef = DotNetObjectReference.Create(this);
-                _jsId = await _module.InvokeAsync<string>("init", _dotnetRef, _root);
+                _jsId = await _module.InvokeAsync<string?>("init", _dotnetRef, _root);
             }
-            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+            catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
     }
 
@@ -351,7 +351,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
                 await _module.InvokeVoidAsync("focusInput", _root);
             }
         }
-        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
     }
 
     private async Task RemoveTag(TItem item)
@@ -470,7 +470,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
         if (_module is not null && _jsId is not null)
         {
             try { await _module.InvokeVoidAsync("dispose", _jsId); }
-            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+            catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
 
         _dotnetRef?.Dispose();

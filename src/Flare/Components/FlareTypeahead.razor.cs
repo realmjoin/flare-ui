@@ -135,13 +135,13 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
             {
                 _module = await JS.GetFlareTypeaheadModuleAsync();
                 _dotnetRef = DotNetObjectReference.Create(this);
-                _jsId = await _module.InvokeAsync<string>("init", _dotnetRef, _root);
+                _jsId = await _module.InvokeAsync<string?>("init", _dotnetRef, _root);
 
                 // Set initial input text via JS
                 if (!string.IsNullOrEmpty(_text))
                     await SetInputTextAsync(_text);
             }
-            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+            catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
 
         // Apply any pending programmatic text changes
@@ -153,7 +153,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
             {
                 await SetInputTextAsync(text);
             }
-            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+            catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
     }
 
@@ -326,7 +326,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         _highlightedIndex = -1;
 
         try { await SetInputTextAsync(""); }
-        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
 
         if (Value is not null)
             await SetValue(default);
@@ -336,7 +336,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
             if (_module is not null)
                 await _module.InvokeVoidAsync("focusInput", _root);
         }
-        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
     }
 
     private async Task SelectItem(TItem item)
@@ -345,7 +345,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         CloseDropdown();
 
         try { await SetInputTextAsync(_text); }
-        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
 
         await SetValue(item);
     }
@@ -448,7 +448,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         if (_module is not null && _jsId is not null)
         {
             try { await _module.InvokeVoidAsync("dispose", _jsId); }
-            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+            catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
 
         _dotnetRef?.Dispose();

@@ -7,6 +7,7 @@ const instances = new Map();
  * Returns an id that must be passed to `dispose` to clean up.
  */
 export function init(dotnetRef, root) {
+    if (!root) return null;
     const id = crypto.randomUUID();
 
     function onPointerDown(e) {
