@@ -65,7 +65,7 @@
     private bool _deploying;
     private string _environment = "staging";
     private bool _notifyTeam;
-    private IReadOnlyList<string> _services = ["api-gateway", "web-frontend"];
+    private IReadOnlyList<string> _services = ["legacy-monolith", "notification-api", "order-service"];
     private List<string> _log = [];
 
     protected override async Task OnInitializedAsync()

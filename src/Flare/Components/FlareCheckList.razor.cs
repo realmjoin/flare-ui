@@ -117,6 +117,8 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
     private bool _searched;
     private CancellationTokenSource? _debounceCts;
     private FieldIdentifier? _fieldIdentifier;
+    private List<TItem> _pinnedItems = [];
+    private int _serverTotal;
 
     private IEqualityComparer<TItem> ItemComparer => Comparer ?? EqualityComparer<TItem>.Default;
 
@@ -146,15 +148,46 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
 
             try
             {
-                var result = await ProviderFunc(_filterText, request.StartIndex, request.Count, request.CancellationToken);
-                if (request.CancellationToken.IsCancellationRequested)
-                    return default;
+                // On the very first fetch, snapshot the pre-selected values as pinned items.
+                // These form a permanent prefix in the virtual index space.
+                if (_pinnedItems.Count == 0 && _selectedValues.Count > 0 && request.StartIndex == 0)
+                    _pinnedItems = _selectedValues.ToList();
 
-                _totalCount = result.TotalCount;
+                var pinCount = _pinnedItems.Count;
+                var output = new List<TItem>();
+
+                // Serve pinned items for the portion of the request that falls in the prefix.
+                if (request.StartIndex < pinCount)
+                {
+                    var pinSlice = _pinnedItems
+                        .Skip(request.StartIndex)
+                        .Take(request.Count)
+                        .ToList();
+                    output.AddRange(pinSlice);
+                }
+
+                // If the request extends past the pinned prefix, fetch from the server.
+                var remaining = request.Count - output.Count;
+                if (remaining > 0)
+                {
+                    var serverStart = Math.Max(0, request.StartIndex - pinCount);
+                    var result = await ProviderFunc(_filterText, serverStart, remaining, request.CancellationToken);
+                    if (request.CancellationToken.IsCancellationRequested)
+                        return default;
+
+                    _serverTotal = result.TotalCount;
+
+                    // Deduplicate server items against the pinned prefix.
+                    var comparer = ItemComparer;
+                    var pinnedSet = new HashSet<TItem>(_pinnedItems, comparer);
+                    output.AddRange(result.Items.Where(i => !pinnedSet.Contains(i)));
+                }
+
+                _totalCount = pinCount + _serverTotal;
                 _searched = true;
                 _loading = false;
                 StateHasChanged();
-                return new ItemsProviderResult<TItem>(result.Items, result.TotalCount);
+                return new ItemsProviderResult<TItem>(output, _totalCount);
             }
             catch (TaskCanceledException)
             {
@@ -204,6 +237,17 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
             else
             {
                 _cachedItems = [];
+            }
+
+            // Prepend selected items not present in the data source.
+            if (_selectedValues.Count > 0)
+            {
+                var comparer = ItemComparer;
+                var missing = _selectedValues
+                    .Where(v => !_cachedItems.Any(i => comparer.Equals(i, v)))
+                    .ToList();
+                if (missing.Count > 0)
+                    _cachedItems.InsertRange(0, missing);
             }
 
             _searched = true;
@@ -270,6 +314,8 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
             if (!token.IsCancellationRequested)
             {
                 _searched = false;
+                _pinnedItems = [];
+                _serverTotal = 0;
                 await RefreshVirtualizer();
             }
         }
@@ -300,6 +346,8 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         _filterText = "";
         CancelDebounce();
         _searched = false;
+        _pinnedItems = [];
+        _serverTotal = 0;
         await RefreshVirtualizer();
     }
 
