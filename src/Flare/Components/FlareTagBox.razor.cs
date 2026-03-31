@@ -120,7 +120,8 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
 
     protected override void OnParametersSet()
     {
-        _values = Values.ToList();
+        if (!Values.SequenceEqual(_values, ItemComparer))
+            _values = Values.ToList();
 
         _fieldIdentifier = EditContext is not null && ValuesExpression is not null
             ? FieldIdentifier.Create(ValuesExpression)

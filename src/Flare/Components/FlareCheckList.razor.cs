@@ -124,7 +124,8 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
 
     protected override void OnParametersSet()
     {
-        _selectedValues = Values.ToList();
+        if (!Values.SequenceEqual(_selectedValues, ItemComparer))
+            _selectedValues = Values.ToList();
 
         _fieldIdentifier = EditContext is not null && ValuesExpression is not null
             ? FieldIdentifier.Create(ValuesExpression)
