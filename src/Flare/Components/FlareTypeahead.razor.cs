@@ -90,6 +90,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
     private string? _jsId;
 
     private string _text = "";
+    private string? _pendingText;
     private List<TItem> _items = [];
     private int _highlightedIndex = -1;
     private bool _isOpen;
@@ -107,11 +108,18 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         {
             var newText = GetText(Value);
             if (newText != _text && !_isOpen)
+            {
                 _text = newText;
+                _pendingText = newText;
+            }
         }
         else if (!_isOpen)
         {
-            _text = "";
+            if (_text != "")
+            {
+                _text = "";
+                _pendingText = "";
+            }
         }
 
         _fieldIdentifier = EditContext is not null && ValueExpression is not null
@@ -128,6 +136,22 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
                 _module = await JS.GetFlareTypeaheadModuleAsync();
                 _dotnetRef = DotNetObjectReference.Create(this);
                 _jsId = await _module.InvokeAsync<string>("init", _dotnetRef, _root);
+
+                // Set initial input text via JS
+                if (!string.IsNullOrEmpty(_text))
+                    await SetInputTextAsync(_text);
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+        }
+
+        // Apply any pending programmatic text changes
+        if (_pendingText is not null)
+        {
+            var text = _pendingText;
+            _pendingText = null;
+            try
+            {
+                await SetInputTextAsync(text);
             }
             catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }
@@ -160,18 +184,22 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         _searchCts = new CancellationTokenSource();
         var token = _searchCts.Token;
 
-        _loading = true;
-        StateHasChanged();
-
         try
         {
-            if (DebounceMs > 0)
+            // Only debounce for async SearchFunc; sync Items filtering is instant
+            if (DebounceMs > 0 && SearchFunc is not null)
+            {
+                _loading = false;
+                _searched = false;
                 await Task.Delay(DebounceMs, token);
+            }
 
             IEnumerable<TItem> results;
 
             if (SearchFunc is not null)
             {
+                _loading = true;
+                StateHasChanged();
                 results = await SearchFunc(query, token);
             }
             else if (Items is not null)
@@ -190,6 +218,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
             _searched = true;
             _loading = false;
             _highlightedIndex = -1;
+            StateHasChanged();
         }
         catch (TaskCanceledException) { }
         catch
@@ -197,6 +226,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
             _items = [];
             _loading = false;
             _searched = true;
+            StateHasChanged();
         }
     }
 
@@ -295,6 +325,9 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         _searched = false;
         _highlightedIndex = -1;
 
+        try { await SetInputTextAsync(""); }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+
         if (Value is not null)
             await SetValue(default);
 
@@ -310,6 +343,10 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
     {
         _text = GetText(item);
         CloseDropdown();
+
+        try { await SetInputTextAsync(_text); }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+
         await SetValue(item);
     }
 
@@ -355,7 +392,13 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         });
     }
 
-    private string GetText(TItem item) => TextSelector(item);
+    private string GetText(TItem item) => TextSelector(item) ?? "";
+
+    private async Task SetInputTextAsync(string text)
+    {
+        if (_module is not null)
+            await _module.InvokeVoidAsync("setText", _root, text);
+    }
 
     private string? ActiveDescendant() =>
         _highlightedIndex >= 0 ? OptionId(_highlightedIndex) : null;

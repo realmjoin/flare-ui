@@ -48,6 +48,15 @@ export function focusInput(container) {
 }
 
 /**
+ * Set the input value programmatically (avoids Blazor Server roundtrip jitter).
+ */
+export function setText(container, text) {
+    if (!container) return;
+    const input = container.querySelector('input');
+    if (input) input.value = text;
+}
+
+/**
  * Clean up event listeners.
  */
 export function dispose(id) {
