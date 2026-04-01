@@ -23,6 +23,10 @@ export function init(dotnetRef, root) {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
         }
+        if (e.key === 'Escape' && root.querySelector('[role="listbox"]')) {
+            e.stopPropagation();
+            dotnetRef.invokeMethodAsync('OnClickOutside');
+        }
     }
     input?.addEventListener('keydown', onKeyDown);
 

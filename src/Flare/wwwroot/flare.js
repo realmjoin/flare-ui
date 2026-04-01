@@ -4,10 +4,7 @@ export function createFocusTrap(element, initialFocusSelector) {
     const previouslyFocused = document.activeElement;
 
     function handleKeyDown(e) {
-        if (e.key === 'Escape') {
-            e.preventDefault();
-            return;
-        }
+        if (e.key === 'Escape') return;
 
         // Enter activates the focused button, preventDefault stops the
         // keyup from re-triggering the opener after the dialog closes.
