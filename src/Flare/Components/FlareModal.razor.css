@@ -17,7 +17,7 @@
     border-radius: 0.75rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
     max-width: var(--flare-modal-max-width, 90vw);
-    width: var(--flare-modal-width, fit-content);
+    width: var(--flare-modal-width, 32rem);
     min-width: var(--flare-modal-min-width, 20rem);
     margin: 2rem auto;
     animation: flare-scale-in 200ms ease-out;
