@@ -5,7 +5,7 @@
 <div class="@RootClass()"
      @ref="_root"
      @onclick="FocusInput"
-     @onfocusin="HandleFocusIn">
+     @onfocusin="OpenIfSearchable">
 
     @* Selected tags *@
     @foreach (var item in _values)
@@ -49,6 +49,8 @@
            placeholder="@CurrentPlaceholder()"
            disabled="@IsDisabled"
            @oninput="HandleInput"
+           @onclick="OpenIfSearchable"
+           @onclick:stopPropagation
            @onkeydown="HandleKeyDown"
            @onkeydown:stopPropagation="@_isOpen"
            @onblur="HandleBlur" />

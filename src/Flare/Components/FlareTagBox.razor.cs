@@ -302,7 +302,7 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
         }
     }
 
-    private void HandleFocusIn()
+    private void OpenIfSearchable()
     {
         if (_text.Length >= MinLength && !_isOpen)
         {
@@ -338,9 +338,17 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
     {
         _values.Add(item);
         _text = "";
-        _items = [];
-        _searched = false;
-        CloseDropdown();
+
+        // Remove the selected item from the visible list so the dropdown
+        // stays open with the remaining options.
+        var comparer = ItemComparer;
+        var removedIndex = _items.FindIndex(r => comparer.Equals(r, item));
+        _items = _items.Where(r => !comparer.Equals(r, item)).ToList();
+        _highlightedIndex = _items.Count == 0 ? -1 : Math.Min(removedIndex, _items.Count - 1);
+
+        if (_items.Count == 0)
+            CloseDropdown();
+
         await NotifyChanged();
 
         try
