@@ -8,10 +8,15 @@ export function createFocusTrap(element, initialFocusSelector) {
 
         // Enter activates the focused button, preventDefault stops the
         // keyup from re-triggering the opener after the dialog closes.
+        // Let Enter pass through on form inputs so native form submission works.
         if (e.key === 'Enter') {
-            e.preventDefault();
-            if (document.activeElement && element.contains(document.activeElement)) {
-                document.activeElement.click();
+            const active = document.activeElement;
+            if (active && element.contains(active)) {
+                if (active.tagName === 'INPUT' && active.closest('form')) {
+                    return;
+                }
+                e.preventDefault();
+                active.click();
             }
             return;
         }
