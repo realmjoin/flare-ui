@@ -298,7 +298,9 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
         if (_text.Length >= MinLength && !_isOpen)
         {
             _isOpen = true;
-            _ = SearchAsync(_text);
+            // When a value is already selected, _text holds the display name — not
+            // a real search query. Pass "" so the provider can return defaults.
+            _ = SearchAsync(Value is not null ? "" : _text);
         }
     }
 
