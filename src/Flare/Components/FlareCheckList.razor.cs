@@ -356,10 +356,10 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         StateHasChanged();
     }
 
-    private void HandleKeyUp(KeyboardEventArgs e)
+    private async void HandleKeyUp(KeyboardEventArgs e)
     {
         if (e.Key == "Escape" && !string.IsNullOrEmpty(_filterText))
-            _ = ClearFilterAsync();
+            await ClearFilterAsync();
     }
 
     private async Task ClearFilter()
