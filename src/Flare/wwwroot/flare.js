@@ -4,35 +4,30 @@ export function createFocusTrap(element, initialFocusSelector) {
     const previouslyFocused = document.activeElement;
 
     function handleKeyDown(e) {
-        if (e.key === 'Escape') return;
+        if (e.key !== 'Tab') return;
 
-        // Enter activates the focused button, preventDefault stops the
-        // keyup from re-triggering the opener after the dialog closes.
-        // Let Enter pass through on form inputs so native form submission works.
-        if (e.key === 'Enter') {
-            const active = document.activeElement;
-            if (active && element.contains(active)) {
-                if (active.tagName === 'INPUT' && active.closest('form')) {
-                    return;
-                }
-                e.preventDefault();
-                active.click();
-            }
+        const focusable = [...element.querySelectorAll(FOCUSABLE)];
+        if (focusable.length === 0) {
+            e.preventDefault();
             return;
         }
 
-        if (e.key !== 'Tab') return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
 
-        // Manage Tab cycling manually so focus stays trapped.
-        e.preventDefault();
-        const focusable = [...element.querySelectorAll(FOCUSABLE)];
-        if (focusable.length === 0) return;
-
-        const idx = focusable.indexOf(document.activeElement);
+        // Only intercept Tab at the boundaries (or when focus escaped) to
+        // cycle it back around. Normal Tab order inside the trap is native.
         if (e.shiftKey) {
-            focusable[idx <= 0 ? focusable.length - 1 : idx - 1].focus();
+            if (active === first || !element.contains(active)) {
+                e.preventDefault();
+                last.focus();
+            }
         } else {
-            focusable[idx >= focusable.length - 1 ? 0 : idx + 1].focus();
+            if (active === last || !element.contains(active)) {
+                e.preventDefault();
+                first.focus();
+            }
         }
     }
 
@@ -54,5 +49,9 @@ export function createFocusTrap(element, initialFocusSelector) {
 export function destroyFocusTrap(trap) {
     if (!trap) return;
     trap.element.removeEventListener('keydown', trap.handleKeyDown);
-    try { trap.previouslyFocused?.focus(); } catch { /* element may be detached */ }
+    // Defer focus restoration so any pending keyup from the closing
+    // interaction doesn't re-trigger the opener.
+    requestAnimationFrame(() => {
+        try { trap.previouslyFocused?.focus(); } catch { /* element may be detached */ }
+    });
 }
