@@ -16,20 +16,28 @@ public partial class FlareRelativeDay : ComponentBase
     [Inject] private IFlareTimezoneService Timezone { get; set; } = default!;
 
     /// <summary>
-    /// The UTC timestamp to display.
+    /// The UTC timestamp to display. When null or <c>default</c>, the <see cref="Placeholder"/> is rendered instead
+    /// (or nothing at all if <see cref="Placeholder"/> is empty).
     /// </summary>
-    [Parameter, EditorRequired] public DateTimeOffset Value { get; set; }
+    [Parameter, EditorRequired] public DateTimeOffset? Value { get; set; }
+
+    /// <summary>
+    /// Text to render when <see cref="Value"/> is null or <c>default</c>. Empty (the default) renders no element at all.
+    /// </summary>
+    [Parameter] public string Placeholder { get; set; } = "";
 
     /// <summary>
     /// Additional HTML attributes splatted onto the wrapping <c>&lt;span&gt;</c> element.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 
+    internal bool HasValue => Value is { } v && v != default;
+
     // ⚠ Logic must stay in sync with formatRelativeDay() in flare-time.js
     private string FormatFallback()
     {
         // Day boundaries and night detection depend on local time — convert when the client timezone is known.
-        var value = Timezone.IsInitialized ? Timezone.ToClientTime(Value) : Value;
+        var value = Timezone.IsInitialized ? Timezone.ToClientTime(Value!.Value) : Value!.Value;
         var now = Timezone.IsInitialized ? Timezone.ToClientTime(DateTimeOffset.UtcNow) : DateTimeOffset.UtcNow;
         return FormatRelativeDay(value, now, Locale.Get("time"));
     }
@@ -39,7 +47,7 @@ public partial class FlareRelativeDay : ComponentBase
     internal static DateTime GetNightDay(DateTimeOffset value) =>
         value.Hour < 6 ? value.Date.AddDays(-1) : value.Date;
 
-    private string FormatTitle() => Timezone.ToClientTime(Value).ToString(Options.RelativeTimeTitleFormat);
+    private string FormatTitle() => Timezone.ToClientTime(Value!.Value).ToString(Options.RelativeTimeTitleFormat);
 
     internal static string FormatRelativeDay(DateTimeOffset value, DateTimeOffset now, IReadOnlyDictionary<string, string> l)
     {

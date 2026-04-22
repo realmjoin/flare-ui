@@ -1,3 +1,10 @@
 @namespace Flare
 
-<span class="flare-title" data-flare-relative-time="@Value.UtcDateTime.ToString("o")" data-flare-title="@FormatTitle()" @attributes="InputAttributes">@FormatFallback()</span>
+@if (HasValue)
+{
+    <span class="flare-title" data-flare-relative-time="@Value!.Value.UtcDateTime.ToString("o")" data-flare-title="@FormatTitle()" @attributes="InputAttributes">@FormatFallback()</span>
+}
+else if (!string.IsNullOrEmpty(Placeholder))
+{
+    <span @attributes="InputAttributes">@Placeholder</span>
+}

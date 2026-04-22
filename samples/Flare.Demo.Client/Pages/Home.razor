@@ -50,7 +50,7 @@ else
                         }
                     </td>
                     <td style="white-space: nowrap; font-size: 0.85rem;"><FlareRelativeTime Value="@member.AddedUtc" /></td>
-                    <td style="white-space: nowrap; font-size: 0.85rem;"><FlareRelativeDay Value="@member.ScheduledUtc" /></td>
+                    <td style="white-space: nowrap; font-size: 0.85rem;"><FlareRelativeDay Value="@member.ScheduledUtc" Placeholder="Not scheduled" /></td>
                     <td style="white-space: nowrap;">
                         <button class="btn btn-sm btn-outline-primary" @onclick="() => EditMember(member)">Edit</button>
                         <button class="btn btn-sm btn-outline-danger" @onclick="() => RemoveMember(member)">Remove</button>
@@ -62,13 +62,13 @@ else
 }
 
 @code {
-    private record Member(string FirstName, string LastName, string Role, IReadOnlyList<string> Skills, DateTimeOffset AddedUtc, DateTimeOffset ScheduledUtc);
+    private record Member(string FirstName, string LastName, string Role, IReadOnlyList<string> Skills, DateTimeOffset AddedUtc, DateTimeOffset? ScheduledUtc);
 
     private readonly List<Member> _members = new()
     {
         new("Alice", "Chen", "Engineering Lead", ["C#", "Blazor", "Azure"], DateTimeOffset.UtcNow.AddDays(-12), DateTimeOffset.UtcNow.AddDays(-2)),
         new("Bob", "Martinez", "Designer", ["Figma", "CSS"], DateTimeOffset.UtcNow.AddDays(-5), DateTimeOffset.UtcNow.AddDays(1).Date.AddHours(3)),
-        new("Carol", "Zhang", "Backend Developer", ["C#", "PostgreSQL", "Docker"], DateTimeOffset.UtcNow.AddHours(-3), DateTimeOffset.UtcNow.AddDays(3).Date.AddHours(23)),
+        new("Carol", "Zhang", "Backend Developer", ["C#", "PostgreSQL", "Docker"], DateTimeOffset.UtcNow.AddHours(-3), null),
     };
 
     private async Task AddMember()

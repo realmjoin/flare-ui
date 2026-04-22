@@ -15,20 +15,28 @@ public partial class FlareRelativeTime : ComponentBase
     [Inject] private IFlareTimezoneService Timezone { get; set; } = default!;
 
     /// <summary>
-    /// The UTC timestamp to display relative to now.
+    /// The UTC timestamp to display relative to now. When null or <c>default</c>, the <see cref="Placeholder"/> is rendered instead
+    /// (or nothing at all if <see cref="Placeholder"/> is empty).
     /// </summary>
-    [Parameter, EditorRequired] public DateTimeOffset Value { get; set; }
+    [Parameter, EditorRequired] public DateTimeOffset? Value { get; set; }
+
+    /// <summary>
+    /// Text to render when <see cref="Value"/> is null or <c>default</c>. Empty (the default) renders no element at all.
+    /// </summary>
+    [Parameter] public string Placeholder { get; set; } = "";
 
     /// <summary>
     /// Additional HTML attributes splatted onto the wrapping <c>&lt;span&gt;</c> element.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 
+    internal bool HasValue => Value is { } v && v != default;
+
     // ⚠ Thresholds and rounding must stay in sync with formatRelativeTime() in flare-time.js
     private string FormatFallback()
     {
         var l = Locale.Get("time");
-        var diff = DateTimeOffset.UtcNow - Value;
+        var diff = DateTimeOffset.UtcNow - Value!.Value;
         var isFuture = diff < TimeSpan.Zero;
         var abs = isFuture ? -diff : diff;
 
@@ -48,5 +56,5 @@ public partial class FlareRelativeTime : ComponentBase
     private static string Plural(int count, string singular, string plural) =>
         $"{count} {(count == 1 ? singular : plural)}";
 
-    private string FormatTitle() => Timezone.ToClientTime(Value).ToString(Options.RelativeTimeTitleFormat);
+    private string FormatTitle() => Timezone.ToClientTime(Value!.Value).ToString(Options.RelativeTimeTitleFormat);
 }
