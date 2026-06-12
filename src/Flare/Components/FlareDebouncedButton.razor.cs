@@ -61,18 +61,9 @@ public partial class FlareDebouncedButton : ComponentBase, IDisposable
         _cts = new CancellationTokenSource();
         var token = _cts.Token;
 
-        // Fire action on a background thread to avoid blocking the UI
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await OnAction.InvokeAsync();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "FlareDebouncedButton action threw an exception");
-            }
-        });
+        // Fire-and-forget so the cooldown runs in parallel with the action. Must start on the
+        // current sync context — EventCallback.InvokeAsync is not safe to call from other threads.
+        _ = InvokeActionAsync();
 
         try
         {
@@ -87,6 +78,18 @@ public partial class FlareDebouncedButton : ComponentBase, IDisposable
         {
             _cooling = false;
             await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task InvokeActionAsync()
+    {
+        try
+        {
+            await OnAction.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "FlareDebouncedButton action threw an exception");
         }
     }
 
