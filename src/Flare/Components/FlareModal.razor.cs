@@ -71,6 +71,7 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
             {
                 var module = await JS.GetFlareModuleAsync();
                 await module.InvokeVoidAsync("destroyFocusTrap", _trap);
+                await _trap.DisposeAsync();
             }
             catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
         }

@@ -376,7 +376,7 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
                 // Small yield so Blazor has time to render the aria-selected update
                 await Task.Delay(10);
                 var selector = $"#{OptionId(_highlightedIndex)}";
-                var el = await JS.InvokeAsync<IJSObjectReference?>("document.querySelector", selector);
+                await using var el = await JS.InvokeAsync<IJSObjectReference?>("document.querySelector", selector);
                 if (el is not null)
                     await _module.InvokeVoidAsync("scrollIntoView", el);
             }
