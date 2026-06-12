@@ -12,6 +12,7 @@ public partial class FlareToast : ComponentBase, IDisposable
     private CancellationTokenSource? _cts;
     private int _remainingMs;
     private long _timerStartedAt;
+    private int _pauseEpoch;
     private bool _disposed;
 
     protected override void OnInitialized()
@@ -59,6 +60,7 @@ public partial class FlareToast : ComponentBase, IDisposable
         Instance.IsPaused = true;
         var elapsed = (int)(Environment.TickCount64 - _timerStartedAt);
         _remainingMs = Math.Max(_remainingMs - elapsed, 100);
+        _pauseEpoch++;
         _cts?.Cancel();
         StateHasChanged();
     }
@@ -69,6 +71,7 @@ public partial class FlareToast : ComponentBase, IDisposable
         if (!Instance.IsPaused) return;
 
         Instance.IsPaused = false;
+        _pauseEpoch++;
         await StartTimer();
     }
 

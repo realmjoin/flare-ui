@@ -37,8 +37,11 @@
     }
     @if (Instance.Options.ShowProgress && !Instance.Options.Persistent && !Headless)
     {
-        <div class="flare-toast-progress"
-             style="animation-duration: @(Instance.Options.DurationMs)ms; animation-play-state: @(Instance.IsPaused ? "paused" : "running");">
+        @* Re-keyed on every pause/resume: the recreated element starts its animation at the
+           elapsed offset (negative delay), keeping the bar in sync with the dismiss timer. *@
+        <div @key="_pauseEpoch"
+             class="flare-toast-progress"
+             style="animation-duration: @(Instance.Options.DurationMs)ms; animation-delay: -@(Instance.Options.DurationMs - _remainingMs)ms; animation-play-state: @(Instance.IsPaused ? "paused" : "running");">
         </div>
     }
 </div>
