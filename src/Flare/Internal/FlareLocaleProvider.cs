@@ -16,9 +16,10 @@ internal sealed class FlareLocaleProvider
         var assembly = typeof(FlareLocaleProvider).Assembly;
         var tag = locale.ToLowerInvariant();
 
-        // Resolution order: exact tag → base-base (e.g. "de" → "de-de") → en-us
+        // Resolution order: exact tag → language default region (e.g. "de"/"fr-ca" → "de-de"/"fr-fr") → en-us
         var candidates = new List<string> { tag };
-        if (!tag.Contains('-')) candidates.Add($"{tag}-{tag}");
+        var lang = tag.Contains('-') ? tag[..tag.IndexOf('-')] : tag;
+        if (!candidates.Contains($"{lang}-{lang}")) candidates.Add($"{lang}-{lang}");
         if (tag != Fallback && !candidates.Contains(Fallback)) candidates.Add(Fallback);
 
         foreach (var candidate in candidates)

@@ -17,9 +17,10 @@ export async function init(code, isDev) {
         return res.json();
     }
 
-    // Resolution order: exact tag → base language with region (e.g. "de" → "de-de") → en-us
+    // Resolution order: exact tag → language default region (e.g. "de"/"fr-ca" → "de-de"/"fr-fr") → en-us
     const candidates = [tag];
-    if (!tag.includes('-')) candidates.push(`${tag}-${tag}`);
+    const lang = tag.includes('-') ? tag.slice(0, tag.indexOf('-')) : tag;
+    if (!candidates.includes(`${lang}-${lang}`)) candidates.push(`${lang}-${lang}`);
     if (tag !== FALLBACK && !candidates.includes(FALLBACK)) candidates.push(FALLBACK);
 
     for (const candidate of candidates) {
