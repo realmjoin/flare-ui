@@ -271,18 +271,23 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
 
     private async Task CommitCurrentInput()
     {
-        // If an item is highlighted, select it
-        if (_highlightedIndex >= 0 && _highlightedIndex < _items.Count)
+        // Results are only selectable while the dropdown shows them — after
+        // Escape the list is stale and invisible.
+        if (_isOpen)
         {
-            await SelectItem(_items[_highlightedIndex]);
-            return;
-        }
+            // If an item is highlighted, select it
+            if (_highlightedIndex >= 0 && _highlightedIndex < _items.Count)
+            {
+                await SelectItem(_items[_highlightedIndex]);
+                return;
+            }
 
-        // If there are search results, select the first one
-        if (_items.Count > 0)
-        {
-            await SelectItem(_items[0]);
-            return;
+            // If there are search results, select the first one
+            if (_items.Count > 0)
+            {
+                await SelectItem(_items[0]);
+                return;
+            }
         }
 
         // If CreateItem is provided and there's text, create a custom value
