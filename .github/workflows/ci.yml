@@ -20,6 +20,8 @@ jobs:
 
       - run: dotnet build Flare.sln -c Release --no-restore
 
+      - run: dotnet test Flare.sln -c Release --no-build
+
       - run: dotnet pack src/Flare/Flare.csproj -c Release --no-build -o ./nupkg
 
       - uses: actions/upload-artifact@v4
