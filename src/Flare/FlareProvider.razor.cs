@@ -41,19 +41,25 @@ public partial class FlareProvider : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            try { await JS.GetFlareModuleAsync(); }
-            catch { }
+            try
+            {
+                await JS.GetFlareModuleAsync();
 
-            await ((FlareTimezoneService)Timezone).InitializeAsync(JS);
+                await ((FlareTimezoneService)Timezone).InitializeAsync(JS);
 
-            var localeModule = await JS.GetFlareLocaleModuleAsync();
-            await localeModule.InvokeVoidAsync("init", _options.Locale, _options.Debug);
+                var localeModule = await JS.GetFlareLocaleModuleAsync();
+                await localeModule.InvokeVoidAsync("init", _options.Locale, _options.Debug);
 
-            var timeModule = await JS.GetFlareTimeModuleAsync();
-            await timeModule.InvokeVoidAsync("init");
+                var timeModule = await JS.GetFlareTimeModuleAsync();
+                await timeModule.InvokeVoidAsync("init");
 
-            var tooltipModule = await JS.GetFlareTooltipModuleAsync();
-            await tooltipModule.InvokeVoidAsync("init");
+                var tooltipModule = await JS.GetFlareTooltipModuleAsync();
+                await tooltipModule.InvokeVoidAsync("init");
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or ObjectDisposedException or JSException)
+            {
+                return;
+            }
 
             StateHasChanged();
         }

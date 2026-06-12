@@ -19,8 +19,13 @@ internal sealed class FlareTimezoneService : IFlareTimezoneService
         var module = await js.GetFlareTimeModuleAsync();
         var iana = await module.InvokeAsync<string>("getClientTimezone");
 
-        _ianaTimezone = iana;
-        _clientTimeZone = TimeZoneInfo.FindSystemTimeZoneById(iana);
+        // An unknown or unmappable IANA id must not break provider initialization — stay on UTC.
+        if (!string.IsNullOrEmpty(iana) && TimeZoneInfo.TryFindSystemTimeZoneById(iana, out var tz))
+        {
+            _ianaTimezone = iana;
+            _clientTimeZone = tz;
+        }
+
         IsInitialized = true;
     }
 
