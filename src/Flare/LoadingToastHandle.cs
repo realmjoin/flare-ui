@@ -20,7 +20,8 @@ public sealed class LoadingToastHandle : IDisposable
     private readonly Action<LoadingToastHandle> _onComplete;
     private readonly Action _notifyChanged;
     private readonly CancellationTokenSource? _delayCts;
-    private int _disposed;
+    private readonly Lock _sync = new();
+    private bool _disposed;
 
     internal LoadingToastState State { get; }
     internal bool IsActive { get; private set; }
@@ -70,11 +71,19 @@ public sealed class LoadingToastHandle : IDisposable
         try
         {
             await Task.Delay(delayMs, ct);
-            IsActive = true;
-            _onActivate(this);
         }
         catch (TaskCanceledException)
         {
+            return;
+        }
+
+        // Activation and disposal are mutually exclusive so a Dispose racing the end of the
+        // delay can never leave the toast activated without a matching completion.
+        lock (_sync)
+        {
+            if (_disposed) return;
+            IsActive = true;
+            _onActivate(this);
         }
     }
 
@@ -83,7 +92,11 @@ public sealed class LoadingToastHandle : IDisposable
     /// </summary>
     public void Dispose()
     {
-        if (Interlocked.Exchange(ref _disposed, 1) == 1) return;
+        lock (_sync)
+        {
+            if (_disposed) return;
+            _disposed = true;
+        }
 
         _delayCts?.Cancel();
         _delayCts?.Dispose();
