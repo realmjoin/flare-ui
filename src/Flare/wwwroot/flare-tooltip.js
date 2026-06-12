@@ -15,14 +15,16 @@ function position(anchor) {
     const tw = tooltip.offsetWidth;
     const th = tooltip.offsetHeight;
 
-    // Default: above, centered
-    let top = rect.top + window.scrollY - th - 8;
-    let left = rect.left + window.scrollX + rect.width / 2 - tw / 2;
+    // Default: above, centered — viewport coordinates, the tooltip is position: fixed
+    let top = rect.top - th - 8;
+    let left = rect.left + rect.width / 2 - tw / 2;
 
     // Flip below if not enough room above
-    if (rect.top - th - 8 < 0) {
-        top = rect.bottom + window.scrollY + 8;
+    const below = rect.top - th - 8 < 0;
+    if (below) {
+        top = rect.bottom + 8;
     }
+    tooltip.classList.toggle('flare-tooltip-below', below);
 
     // Clamp horizontal to viewport
     const margin = 6;
