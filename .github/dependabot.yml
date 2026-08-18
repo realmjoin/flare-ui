@@ -1,0 +1,43 @@
+version: 2
+
+updates:
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+    groups:
+      # Alles Nicht-Breaking in eine PR pro Woche.
+      nuget-minor-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
+      # Majors gruppiert, aber getrennt vom Rest – die wollen gelesen werden.
+      nuget-major:
+        patterns: ["*"]
+        update-types: [major]
+    ignore:
+      # Der Floor in Flare.UIs nuspec – bewusst auf der niedrigsten
+      # unterstützten Version, nicht automatisch anheben.
+      - dependency-name: "Microsoft.AspNetCore.Components.Web"
+      # Folgt dem TFM (net10.0) – ein Major kommt erst mit dem Framework-Upgrade.
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: ci
+    groups:
+      github-actions:
+        patterns: ["*"]
