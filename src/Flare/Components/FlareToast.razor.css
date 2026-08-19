@@ -19,19 +19,19 @@
 }
 
 .flare-toast-info {
-    --flare-toast-accent: #3b82f6;
+    --flare-toast-accent: var(--flare-toast-info, #3b82f6);
 }
 
 .flare-toast-success {
-    --flare-toast-accent: #22c55e;
+    --flare-toast-accent: var(--flare-toast-success, #22c55e);
 }
 
 .flare-toast-warning {
-    --flare-toast-accent: #f59e0b;
+    --flare-toast-accent: var(--flare-toast-warning, #f59e0b);
 }
 
 .flare-toast-error {
-    --flare-toast-accent: #ef4444;
+    --flare-toast-accent: var(--flare-toast-error, #ef4444);
 }
 
 .flare-toast-exiting {
@@ -82,7 +82,7 @@
     left: 0;
     height: 3px;
     width: 100%;
-    background: var(--flare-toast-accent, #6b7280);
+    background: var(--flare-toast-progress, var(--flare-toast-accent, #6b7280));
     opacity: 0.5;
     transform-origin: left;
     animation: flare-progress linear forwards;

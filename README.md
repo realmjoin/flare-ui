@@ -342,6 +342,14 @@ await SomeWork();                             // bar auto-hides on dispose
 using var _ = Flare.StartLoadingBar(delayMs: 0);  // shows immediately
 ```
 
+Colors are customizable via CSS variables on `:root` (or any ancestor):
+
+```css
+--flare-loading-bar-color: #007bff;      /* first gradient stop; set only this for a solid color */
+--flare-loading-bar-color-alt: #28a745;  /* second gradient stop */
+--flare-loading-bar-background: ...;     /* optional full background override */
+```
+
 ## Loading Toast
 
 ```csharp
@@ -357,6 +365,26 @@ for (var i = 0; i <= 100; i += 10)
     await Task.Delay(100);
 }
 toast.Dispose();
+```
+
+The bar uses the same `--flare-loading-bar-*` colors by default. Override independently:
+
+```css
+--flare-loading-toast-color: #007bff;
+--flare-loading-toast-color-alt: #28a745;
+--flare-loading-toast-background: ...;   /* optional full fill override */
+--flare-loading-toast-track: #e5e7eb;    /* unfilled track */
+--flare-loading-toast-accent: #3b82f6;   /* left border + percent label */
+```
+
+Regular toasts also have a countdown bar. It follows the toast accent, or `--flare-toast-progress` if set:
+
+```css
+--flare-toast-info: #3b82f6;
+--flare-toast-success: #22c55e;
+--flare-toast-warning: #f59e0b;
+--flare-toast-error: #ef4444;
+--flare-toast-progress: ...;             /* optional override for the countdown bar only */
 ```
 
 ## Confirm Button

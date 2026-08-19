@@ -13,7 +13,7 @@
     animation: flare-loading-toast-in 300ms ease-out;
     font-size: 0.9rem;
     line-height: 1.4;
-    border-left: 4px solid #3b82f6;
+    border-left: 4px solid var(--flare-loading-toast-accent, #3b82f6);
     min-width: 260px;
 }
 
@@ -31,20 +31,31 @@
 .flare-loading-toast-percent {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #3b82f6;
+    color: var(--flare-loading-toast-accent, #3b82f6);
     white-space: nowrap;
 }
 
 .flare-loading-toast-bar {
     height: 4px;
     border-radius: 2px;
-    background: #e5e7eb;
+    background: var(--flare-loading-toast-track, #e5e7eb);
     overflow: hidden;
 }
 
 .flare-loading-toast-bar-fill {
     height: 100%;
-    background: linear-gradient(to right, #007bff, #28a745, #007bff);
+    background: var(
+        --flare-loading-toast-background,
+        var(
+            --flare-loading-bar-background,
+            linear-gradient(
+                to right,
+                var(--flare-loading-toast-color, var(--flare-loading-bar-color, #007bff)),
+                var(--flare-loading-toast-color-alt, var(--flare-loading-toast-color, var(--flare-loading-bar-color-alt, var(--flare-loading-bar-color, #28a745)))),
+                var(--flare-loading-toast-color, var(--flare-loading-bar-color, #007bff))
+            )
+        )
+    );
     background-size: 200% 100%;
     border-radius: 2px;
     transition: width 200ms ease;
