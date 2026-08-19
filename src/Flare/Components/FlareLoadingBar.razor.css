@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 5px;
+    height: 6px;
     z-index: 9100;
     pointer-events: none;
 }
@@ -25,8 +25,8 @@
     );
     background-size: 200% 100%;
     transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 2px, rgb(0 0 0 / 70%) 3px, rgb(0 0 0 / 35%) 4px, rgb(0 0 0 / 12%) 5px, transparent 6px);
+    mask-image: linear-gradient(to bottom, #000 2px, rgb(0 0 0 / 70%) 3px, rgb(0 0 0 / 35%) 4px, rgb(0 0 0 / 12%) 5px, transparent 6px);
 }
 
 .flare-loading-bar-indeterminate {
