@@ -13,7 +13,7 @@
                 }
                 @if (Instance.Options.ShowCloseButton)
                 {
-                    <button class="@(Headless ? null : "flare-modal-close")" aria-label="Close"
+                    <button type="button" class="@(Headless ? null : "flare-modal-close")" aria-label="Close"
                             @onclick="() => Close(ModalResult.Cancel())">&times;</button>
                 }
             </div>

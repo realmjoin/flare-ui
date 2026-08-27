@@ -23,7 +23,8 @@
 
     @if (!string.IsNullOrEmpty(_text) && !Disabled)
     {
-        <button class="@(Headless ? null : "flare-typeahead-clear")"
+        <button type="button"
+                class="@(Headless ? null : "flare-typeahead-clear")"
                 tabindex="-1"
                 aria-label="Clear"
                 @onpointerdown="HandleClear"

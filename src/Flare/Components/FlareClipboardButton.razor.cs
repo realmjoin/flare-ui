@@ -29,6 +29,8 @@ public partial class FlareClipboardButton : ComponentBase, IAsyncDisposable
 
     /// <summary>
     /// Additional HTML attributes splatted onto the underlying <c>&lt;button&gt;</c> element.
+    /// The button renders as <c>type="button"</c> so it never submits an enclosing form;
+    /// pass an explicit <c>type</c> here to override that.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 

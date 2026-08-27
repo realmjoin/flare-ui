@@ -18,7 +18,8 @@
                    @onkeyup="HandleKeyUp" />
             @if (!string.IsNullOrEmpty(_filterText) && !Disabled)
             {
-                <button class="@(Headless ? null : "flare-checklist-search-clear")"
+                <button type="button"
+                        class="@(Headless ? null : "flare-checklist-search-clear")"
                         tabindex="-1"
                         aria-label="Clear filter"
                         @onclick="ClearFilter">&times;</button>

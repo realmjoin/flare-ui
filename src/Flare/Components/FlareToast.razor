@@ -7,7 +7,7 @@
      @onmouseleave="ResumeTimer">
     @if (Instance.Options.OnClick is not null)
     {
-        <button class="@(Headless ? null : "flare-toast-body flare-toast-clickable")" @onclick="HandleClick">
+        <button type="button" class="@(Headless ? null : "flare-toast-body flare-toast-clickable")" @onclick="HandleClick">
             @if (Instance.Options.Content is not null)
             {
                 @Instance.Options.Content
@@ -33,7 +33,7 @@
     }
     @if (Instance.Options.ShowCloseButton)
     {
-        <button class="@(Headless ? null : "flare-toast-close")" aria-label="Dismiss" @onclick="Dismiss">&times;</button>
+        <button type="button" class="@(Headless ? null : "flare-toast-close")" aria-label="Dismiss" @onclick="Dismiss">&times;</button>
     }
     @if (Instance.Options.ShowProgress && !Instance.Options.Persistent && !Headless)
     {
