@@ -2,6 +2,10 @@
 
 Batteries-included Blazor component library for toasts, modals, confirm dialogs, loading bars, loading toasts, typeahead, tag box, clipboard, relative time, relative day, timezone detection, and reusable button primitives — with built-in localization for 25 languages. Zero dependencies.
 
+The sample app wires those pieces into a small team-roster / deploy / incident-log UI:
+
+<img src="docs/images/roster.png" alt="Flare demo: Team Roster with relative time, clipboard names, and confirm buttons" width="900">
+
 ## Install
 
 ```
@@ -45,7 +49,13 @@ await Flare.ToastAsync("", new ToastOptions
     Level = ToastLevel.Success,
     Content = @<div><strong>Done</strong><div>3 items processed</div></div>,
 });
+```
 
+That rich-content form is what the demo uses after a production deploy:
+
+<img src="docs/images/toast-rich.png" alt="Success toast with title and detail after a production deploy" width="900">
+
+```csharp
 // Dismiss programmatically
 var handle = await Flare.ToastAsync("Working...", new ToastOptions { Persistent = true });
 handle.Dismiss();
@@ -71,6 +81,21 @@ var confirmed = await Flare.ConfirmAsync("Delete Item", "This cannot be undone."
 });
 ```
 
+With `Intent.Danger`, Cancel is focused so Enter backs out. The demo uses that in two places:
+
+<table>
+<tr>
+<td align="center" valign="top">
+<img src="docs/images/confirm.png" alt="Danger confirm: Cancel is focused, Remove is red" width="380">
+<p>Remove a teammate</p>
+</td>
+<td align="center" valign="top">
+<img src="docs/images/confirm-danger.png" alt="Production deploy confirm with Cancel focused" width="380">
+<p>Ship to production</p>
+</td>
+</tr>
+</table>
+
 `DefaultButton` controls which button receives initial focus. Enter and Space both activate the focused button:
 - `ConfirmIntent.Primary` → Confirm is focused → Enter confirms
 - `ConfirmIntent.Danger` → Cancel is focused → Enter cancels (prevents accidental destructive actions)
@@ -83,7 +108,18 @@ new ConfirmOptions { Intent = ConfirmIntent.Danger, DefaultButton = DefaultButto
 
 ## Modal
 
-Any Blazor component can be rendered as a modal. Use the cascading `ModalContext` to return data:
+<table>
+<tr>
+<td valign="top">
+
+Any Blazor component can be rendered as a modal. The demo's "Add member" form is one of those — typeahead for the role, tag box for skills. Use the cascading `ModalContext` to return data from it.
+
+</td>
+<td valign="top" width="46%">
+<img src="docs/images/modal.png" alt="Add Member modal with typeahead role and tag box skills" width="400">
+</td>
+</tr>
+</table>
 
 ```razor
 @* EditProfile.razor *@
@@ -127,7 +163,20 @@ Control modal sizing via CSS custom properties on `CssClass`:
 
 ## Typeahead
 
-A single-value autocomplete control that searches items as the user types.
+<table>
+<tr>
+<td valign="top">
+
+A single-value autocomplete control that searches items as the user types. Open the role field in the member modal and it filters as you go.
+
+Keyboard: Arrow keys navigate, Enter selects, Escape/Tab closes.
+
+</td>
+<td valign="top" width="46%">
+<img src="docs/images/typeahead.png" alt="Typeahead role search inside the Add Member modal" width="400">
+</td>
+</tr>
+</table>
 
 ```razor
 @* Client-side filtering *@
@@ -172,11 +221,22 @@ A single-value autocomplete control that searches items as the user types.
 | `Disabled` | `false` | Disables the control |
 | `Headless` | `false` | Strips all built-in CSS |
 
-Keyboard: Arrow keys navigate, Enter selects, Escape/Tab closes.
-
 ## Tag Box
 
-A multi-select tagging control with typeahead search. Selected items appear as removable tags.
+<table>
+<tr>
+<td valign="top" width="46%">
+<img src="docs/images/tagbox.png" alt="Tag box with skill suggestions inside the Add Member modal" width="400">
+</td>
+<td valign="top">
+
+A multi-select tagging control with typeahead search. Selected items appear as removable tags; the skills field in the same modal is the live example.
+
+Keyboard: Arrow keys navigate, Enter/Comma selects, Backspace removes last tag, Escape closes.
+
+</td>
+</tr>
+</table>
 
 ```razor
 @* Client-side with free-text creation *@
@@ -219,8 +279,6 @@ A multi-select tagging control with typeahead search. Selected items appear as r
 | `NotFoundText` | `"No results found"` | Text shown when empty |
 | `Disabled` | `false` | Disables the control |
 | `Headless` | `false` | Strips all built-in CSS |
-
-Keyboard: Arrow keys navigate, Enter/Comma selects, Backspace removes last tag, Escape closes.
 
 ## Check List
 
@@ -352,12 +410,16 @@ Colors are customizable via CSS variables on `:root` (or any ancestor):
 
 ## Loading Toast
 
+<table>
+<tr>
+<td valign="top">
+
+Indeterminate, or with a percent. The demo shows this while importing members:
+
 ```csharp
-// Indeterminate
 using var _ = Flare.StartLoadingToast("Processing...");
 await SomeWork();
 
-// With progress
 var toast = Flare.StartLoadingToast("Uploading...", delayMs: 0);
 for (var i = 0; i <= 100; i += 10)
 {
@@ -366,6 +428,13 @@ for (var i = 0; i <= 100; i += 10)
 }
 toast.Dispose();
 ```
+
+</td>
+<td valign="middle">
+<img src="docs/images/loading-toast.png" alt="Loading toast at 50% while importing members" width="340">
+</td>
+</tr>
+</table>
 
 The bar uses the same `--flare-loading-bar-*` colors by default. Override independently:
 
