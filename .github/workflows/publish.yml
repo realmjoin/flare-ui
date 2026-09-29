@@ -7,8 +7,10 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: nuget
     permissions:
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -22,4 +24,11 @@ jobs:
 
       - run: dotnet pack src/Flare/Flare.csproj -c Release --no-restore -p:Version=${GITHUB_REF_NAME#v} -o ./nupkg
 
-      - run: dotnet nuget push nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      - uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        id: login
+        with:
+          user: Jabe
+
+      - run: dotnet nuget push nupkg/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
