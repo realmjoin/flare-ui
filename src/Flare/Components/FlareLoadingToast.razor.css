@@ -50,9 +50,9 @@
             --flare-loading-bar-background,
             linear-gradient(
                 to right,
-                var(--flare-loading-toast-color, var(--flare-loading-bar-color, #007bff)),
-                var(--flare-loading-toast-color-alt, var(--flare-loading-toast-color, var(--flare-loading-bar-color-alt, var(--flare-loading-bar-color, #28a745)))),
-                var(--flare-loading-toast-color, var(--flare-loading-bar-color, #007bff))
+                var(--flare-loading-toast-color, var(--flare-loading-bar-color, #3b82f6)),
+                var(--flare-loading-toast-color-alt, var(--flare-loading-toast-color, var(--flare-loading-bar-color-alt, var(--flare-loading-bar-color, #22c55e)))),
+                var(--flare-loading-toast-color, var(--flare-loading-bar-color, #3b82f6))
             )
         )
     );

@@ -2,7 +2,7 @@
 @typeparam TItem
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
-<div class="@RootClass()">
+<div @attributes="InputAttributes" class="@RootClass()">
     @if (ShowSearch)
     {
         <div class="@(Headless ? null : "flare-checklist-search")">

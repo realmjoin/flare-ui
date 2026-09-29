@@ -27,6 +27,11 @@ public partial class FlareRelativeDay : ComponentBase
     [Parameter] public string Placeholder { get; set; } = "";
 
     /// <summary>
+    /// CSS class(es) applied to the wrapping <c>&lt;span&gt;</c> element.
+    /// </summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>
     /// Additional HTML attributes splatted onto the wrapping <c>&lt;span&gt;</c> element.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }

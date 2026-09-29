@@ -4,7 +4,7 @@
     left: 0;
     right: 0;
     height: 6px;
-    z-index: 9100;
+    z-index: 9300;
     pointer-events: none;
 }
 
@@ -18,9 +18,9 @@
         --flare-loading-bar-background,
         linear-gradient(
             to right,
-            var(--flare-loading-bar-color, #007bff),
-            var(--flare-loading-bar-color-alt, var(--flare-loading-bar-color, #28a745)),
-            var(--flare-loading-bar-color, #007bff)
+            var(--flare-loading-bar-color, #3b82f6),
+            var(--flare-loading-bar-color-alt, var(--flare-loading-bar-color, #22c55e)),
+            var(--flare-loading-bar-color, #3b82f6)
         )
     );
     background-size: 200% 100%;
