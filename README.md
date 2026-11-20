@@ -392,13 +392,30 @@ A connected bar of segments for a short list of options — one of N by default,
 | `TextSelector` | `ToString()` | Extracts display text from an option |
 | `Comparer` | `Default` | Equality comparer for selection state |
 | `ItemTemplate` | `null` | Custom render template for the segment content |
+| `ItemDisabled` | `null` | Returns `true` for options the user cannot change; a locked segment still shows its state |
+| `ItemTitle` | `null` | Returns the tooltip (`title`) for an option's segment |
 | `Stretch` | `false` | Fill the available width with equally wide segments |
-| `Disabled` | `false` | Disables the control |
+| `Wrap` | `false` | Wrap segments onto further rows when they do not fit (default: shorten labels with an ellipsis) |
+| `Disabled` | `false` | Disables the whole control |
 | `Headless` | `false` | Strips all built-in CSS; the native inputs stay visible |
 
 The segments are native radio buttons or checkboxes. Keyboard: Tab moves into the bar; in single select the arrow keys change the option, in multi select Tab moves between segments and Space toggles. Other attributes such as `aria-label` are passed to the root element.
 
-Colours can be overridden with CSS variables: `--flare-togglebar-accent`, `--flare-togglebar-accent-hover`, `--flare-togglebar-tint`, `--flare-togglebar-tint-hover`, and `--flare-togglebar-tint-text`.
+`TItem` has to be given explicitly when `ValueChanged` / `ValuesChanged` is a lambda; C# cannot infer it from there.
+
+Look and size are set with CSS variables, on the bar itself or any ancestor:
+
+| Variable | Default | Applies to |
+|---|---|---|
+| `--flare-togglebar-accent` / `-accent-hover` | `#3b82f6` / `#2563eb` | Active segment (single select), check box, focus ring |
+| `--flare-togglebar-accent-text` | `#fff` | Text on the active segment (single select) |
+| `--flare-togglebar-tint` / `-tint-hover` / `-tint-text` | `#eff6ff` / `#dbeafe` / `#1d4ed8` | Active segments (multi select) |
+| `--flare-togglebar-bg` / `-hover` | `#fff` / `#f3f4f6` | Bar background, hover on inactive segments |
+| `--flare-togglebar-text` | `#374151` | Text of inactive segments |
+| `--flare-togglebar-border` | `#d1d5db` | Outer border and dividers |
+| `--flare-togglebar-radius` | `0.375rem` | Corner radius |
+| `--flare-togglebar-font-size` | `0.875rem` | Label size |
+| `--flare-togglebar-padding` | `0.375rem 0.75rem` | Segment padding, and with it the height of the bar |
 
 ## EditForm Integration
 

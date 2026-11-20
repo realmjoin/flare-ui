@@ -25,6 +25,8 @@
                             Items="Regions"
                             Multiple
                             @bind-Values="_regions"
+                            ItemDisabled="@(r => r == "Asia")"
+                            ItemTitle="@(r => r == "Asia" ? "Not provisioned yet" : null)"
                             aria-label="Regions" />
         </div>
         <div class="text-muted" style="font-size: 0.875rem;">
@@ -92,7 +94,7 @@
     private static readonly string[] Regions = ["EU West", "EU North", "US East", "US West", "Asia"];
 
     private string? _strategy = "Rolling";
-    private IReadOnlyList<string> _regions = ["EU West", "EU North", "US East", "Asia"];
+    private IReadOnlyList<string> _regions = ["EU West", "EU North", "US East"];
 
     private bool _deploying;
     private string _environment = "staging";

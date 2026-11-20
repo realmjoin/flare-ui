@@ -64,7 +64,22 @@ public partial class FlareToggleBar<TItem> : ComponentBase
     /// </summary>
     [Parameter] public bool Stretch { get; set; }
 
-    /// <summary>Whether the control is disabled.</summary>
+    /// <summary>
+    /// When true, segments that do not fit in one row wrap onto further rows.
+    /// Defaults to false (labels are shortened with an ellipsis instead).
+    /// </summary>
+    [Parameter] public bool Wrap { get; set; }
+
+    /// <summary>
+    /// Returns true for options that cannot be changed by the user. A disabled option
+    /// keeps showing its state, so a locked option can be either on or off.
+    /// </summary>
+    [Parameter] public Func<TItem, bool>? ItemDisabled { get; set; }
+
+    /// <summary>Returns the tooltip (<c>title</c>) for an option's segment, or null for none.</summary>
+    [Parameter] public Func<TItem, string?>? ItemTitle { get; set; }
+
+    /// <summary>Whether the whole control is disabled.</summary>
     [Parameter] public bool Disabled { get; set; }
 
     /// <summary>Additional CSS class(es) applied to the root element.</summary>
@@ -193,6 +208,7 @@ public partial class FlareToggleBar<TItem> : ComponentBase
             "flare-togglebar",
             Multiple ? "flare-togglebar-multiple" : "flare-togglebar-single",
             Stretch ? "flare-togglebar-stretch" : null,
+            Wrap ? "flare-togglebar-wrap" : null,
             Disabled ? "flare-togglebar-disabled" : null,
             Class,
             validation);
@@ -204,9 +220,15 @@ public partial class FlareToggleBar<TItem> : ComponentBase
         }
     }
 
-    private string? ItemClass(bool selected)
+    private string? ItemClass(bool selected, bool disabled)
     {
         if (Headless) return null;
-        return selected ? "flare-togglebar-item flare-togglebar-item-selected" : "flare-togglebar-item";
+        return (selected, disabled) switch
+        {
+            (true, true) => "flare-togglebar-item flare-togglebar-item-selected flare-togglebar-item-disabled",
+            (true, false) => "flare-togglebar-item flare-togglebar-item-selected",
+            (false, true) => "flare-togglebar-item flare-togglebar-item-disabled",
+            _ => "flare-togglebar-item",
+        };
     }
 }

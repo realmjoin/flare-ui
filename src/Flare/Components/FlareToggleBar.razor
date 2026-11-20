@@ -5,13 +5,14 @@
     @foreach (var item in Items)
     {
         var selected = IsSelected(item);
-        <label class="@ItemClass(selected)">
+        var disabled = Disabled || (ItemDisabled?.Invoke(item) ?? false);
+        <label class="@ItemClass(selected, disabled)" title="@ItemTitle?.Invoke(item)">
             @if (Multiple)
             {
                 <input type="checkbox"
                        class="@(Headless ? null : "flare-togglebar-input")"
                        checked="@selected"
-                       disabled="@Disabled"
+                       disabled="@disabled"
                        @onchange="e => SetCheckedAsync(item, e)" />
                 @if (!Headless)
                 {
@@ -24,7 +25,7 @@
                        name="@_name"
                        class="@(Headless ? null : "flare-togglebar-input")"
                        checked="@selected"
-                       disabled="@Disabled"
+                       disabled="@disabled"
                        @onchange="() => SelectAsync(item)" />
             }
             <span class="@(Headless ? null : "flare-togglebar-content")">
