@@ -10,6 +10,32 @@
 <p class="lead">Ship with confidence — all state lives on the server via REST API.</p>
 
 <section class="mb-4">
+    <h2>Rollout</h2>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-start;">
+        <div>
+            <div class="form-label">Strategy</div>
+            <FlareToggleBar TItem="string"
+                            Items="Strategies"
+                            @bind-Value="_strategy"
+                            aria-label="Rollout strategy" />
+        </div>
+        <div>
+            <div class="form-label">Regions</div>
+            <FlareToggleBar TItem="string"
+                            Items="Regions"
+                            Multiple
+                            @bind-Values="_regions"
+                            aria-label="Regions" />
+        </div>
+        <div class="text-muted" style="font-size: 0.875rem;">
+            @_strategy rollout to @(_regions.Count == 0 ? "no region" : string.Join(", ", _regions)).
+        </div>
+    </div>
+</section>
+
+<hr />
+
+<section class="mb-4">
     <h2>Deploy</h2>
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
         <FlareDebouncedButton class="btn btn-success" OnAction="DeployStaging">Deploy to staging</FlareDebouncedButton>
@@ -61,6 +87,12 @@
 @code {
     private record DeployResult(string Entry);
     private record DeployConfig(string Environment, bool NotifyTeam);
+
+    private static readonly string[] Strategies = ["Rolling", "Blue-green", "Canary"];
+    private static readonly string[] Regions = ["EU West", "EU North", "US East", "US West", "Asia"];
+
+    private string? _strategy = "Rolling";
+    private IReadOnlyList<string> _regions = ["EU West", "EU North", "US East", "Asia"];
 
     private bool _deploying;
     private string _environment = "staging";

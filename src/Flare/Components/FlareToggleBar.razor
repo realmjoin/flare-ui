@@ -1,0 +1,42 @@
+@namespace Flare
+@typeparam TItem
+
+<div role="@(Multiple ? "group" : "radiogroup")" @attributes="InputAttributes" class="@RootClass()">
+    @foreach (var item in Items)
+    {
+        var selected = IsSelected(item);
+        <label class="@ItemClass(selected)">
+            @if (Multiple)
+            {
+                <input type="checkbox"
+                       class="@(Headless ? null : "flare-togglebar-input")"
+                       checked="@selected"
+                       disabled="@Disabled"
+                       @onchange="e => SetCheckedAsync(item, e)" />
+                @if (!Headless)
+                {
+                    <span class="flare-togglebar-check" aria-hidden="true">&#x2713;</span>
+                }
+            }
+            else
+            {
+                <input type="radio"
+                       name="@_name"
+                       class="@(Headless ? null : "flare-togglebar-input")"
+                       checked="@selected"
+                       disabled="@Disabled"
+                       @onchange="() => SelectAsync(item)" />
+            }
+            <span class="@(Headless ? null : "flare-togglebar-content")">
+                @if (ItemTemplate is not null)
+                {
+                    @ItemTemplate(item)
+                }
+                else
+                {
+                    @GetText(item)
+                }
+            </span>
+        </label>
+    }
+</div>

@@ -356,9 +356,53 @@ A searchable, scrollable multi-select list with virtualized rendering. Uses Blaz
 
 Keyboard: Escape clears filter. Click row to toggle.
 
+## Toggle Bar
+
+A connected bar of segments for a short list of options — one of N by default, any of N with `Multiple`. Single select fills the active segment with the accent colour. Multi select gives every segment its own check box and only tints the active ones, so the state of each option stays readable even when all of them are on.
+
+```razor
+@* One of N *@
+<FlareToggleBar TItem="string"
+                Items="_strategies"
+                @bind-Value="_strategy"
+                aria-label="Rollout strategy" />
+
+@* Any of N *@
+<FlareToggleBar TItem="string"
+                Items="_regions"
+                Multiple
+                @bind-Values="_selectedRegions"
+                aria-label="Regions" />
+
+@* Enum options with display text, full width *@
+<FlareToggleBar TItem="Severity"
+                Items="Enum.GetValues<Severity>()"
+                TextSelector="s => s.ToString().ToUpperInvariant()"
+                @bind-Value="_severity"
+                Stretch />
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `Items` | *(required)* | Options in display order (`IEnumerable<TItem>`) |
+| `Multiple` | `false` | `false` = one of N (`Value`), `true` = any of N (`Values`) |
+| `Value` / `ValueChanged` | | Two-way binding for the selected option (single select) |
+| `Values` / `ValuesChanged` | | Two-way binding for the selected options (multi select), in `Items` order |
+| `ValueExpression` / `ValuesExpression` | `null` | Expression for `EditForm` integration |
+| `TextSelector` | `ToString()` | Extracts display text from an option |
+| `Comparer` | `Default` | Equality comparer for selection state |
+| `ItemTemplate` | `null` | Custom render template for the segment content |
+| `Stretch` | `false` | Fill the available width with equally wide segments |
+| `Disabled` | `false` | Disables the control |
+| `Headless` | `false` | Strips all built-in CSS; the native inputs stay visible |
+
+The segments are native radio buttons or checkboxes. Keyboard: Tab moves into the bar; in single select the arrow keys change the option, in multi select Tab moves between segments and Space toggles. Other attributes such as `aria-label` are passed to the root element.
+
+Colours can be overridden with CSS variables: `--flare-togglebar-accent`, `--flare-togglebar-accent-hover`, `--flare-togglebar-tint`, `--flare-togglebar-tint-hover`, and `--flare-togglebar-tint-text`.
+
 ## EditForm Integration
 
-`FlareTypeahead`, `FlareTagBox`, and `FlareCheckList` integrate with Blazor's `EditForm`. When used inside an `EditForm`, `@bind-Value` / `@bind-Values` automatically generates the expression parameter. The component picks up the cascading `EditContext`, notifies field changes on selection, and applies validation CSS classes (`modified`, `valid`, `invalid`).
+`FlareTypeahead`, `FlareTagBox`, `FlareCheckList`, and `FlareToggleBar` integrate with Blazor's `EditForm`. When used inside an `EditForm`, `@bind-Value` / `@bind-Values` automatically generates the expression parameter. The component picks up the cascading `EditContext`, notifies field changes on selection, and applies validation CSS classes (`modified`, `valid`, `invalid`).
 
 ```razor
 <EditForm Model="_model" OnValidSubmit="Save">
