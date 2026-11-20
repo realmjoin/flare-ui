@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "flare-demo",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "samples/Flare.Demo", "--no-launch-profile", "--", "--urls", "http://localhost:5265", "--environment", "Development"],
+      "port": 5265
+    }
+  ]
+}
