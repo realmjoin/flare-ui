@@ -134,7 +134,7 @@ public partial class FlareToggleBar<TItem> : ComponentBase
 
     private async Task SelectAsync(TItem item)
     {
-        if (Disabled || ItemComparer.Equals(_value!, item)) return;
+        if (IsLocked(item) || ItemComparer.Equals(_value!, item)) return;
 
         _value = item;
         await ValueChanged.InvokeAsync(item);
@@ -154,7 +154,7 @@ public partial class FlareToggleBar<TItem> : ComponentBase
 
     private async Task SetCheckedAsync(TItem item, ChangeEventArgs e)
     {
-        if (Disabled) return;
+        if (IsLocked(item)) return;
 
         _values = ToggleBarSelection.Toggle(Items, _values, item, e.Value is true, ItemComparer);
         await ValuesChanged.InvokeAsync(_values.AsReadOnly());
@@ -179,6 +179,10 @@ public partial class FlareToggleBar<TItem> : ComponentBase
     // parent did not take the change over (e.g. it enforces a limit), going back to the bound
     // value afterwards is a real diff and resets the native input, which has already flipped.
     private static async Task ParentRenderedAsync() => await Task.Yield();
+
+    // The disabled attribute on the input only stops a well-behaved browser. The handlers
+    // check the lock again, so a change event for a locked option is ignored as well.
+    private bool IsLocked(TItem item) => Disabled || (ItemDisabled?.Invoke(item) ?? false);
 
     private void NotifyFieldChanged()
     {

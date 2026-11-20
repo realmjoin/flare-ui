@@ -5,7 +5,7 @@
     @foreach (var item in Items)
     {
         var selected = IsSelected(item);
-        var disabled = Disabled || (ItemDisabled?.Invoke(item) ?? false);
+        var disabled = IsLocked(item);
         <label class="@ItemClass(selected, disabled)" title="@ItemTitle?.Invoke(item)">
             @if (Multiple)
             {
