@@ -30,8 +30,8 @@
   },
   "ui": {
     "close": "Schließen",
-    "dismiss": "Ausblenden",
-    "clear": "Leeren",
+    "dismiss": "Schließen",
+    "clear": "Löschen",
     "clearFilter": "Filter löschen",
     "filter": "Filter",
     "removeFormat": "{0} entfernen",

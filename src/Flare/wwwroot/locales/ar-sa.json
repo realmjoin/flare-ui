@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "إغلاق",
-    "dismiss": "تجاهل",
+    "dismiss": "إغلاق",
     "clear": "مسح",
     "clearFilter": "مسح عامل التصفية",
     "filter": "تصفية",

@@ -2,7 +2,7 @@
 
 @if (HasValue)
 {
-    <span @attributes="InputAttributes" class="flare-title @Class" data-flare-relative-time="@Value!.Value.UtcDateTime.ToString("o")" data-flare-title="@FormatTitle()">@FormatFallback()</span>
+    <span tabindex="@(IsFocusable ? "0" : null)" @attributes="InputAttributes" class="flare-title @Class" data-flare-relative-time="@Value!.Value.UtcDateTime.ToString("o")" data-flare-title="@FormatTitle()">@FormatFallback()</span>
 }
 else if (!string.IsNullOrEmpty(Placeholder))
 {

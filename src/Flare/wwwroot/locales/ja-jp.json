@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "閉じる",
-    "dismiss": "消去",
+    "dismiss": "閉じる",
     "clear": "クリア",
     "clearFilter": "フィルターをクリア",
     "filter": "フィルター",

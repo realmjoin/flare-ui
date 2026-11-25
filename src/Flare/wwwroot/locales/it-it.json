@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Chiudi",
-    "dismiss": "Ignora",
+    "dismiss": "Chiudi",
     "clear": "Cancella",
     "clearFilter": "Cancella filtro",
     "filter": "Filtra",
@@ -45,8 +45,8 @@
     "copyToClipboard": "Copia negli appunti",
     "copied": "Copiato negli appunti",
     "copyFailed": "Impossibile copiare negli appunti",
-    "selectedFormat": "{0} selezionati",
-    "selectedMaxFormat": "{0} selezionati / max {1}",
+    "selectedFormat": "Selezionati: {0}",
+    "selectedMaxFormat": "Selezionati: {0} / max {1}",
     "ok": "OK",
     "cancel": "Annulla",
     "dialog": "Finestra di dialogo"

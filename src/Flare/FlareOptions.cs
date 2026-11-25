@@ -53,6 +53,14 @@ public sealed class FlareOptions
     /// Defaults to <c>"yyyy-MM-dd HH:mm:ss '(local)'"</c>.
     /// </summary>
     public string RelativeTimeTitleFormat { get; set; } = "yyyy-MM-dd HH:mm:ss '(local)'";
+
+    /// <summary>
+    /// Whether relative time/day components are in the tab order, which makes their tooltip
+    /// with the absolute time reachable by keyboard and announced by screen readers.
+    /// Defaults to <c>false</c>: in a table every timestamp would become a tab stop.
+    /// Can be set per component with its <c>Focusable</c> parameter.
+    /// </summary>
+    public bool RelativeTimeFocusable { get; set; }
 }
 
 /// <summary>

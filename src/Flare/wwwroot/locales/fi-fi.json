@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Sulje",
-    "dismiss": "Hylkää",
+    "dismiss": "Sulje",
     "clear": "Tyhjennä",
     "clearFilter": "Tyhjennä suodatin",
     "filter": "Suodata",

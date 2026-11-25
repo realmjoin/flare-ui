@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Stäng",
-    "dismiss": "Avfärda",
+    "dismiss": "Stäng",
     "clear": "Rensa",
     "clearFilter": "Rensa filter",
     "filter": "Filtrera",
@@ -45,8 +45,8 @@
     "copyToClipboard": "Kopiera till urklipp",
     "copied": "Kopierat till urklipp",
     "copyFailed": "Det gick inte att kopiera till urklipp",
-    "selectedFormat": "{0} valda",
-    "selectedMaxFormat": "{0} valda / max {1}",
+    "selectedFormat": "Valda: {0}",
+    "selectedMaxFormat": "Valda: {0} / max {1}",
     "ok": "OK",
     "cancel": "Avbryt",
     "dialog": "Dialogruta"

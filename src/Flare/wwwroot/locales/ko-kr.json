@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "닫기",
-    "dismiss": "해제",
+    "dismiss": "닫기",
     "clear": "지우기",
     "clearFilter": "필터 지우기",
     "filter": "필터",

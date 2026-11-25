@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Sluiten",
-    "dismiss": "Negeren",
+    "dismiss": "Sluiten",
     "clear": "Wissen",
     "clearFilter": "Filter wissen",
     "filter": "Filteren",

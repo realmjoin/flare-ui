@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Zamknij",
-    "dismiss": "Odrzuć",
+    "dismiss": "Zamknij",
     "clear": "Wyczyść",
     "clearFilter": "Wyczyść filtr",
     "filter": "Filtruj",

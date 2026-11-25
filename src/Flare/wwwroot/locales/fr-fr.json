@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Fermer",
-    "dismiss": "Ignorer",
+    "dismiss": "Fermer",
     "clear": "Effacer",
     "clearFilter": "Effacer le filtre",
     "filter": "Filtrer",
@@ -45,8 +45,8 @@
     "copyToClipboard": "Copier dans le presse-papiers",
     "copied": "Copié dans le presse-papiers",
     "copyFailed": "Échec de la copie dans le presse-papiers",
-    "selectedFormat": "{0} sélectionné(s)",
-    "selectedMaxFormat": "{0} sélectionné(s) / {1} max.",
+    "selectedFormat": "Sélection : {0}",
+    "selectedMaxFormat": "Sélection : {0} / {1} max.",
     "ok": "OK",
     "cancel": "Annuler",
     "dialog": "Boîte de dialogue"

@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Lukk",
-    "dismiss": "Avvis",
+    "dismiss": "Lukk",
     "clear": "Tøm",
     "clearFilter": "Tøm filter",
     "filter": "Filtrer",

@@ -31,6 +31,7 @@
                         TextSelector="s => s"
                         @bind-Value="_serviceFilter"
                         Placeholder="Filter by service…"
+                        aria-label="Filter by service"
                         DebounceMs="0"
                         MinLength="0" />
     </div>
@@ -66,7 +67,7 @@ else
                         <span class="badge @SeverityBadge(inc.Severity)">@inc.Severity</span>
                     </td>
                     <td style="white-space: nowrap; font-size: 0.85rem;">
-                        <FlareRelativeTime Value="@inc.OpenedUtc" />
+                        <FlareRelativeTime Value="@inc.OpenedUtc" Focusable />
                     </td>
                     <td style="white-space: nowrap;">
                         <FlareConfirmButton class="btn btn-sm" StandbyClass="btn-outline-success" ArmedClass="btn-success"

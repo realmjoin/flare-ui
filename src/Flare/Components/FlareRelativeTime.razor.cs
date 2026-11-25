@@ -33,6 +33,15 @@ public partial class FlareRelativeTime : ComponentBase
     /// <summary>
     /// Additional HTML attributes splatted onto the wrapping <c>&lt;span&gt;</c> element.
     /// </summary>
+    /// <summary>
+    /// Puts the element into the tab order, so keyboard users can reach the tooltip with the
+    /// absolute time and screen readers announce it as the description. <c>null</c> (the default)
+    /// uses <see cref="FlareOptions.RelativeTimeFocusable"/>.
+    /// </summary>
+    [Parameter] public bool? Focusable { get; set; }
+
+    private bool IsFocusable => Focusable ?? Options.RelativeTimeFocusable;
+
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 
     internal bool HasValue => Value is { } v && v != default;

@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Kapat",
-    "dismiss": "Yoksay",
+    "dismiss": "Kapat",
     "clear": "Temizle",
     "clearFilter": "Filtreyi temizle",
     "filter": "Filtrele",

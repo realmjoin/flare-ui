@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "Fechar",
-    "dismiss": "Dispensar",
+    "dismiss": "Fechar",
     "clear": "Limpar",
     "clearFilter": "Limpar filtro",
     "filter": "Filtrar",
@@ -45,8 +45,8 @@
     "copyToClipboard": "Copiar para a área de transferência",
     "copied": "Copiado para a área de transferência",
     "copyFailed": "Falha ao copiar para a área de transferência",
-    "selectedFormat": "{0} selecionados",
-    "selectedMaxFormat": "{0} selecionados / máx. {1}",
+    "selectedFormat": "Selecionados: {0}",
+    "selectedMaxFormat": "Selecionados: {0} / máx. {1}",
     "ok": "OK",
     "cancel": "Cancelar",
     "dialog": "Caixa de diálogo"

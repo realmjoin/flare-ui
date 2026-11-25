@@ -670,6 +670,12 @@ Renders output like "just now", "5 minutes ago", "in 2 hours", "3 days ago".
 
 Updates automatically — 1-second ticks while any element is in seconds range, 10-second ticks otherwise. Pauses when the tab is hidden.
 
+The tooltip with the absolute time shows on hover and on tap. To make it reachable by keyboard and announced by screen readers, put the element into the tab order with `Focusable` — per component, or for all relative time and day components with `o.RelativeTimeFocusable = true`. It is off by default, because every timestamp in a table would become a tab stop.
+
+```razor
+<FlareRelativeTime Value="@item.CreatedUtc" Focusable />
+```
+
 ## Relative Day
 
 Displays a UTC timestamp relative to the current day, focused on day granularity with an optional night indicator (23:00–05:59).
@@ -769,7 +775,7 @@ The components follow the WAI-ARIA Authoring Practices patterns and are fully ke
 - **Dialogs** (modal, confirm) trap focus, return it to the opener and close on Escape. A modal without a title is named by `ModalOptions.AriaLabel`.
 - **Typeahead and tag box** are comboboxes with a listbox popup; the **check list** is a multi-select listbox, also when virtualized.
 - **Toasts** are live regions (`alert` for errors, `status` otherwise). The dismiss timer pauses while keyboard focus is inside a toast.
-- **Tooltips** on focusable elements (such as the inline clipboard) appear on focus as well as hover, are announced as the description of the focused element and close on Escape. The absolute-time tooltip of `FlareRelativeTime` / `FlareRelativeDay` sits on plain text and is reachable by mouse and touch only.
+- **Tooltips** on focusable elements (such as the inline clipboard) appear on focus as well as hover, are announced as the description of the focused element and close on Escape. The absolute-time tooltip of `FlareRelativeTime` / `FlareRelativeDay` sits on plain text; set `Focusable` (or `RelativeTimeFocusable` globally) to include it.
 - **Reduced motion:** with `prefers-reduced-motion: reduce`, slide, scale and shimmer animations are off.
 - **Forced colors** (Windows high contrast): selection, focus and progress stay visible through system colors.
 - Built-in labels and status texts ("Close", "Loading…", "No results found", …) follow the configured [locale](#localization).

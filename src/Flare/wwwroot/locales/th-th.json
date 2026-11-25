@@ -30,7 +30,7 @@
   },
   "ui": {
     "close": "ปิด",
-    "dismiss": "ปิดข้อความ",
+    "dismiss": "ปิด",
     "clear": "ล้าง",
     "clearFilter": "ล้างตัวกรอง",
     "filter": "กรอง",

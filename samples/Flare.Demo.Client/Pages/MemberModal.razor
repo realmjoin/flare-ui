@@ -17,8 +17,9 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Role</label>
+        <label class="form-label" for="role-input">Role</label>
         <FlareTypeahead TItem="string"
+                        id="role-input"
                         Items="_roles"
                         TextSelector="r => r"
                         @bind-Value="_model.Role"
@@ -29,8 +30,9 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Skills</label>
+        <label class="form-label" for="skills-input">Skills</label>
         <FlareTagBox TItem="string"
+                     id="skills-input"
                      Items="KnownSkills"
                      TextSelector="s => s"
                      CreateItem="s => s"

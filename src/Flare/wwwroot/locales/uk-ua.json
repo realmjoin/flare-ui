@@ -30,11 +30,11 @@
   },
   "ui": {
     "close": "Закрити",
-    "dismiss": "Сховати",
+    "dismiss": "Закрити",
     "clear": "Очистити",
     "clearFilter": "Очистити фільтр",
     "filter": "Фільтр",
-    "removeFormat": "Вилучити {0}",
+    "removeFormat": "Видалити {0}",
     "notifications": "Сповіщення",
     "loading": "Завантаження…",
     "searching": "Пошук…",
