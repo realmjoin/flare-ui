@@ -756,6 +756,7 @@ Every color of the built-in styles is a CSS variable. Set the shared tokens on `
 | `--flare-text-muted` | `#6b7280` | Loading and empty states, footers |
 | `--flare-text-faint` | `#6b7280` | Placeholders, close and clear icons |
 | `--flare-border` / `--flare-border-subtle` | `#868e9b` / `#e5e7eb` | Outer borders; inner dividers |
+| `--flare-check-border` | `#868e9b` | Border of empty check boxes (check list; the toggle bar defaults to `--flare-text-faint`). Separate from `--flare-border`, so a light field border keeps the boxes visible |
 | `--flare-hover` | `#f3f4f6` | Hover background |
 | `--flare-accent` / `--flare-accent-hover` | `#2563eb` / `#1d4ed8` | Primary button, checked boxes, focus rings |
 | `--flare-accent-text` | `#fff` | Text on accent and danger backgrounds |
@@ -766,7 +767,7 @@ Every color of the built-in styles is a CSS variable. Set the shared tokens on `
 
 Each token can be overridden for a single component by inserting its name: `--flare-<component>-<token>`, with `checklist`, `confirm`, `modal`, `tagbox`, `typeahead`, `toast`, `loading-toast` or `togglebar` as the component — for example `--flare-confirm-accent` or `--flare-tagbox-border`. The component variable wins over the shared token.
 
-A few variables exist only per component: `--flare-confirm-message` (message text, `#4b5563`), `--flare-typeahead-focus-ring` / `--flare-tagbox-focus-ring` (focus glow, 15% of the accent), `--flare-togglebar-check-border`, `--flare-toast-focus` (focus ring of toast buttons, defaults to the accent), plus the ones listed under [Toggle Bar](#toggle-bar), [Loading Bar](#loading-bar) and the toast level colors `--flare-toast-info` / `-success` / `-warning` / `-error`. Note that `--flare-togglebar-text` falls back to `--flare-text-secondary`. The toast level colors, the loading toast accent and the loading bar gradient do not follow `--flare-accent`; set their own variables. Shadows are not variables.
+A few variables exist only per component: `--flare-confirm-message` (message text, `#4b5563`), `--flare-typeahead-focus-ring` / `--flare-tagbox-focus-ring` (focus glow, 15% of the accent), `--flare-checklist-check-border` / `--flare-togglebar-check-border` (override `--flare-check-border` per component), `--flare-toast-focus` (focus ring of toast buttons, defaults to the accent), plus the ones listed under [Toggle Bar](#toggle-bar), [Loading Bar](#loading-bar) and the toast level colors `--flare-toast-info` / `-success` / `-warning` / `-error`. Note that `--flare-togglebar-text` falls back to `--flare-text-secondary`. The toast level colors, the loading toast accent and the loading bar gradient do not follow `--flare-accent`; set their own variables. Shadows are not variables.
 
 ## Accessibility
 

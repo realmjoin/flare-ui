@@ -113,7 +113,8 @@
     width: 1.125rem;
     height: 1.125rem;
     min-width: 1.125rem;
-    border: 1.5px solid var(--flare-checklist-border, var(--flare-border, #868e9b));
+    /* Own token: a theme that lightens the field border must not make empty boxes vanish. */
+    border: 1.5px solid var(--flare-checklist-check-border, var(--flare-check-border, #868e9b));
     border-radius: 0.25rem;
     font-size: 0.75rem;
     line-height: 1;
