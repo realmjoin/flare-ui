@@ -11,6 +11,7 @@ public partial class FlareClipboardButton : ComponentBase, IAsyncDisposable
 {
     [Inject] private IFlareService Flare { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private Flare.Internal.FlareLocaleProvider Locale { get; set; } = default!;
 
     /// <summary>
     /// The text value to copy to the clipboard.
@@ -60,9 +61,9 @@ public partial class FlareClipboardButton : ComponentBase, IAsyncDisposable
         if (!_disposed)
         {
             if (success)
-                _ = Flare.ToastAsync("Copied to clipboard", ToastLevel.Success);
+                _ = Flare.ToastAsync(Locale.Ui("copied"), ToastLevel.Success);
             else
-                _ = Flare.ToastAsync("Failed to copy to clipboard", ToastLevel.Error);
+                _ = Flare.ToastAsync(Locale.Ui("copyFailed"), ToastLevel.Error);
 
             await OnCopied.InvokeAsync(success);
         }

@@ -58,6 +58,23 @@ function show(anchor, immediate) {
     }
 }
 
+// Link the tooltip to a focused anchor as its description, so screen readers announce it
+// together with the element. The text is set right away — a description may reference a
+// hidden element — and the visual tooltip follows after the usual delay.
+function describe(anchor) {
+    const text = anchor.getAttribute('data-flare-title');
+    if (!text || anchor.hasAttribute('aria-describedby')) return;
+    tooltip.textContent = text;
+    anchor.setAttribute('aria-describedby', tooltip.id);
+    anchor.setAttribute('data-flare-described', '');
+}
+
+function undescribe(anchor) {
+    if (!anchor.hasAttribute('data-flare-described')) return;
+    anchor.removeAttribute('aria-describedby');
+    anchor.removeAttribute('data-flare-described');
+}
+
 function hide() {
     clearTimeout(showTimer);
     showTimer = null;
@@ -116,11 +133,22 @@ export function init() {
     // Keyboard: focus to show/hide
     document.addEventListener('focusin', (e) => {
         const anchor = e.target.closest?.('.flare-title');
-        if (anchor) show(anchor);
+        if (anchor) {
+            describe(anchor);
+            show(anchor);
+        }
     }, true);
 
     document.addEventListener('focusout', (e) => {
         const anchor = e.target.closest?.('.flare-title');
-        if (anchor) hide();
+        if (anchor) {
+            undescribe(anchor);
+            hide();
+        }
+    }, true);
+
+    // Escape dismisses a visible tooltip without moving focus or the pointer.
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && current) hide();
     }, true);
 }

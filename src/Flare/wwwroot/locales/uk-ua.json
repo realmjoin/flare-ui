@@ -27,5 +27,28 @@
     "tonight": "сьогодні вночі",
     "tomorrowNight": "завтра вночі",
     "nightFormat": "{0} вночі"
+  },
+  "ui": {
+    "close": "Закрити",
+    "dismiss": "Сховати",
+    "clear": "Очистити",
+    "clearFilter": "Очистити фільтр",
+    "filter": "Фільтр",
+    "removeFormat": "Вилучити {0}",
+    "notifications": "Сповіщення",
+    "loading": "Завантаження…",
+    "searching": "Пошук…",
+    "noItems": "Елементів не знайдено",
+    "noResults": "Результатів не знайдено",
+    "createFormat": "Натисніть Enter, щоб створити {0}",
+    "copy": "Копіювати",
+    "copyToClipboard": "Копіювати до буфера обміну",
+    "copied": "Скопійовано до буфера обміну",
+    "copyFailed": "Не вдалося скопіювати до буфера обміну",
+    "selectedFormat": "Вибрано: {0}",
+    "selectedMaxFormat": "Вибрано: {0} / макс. {1}",
+    "ok": "OK",
+    "cancel": "Скасувати",
+    "dialog": "Діалогове вікно"
   }
 }

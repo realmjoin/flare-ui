@@ -21,6 +21,7 @@ public partial class FlareProvider : ComponentBase, IDisposable
     [Inject] private IFlareService Flare { get; set; } = default!;
     [Inject] private FlareOptions _options { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private FlareLocaleProvider Locale { get; set; } = default!;
     [Inject] private IFlareTimezoneService Timezone { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
 

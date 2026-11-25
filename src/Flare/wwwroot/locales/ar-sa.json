@@ -27,5 +27,28 @@
     "tonight": "الليلة",
     "tomorrowNight": "غداً ليلاً",
     "nightFormat": "{0} ليلاً"
+  },
+  "ui": {
+    "close": "إغلاق",
+    "dismiss": "تجاهل",
+    "clear": "مسح",
+    "clearFilter": "مسح عامل التصفية",
+    "filter": "تصفية",
+    "removeFormat": "إزالة {0}",
+    "notifications": "الإشعارات",
+    "loading": "جارٍ التحميل…",
+    "searching": "جارٍ البحث…",
+    "noItems": "لم يتم العثور على عناصر",
+    "noResults": "لم يتم العثور على نتائج",
+    "createFormat": "اضغط على Enter لإنشاء {0}",
+    "copy": "نسخ",
+    "copyToClipboard": "نسخ إلى الحافظة",
+    "copied": "تم النسخ إلى الحافظة",
+    "copyFailed": "تعذّر النسخ إلى الحافظة",
+    "selectedFormat": "تم تحديد {0}",
+    "selectedMaxFormat": "تم تحديد {0} / الحد الأقصى {1}",
+    "ok": "موافق",
+    "cancel": "إلغاء",
+    "dialog": "مربع حوار"
   }
 }

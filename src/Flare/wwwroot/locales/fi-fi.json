@@ -27,5 +27,28 @@
     "tonight": "tänä yönä",
     "tomorrowNight": "huomenna yöllä",
     "nightFormat": "{0} yöllä"
+  },
+  "ui": {
+    "close": "Sulje",
+    "dismiss": "Hylkää",
+    "clear": "Tyhjennä",
+    "clearFilter": "Tyhjennä suodatin",
+    "filter": "Suodata",
+    "removeFormat": "Poista {0}",
+    "notifications": "Ilmoitukset",
+    "loading": "Ladataan…",
+    "searching": "Haetaan…",
+    "noItems": "Kohteita ei löytynyt",
+    "noResults": "Tuloksia ei löytynyt",
+    "createFormat": "Luo {0} painamalla Enter",
+    "copy": "Kopioi",
+    "copyToClipboard": "Kopioi leikepöydälle",
+    "copied": "Kopioitu leikepöydälle",
+    "copyFailed": "Kopiointi leikepöydälle epäonnistui",
+    "selectedFormat": "{0} valittu",
+    "selectedMaxFormat": "{0} valittu / enintään {1}",
+    "ok": "OK",
+    "cancel": "Peruuta",
+    "dialog": "Valintaikkuna"
   }
 }

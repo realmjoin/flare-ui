@@ -27,5 +27,28 @@
     "tonight": "vannacht",
     "tomorrowNight": "morgennacht",
     "nightFormat": "{0} 's nachts"
+  },
+  "ui": {
+    "close": "Sluiten",
+    "dismiss": "Negeren",
+    "clear": "Wissen",
+    "clearFilter": "Filter wissen",
+    "filter": "Filteren",
+    "removeFormat": "{0} verwijderen",
+    "notifications": "Meldingen",
+    "loading": "Laden…",
+    "searching": "Zoeken…",
+    "noItems": "Geen items gevonden",
+    "noResults": "Geen resultaten gevonden",
+    "createFormat": "Druk op Enter om {0} te maken",
+    "copy": "Kopiëren",
+    "copyToClipboard": "Kopiëren naar klembord",
+    "copied": "Gekopieerd naar klembord",
+    "copyFailed": "Kopiëren naar klembord mislukt",
+    "selectedFormat": "{0} geselecteerd",
+    "selectedMaxFormat": "{0} geselecteerd / max. {1}",
+    "ok": "OK",
+    "cancel": "Annuleren",
+    "dialog": "Dialoogvenster"
   }
 }

@@ -3,7 +3,7 @@
 
 <div class="@BackdropClass()" @onclick="HandleBackdropClick" @onkeydown="HandleKeyDown" tabindex="-1" @ref="_backdrop">
     <div class="@DialogClass()" role="alertdialog" aria-modal="true"
-         aria-labelledby="@_titleId" aria-describedby="@_descId"
+         aria-labelledby="@(HasTitle ? _titleId : _descId)" aria-describedby="@(HasTitle ? _descId : null)"
          @onclick:stopPropagation="true" @ref="_dialog">
         @if (!string.IsNullOrEmpty(Instance.Title))
         {

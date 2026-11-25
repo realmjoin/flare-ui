@@ -10,8 +10,9 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Services to deploy</label>
+        <span class="form-label d-block" id="services-label">Services to deploy</span>
         <FlareCheckList TItem="string"
+                        aria-labelledby="services-label"
                         ProviderFunc="LoadServices"
                         TextSelector="s => s"
                         @bind-Values="Services"

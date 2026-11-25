@@ -5,6 +5,8 @@ namespace Flare;
 
 public partial class FlareToast : ComponentBase, IDisposable
 {
+    [Inject] private FlareLocaleProvider Locale { get; set; } = default!;
+
     [Parameter, EditorRequired] public ToastInstance Instance { get; set; } = default!;
     [Parameter] public bool Headless { get; set; }
     [Parameter] public EventCallback OnDismiss { get; set; }
@@ -14,6 +16,8 @@ public partial class FlareToast : ComponentBase, IDisposable
     private long _timerStartedAt;
     private int _pauseEpoch;
     private bool _disposed;
+    private bool _hovered;
+    private bool _focused;
 
     protected override void OnInitialized()
     {
@@ -52,10 +56,45 @@ public partial class FlareToast : ComponentBase, IDisposable
         }
     }
 
+    private Task HandleMouseEnter()
+    {
+        _hovered = Instance.Options.PauseOnHover;
+        return UpdatePause();
+    }
+
+    private Task HandleMouseLeave()
+    {
+        _hovered = false;
+        return UpdatePause();
+    }
+
+    // Keyboard focus inside the toast always holds the timer, independent of PauseOnHover:
+    // otherwise the toast can vanish while someone is tabbing to its buttons.
+    private Task HandleFocusIn()
+    {
+        _focused = true;
+        return UpdatePause();
+    }
+
+    private Task HandleFocusOut()
+    {
+        _focused = false;
+        return UpdatePause();
+    }
+
+    // Hover and focus are tracked separately so that leaving with the mouse does not
+    // resume the timer while focus is still inside (and vice versa).
+    private async Task UpdatePause()
+    {
+        if (_hovered || _focused)
+            PauseTimer();
+        else
+            await ResumeTimer();
+    }
+
     private void PauseTimer()
     {
-        if (Instance.Options.Persistent) return;
-        if (!Instance.Options.PauseOnHover || Instance.IsPaused) return;
+        if (Instance.Options.Persistent || Instance.IsPaused || Instance.IsExiting) return;
 
         Instance.IsPaused = true;
         var elapsed = (int)(Environment.TickCount64 - _timerStartedAt);

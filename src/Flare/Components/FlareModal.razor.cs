@@ -8,6 +8,7 @@ namespace Flare;
 public partial class FlareModal : ComponentBase, IAsyncDisposable
 {
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private FlareLocaleProvider Locale { get; set; } = default!;
 
     [Parameter, EditorRequired] public ModalInstance Instance { get; set; } = default!;
     [Parameter] public bool Headless { get; set; }
@@ -19,6 +20,8 @@ public partial class FlareModal : ComponentBase, IAsyncDisposable
     private ModalContext _modalContext = default!;
     private readonly string _titleId = $"flare-modal-title-{Guid.NewGuid():N}";
     private bool _disposed;
+
+    private bool HasTitle => !string.IsNullOrEmpty(Instance.Options.Title);
 
     protected override void OnInitialized()
     {

@@ -97,14 +97,16 @@ public sealed class ModalDefaults
 public sealed class ConfirmDefaults
 {
     /// <summary>
-    /// Text for the confirm button. Defaults to <c>"OK"</c>.
+    /// Text for the confirm button. <c>null</c> (the default) uses the localized "OK"
+    /// of the configured <see cref="FlareOptions.Locale"/>.
     /// </summary>
-    public string ConfirmText { get; set; } = "OK";
+    public string? ConfirmText { get; set; }
 
     /// <summary>
-    /// Text for the cancel button. Defaults to <c>"Cancel"</c>.
+    /// Text for the cancel button. <c>null</c> (the default) uses the localized "Cancel"
+    /// of the configured <see cref="FlareOptions.Locale"/>.
     /// </summary>
-    public string CancelText { get; set; } = "Cancel";
+    public string? CancelText { get; set; }
 
     /// <summary>
     /// Visual intent of the confirm action. Defaults to <see cref="ConfirmIntent.Primary"/>.

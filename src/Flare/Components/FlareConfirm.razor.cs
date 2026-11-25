@@ -21,6 +21,9 @@ public partial class FlareConfirm : ComponentBase, IAsyncDisposable
     private readonly string _descId = $"flare-confirm-desc-{Guid.NewGuid():N}";
     private bool _disposed;
 
+    // Without a title the message itself names the dialog.
+    private bool HasTitle => !string.IsNullOrEmpty(Instance.Title);
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !_disposed)

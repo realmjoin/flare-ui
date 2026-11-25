@@ -27,5 +27,28 @@
     "tonight": "сегодня ночью",
     "tomorrowNight": "завтра ночью",
     "nightFormat": "{0} ночью"
+  },
+  "ui": {
+    "close": "Закрыть",
+    "dismiss": "Скрыть",
+    "clear": "Очистить",
+    "clearFilter": "Очистить фильтр",
+    "filter": "Фильтр",
+    "removeFormat": "Удалить {0}",
+    "notifications": "Уведомления",
+    "loading": "Загрузка…",
+    "searching": "Поиск…",
+    "noItems": "Элементы не найдены",
+    "noResults": "Результаты не найдены",
+    "createFormat": "Нажмите Enter, чтобы создать {0}",
+    "copy": "Копировать",
+    "copyToClipboard": "Копировать в буфер обмена",
+    "copied": "Скопировано в буфер обмена",
+    "copyFailed": "Не удалось скопировать в буфер обмена",
+    "selectedFormat": "Выбрано: {0}",
+    "selectedMaxFormat": "Выбрано: {0} / макс. {1}",
+    "ok": "ОК",
+    "cancel": "Отмена",
+    "dialog": "Диалоговое окно"
   }
 }

@@ -1,5 +1,25 @@
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+// Keyboard defaults for Flare elements, registered once when the module loads. A delegated
+// listener (instead of inline handlers) keeps this working under a strict CSP.
+const LIST_NAV_KEYS = [' ', 'ArrowDown', 'ArrowUp', 'Home', 'End', 'PageDown', 'PageUp'];
+
+document.addEventListener('keydown', (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+
+    if (target.hasAttribute('data-flare-press')) {
+        // A non-button element acting as a button: Enter and Space click it.
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (!e.repeat) target.click();
+        }
+    } else if (target.hasAttribute('data-flare-listnav')) {
+        // The list handles these keys itself (in Blazor); stop the page from scrolling.
+        if (LIST_NAV_KEYS.includes(e.key)) e.preventDefault();
+    }
+});
+
 export function createFocusTrap(element, initialFocusSelector) {
     const previouslyFocused = document.activeElement;
 
@@ -44,6 +64,28 @@ export function createFocusTrap(element, initialFocusSelector) {
     try { target?.focus({ focusVisible: true }); } catch { /* element may be detached */ }
 
     return { element, handleKeyDown, previouslyFocused };
+}
+
+/**
+ * Bring the option at `index` of a (virtualized) list into view. Rows outside the rendered
+ * window have no element yet, so their position is derived from the fixed row height.
+ */
+export function scrollListIndexIntoView(list, optionId, index, itemSize) {
+    const option = document.getElementById(optionId);
+    if (option) {
+        option.scrollIntoView({ block: 'nearest' });
+        return;
+    }
+    if (!list) return;
+
+    if (list.scrollHeight > list.clientHeight + 1) {
+        // The list scrolls itself (MaxHeight set).
+        list.scrollTop = index * itemSize;
+    } else {
+        // The list grows with its content; the page (or an outer container) scrolls.
+        const top = list.getBoundingClientRect().top + index * itemSize;
+        window.scrollBy(0, top - window.innerHeight / 2);
+    }
 }
 
 export function destroyFocusTrap(trap) {

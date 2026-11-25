@@ -5,14 +5,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--flare-confirm-backdrop, var(--flare-backdrop, rgba(0, 0, 0, 0.4)));
     backdrop-filter: blur(2px);
     animation: flare-fade-in 200ms ease-out;
 }
 
 .flare-confirm-dialog {
     position: relative;
-    background: #fff;
+    background: var(--flare-confirm-bg, var(--flare-bg, #fff));
     border-radius: 0.75rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
     max-width: min(26rem, 90vw);
@@ -25,12 +25,12 @@
     margin: 0 0 0.5rem;
     font-size: 1.125rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--flare-confirm-text, var(--flare-text, #1a1a1a));
 }
 
 .flare-confirm-message {
     margin: 0 0 1.5rem;
-    color: #4b5563;
+    color: var(--flare-confirm-message, #4b5563);
     font-size: 0.9rem;
     line-height: 1.5;
 }
@@ -49,40 +49,40 @@
     font-size: 0.875rem;
     font-weight: 500;
     transition: background 150ms, color 150ms;
-    border: 1px solid #d1d5db;
-    color: #374151;
-    background: #fff;
+    border: 1px solid var(--flare-confirm-border, var(--flare-border, #868e9b));
+    color: var(--flare-confirm-text-secondary, var(--flare-text-secondary, #374151));
+    background: var(--flare-confirm-bg, var(--flare-bg, #fff));
 }
 
 .flare-btn:hover {
-    background: #f3f4f6;
+    background: var(--flare-confirm-hover, var(--flare-hover, #f3f4f6));
 }
 
 .flare-btn:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--flare-confirm-accent, var(--flare-accent, #2563eb));
     outline-offset: 2px;
 }
 
 .flare-btn-primary {
-    background: #3b82f6;
-    color: #fff;
-    border-color: #3b82f6;
+    background: var(--flare-confirm-accent, var(--flare-accent, #2563eb));
+    color: var(--flare-confirm-accent-text, var(--flare-accent-text, #fff));
+    border-color: var(--flare-confirm-accent, var(--flare-accent, #2563eb));
 }
 
 .flare-btn-primary:hover {
-    background: #2563eb;
-    border-color: #2563eb;
+    background: var(--flare-confirm-accent-hover, var(--flare-accent-hover, #1d4ed8));
+    border-color: var(--flare-confirm-accent-hover, var(--flare-accent-hover, #1d4ed8));
 }
 
 .flare-btn-danger {
-    background: #ef4444;
-    color: #fff;
-    border-color: #ef4444;
+    background: var(--flare-confirm-danger, var(--flare-danger, #dc2626));
+    color: var(--flare-confirm-accent-text, var(--flare-accent-text, #fff));
+    border-color: var(--flare-confirm-danger, var(--flare-danger, #dc2626));
 }
 
 .flare-btn-danger:hover {
-    background: #dc2626;
-    border-color: #dc2626;
+    background: var(--flare-confirm-danger-hover, var(--flare-danger-hover, #b91c1c));
+    border-color: var(--flare-confirm-danger-hover, var(--flare-danger-hover, #b91c1c));
 }
 
 @keyframes flare-fade-in {
@@ -98,5 +98,25 @@
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flare-confirm-backdrop,
+    .flare-confirm-dialog {
+        animation: none;
+    }
+}
+
+/* Forced colors drop the box shadow: give the dialog an edge against the page. */
+@media (forced-colors: active) {
+    .flare-confirm-dialog {
+        border: 1px solid CanvasText;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flare-btn {
+        transition: none;
     }
 }

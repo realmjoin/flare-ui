@@ -73,4 +73,15 @@
     transform: translateY(0);
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .flare-tooltip {
+        transition: none;
+        transform: none;
+    }
+}
 
+@media (forced-colors: active) {
+    .flare-tooltip {
+        border: 1px solid CanvasText;
+    }
+}

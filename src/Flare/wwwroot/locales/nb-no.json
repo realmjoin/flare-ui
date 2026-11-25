@@ -27,5 +27,28 @@
     "tonight": "i natt",
     "tomorrowNight": "i morgen natt",
     "nightFormat": "{0} på natten"
+  },
+  "ui": {
+    "close": "Lukk",
+    "dismiss": "Avvis",
+    "clear": "Tøm",
+    "clearFilter": "Tøm filter",
+    "filter": "Filtrer",
+    "removeFormat": "Fjern {0}",
+    "notifications": "Varsler",
+    "loading": "Laster inn…",
+    "searching": "Søker…",
+    "noItems": "Ingen elementer funnet",
+    "noResults": "Ingen resultater funnet",
+    "createFormat": "Trykk Enter for å opprette {0}",
+    "copy": "Kopier",
+    "copyToClipboard": "Kopier til utklippstavlen",
+    "copied": "Kopiert til utklippstavlen",
+    "copyFailed": "Kunne ikke kopiere til utklippstavlen",
+    "selectedFormat": "{0} valgt",
+    "selectedMaxFormat": "{0} valgt / maks. {1}",
+    "ok": "OK",
+    "cancel": "Avbryt",
+    "dialog": "Dialogboks"
   }
 }

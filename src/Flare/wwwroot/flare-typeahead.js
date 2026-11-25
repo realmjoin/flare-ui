@@ -30,8 +30,18 @@ export function init(dotnetRef, root) {
     }
     input?.addEventListener('keydown', onKeyDown);
 
+    // A focused tag removes itself on these keys (handled in Blazor). Cancel only those,
+    // so the browser neither scrolls nor navigates back — Tab keeps moving focus.
+    function onTagKeyDown(e) {
+        if (!e.target.closest?.('[data-flare-tag]')) return;
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Backspace' || e.key === 'Delete') {
+            e.preventDefault();
+        }
+    }
+    root.addEventListener('keydown', onTagKeyDown);
+
     document.addEventListener('pointerdown', onPointerDown, true);
-    instances.set(id, { onPointerDown, onKeyDown, input, dotnetRef, root });
+    instances.set(id, { onPointerDown, onKeyDown, onTagKeyDown, input, dotnetRef, root });
     return id;
 }
 
@@ -69,5 +79,6 @@ export function dispose(id) {
     if (!entry) return;
     document.removeEventListener('pointerdown', entry.onPointerDown, true);
     entry.input?.removeEventListener('keydown', entry.onKeyDown);
+    entry.root?.removeEventListener('keydown', entry.onTagKeyDown);
     instances.delete(id);
 }

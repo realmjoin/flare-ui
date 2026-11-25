@@ -27,5 +27,28 @@
     "tonight": "i natt",
     "tomorrowNight": "i morgon natt",
     "nightFormat": "{0} på natten"
+  },
+  "ui": {
+    "close": "Stäng",
+    "dismiss": "Avfärda",
+    "clear": "Rensa",
+    "clearFilter": "Rensa filter",
+    "filter": "Filtrera",
+    "removeFormat": "Ta bort {0}",
+    "notifications": "Aviseringar",
+    "loading": "Läser in…",
+    "searching": "Söker…",
+    "noItems": "Inga objekt hittades",
+    "noResults": "Inga resultat hittades",
+    "createFormat": "Tryck på Enter för att skapa {0}",
+    "copy": "Kopiera",
+    "copyToClipboard": "Kopiera till urklipp",
+    "copied": "Kopierat till urklipp",
+    "copyFailed": "Det gick inte att kopiera till urklipp",
+    "selectedFormat": "{0} valda",
+    "selectedMaxFormat": "{0} valda / max {1}",
+    "ok": "OK",
+    "cancel": "Avbryt",
+    "dialog": "Dialogruta"
   }
 }

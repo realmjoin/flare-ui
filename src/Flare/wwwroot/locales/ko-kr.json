@@ -27,5 +27,28 @@
     "tonight": "오늘 밤",
     "tomorrowNight": "내일 밤",
     "nightFormat": "{0} 밤"
+  },
+  "ui": {
+    "close": "닫기",
+    "dismiss": "해제",
+    "clear": "지우기",
+    "clearFilter": "필터 지우기",
+    "filter": "필터",
+    "removeFormat": "{0} 제거",
+    "notifications": "알림",
+    "loading": "불러오는 중…",
+    "searching": "검색 중…",
+    "noItems": "항목을 찾을 수 없습니다",
+    "noResults": "결과를 찾을 수 없습니다",
+    "createFormat": "Enter 키를 눌러 {0} 만들기",
+    "copy": "복사",
+    "copyToClipboard": "클립보드에 복사",
+    "copied": "클립보드에 복사됨",
+    "copyFailed": "클립보드에 복사하지 못했습니다",
+    "selectedFormat": "{0}개 선택됨",
+    "selectedMaxFormat": "{0}개 선택됨 / 최대 {1}개",
+    "ok": "확인",
+    "cancel": "취소",
+    "dialog": "대화 상자"
   }
 }

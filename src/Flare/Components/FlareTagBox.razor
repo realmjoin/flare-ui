@@ -11,12 +11,14 @@
     @foreach (var item in _values)
     {
         var current = item;
+        @* A removable tag is a button that removes itself. The key presses it handles are
+           cancelled in flare-typeahead.js, so Tab still moves focus on. *@
         <span class="@(Headless ? null : $"flare-tagbox-tag{(Disabled ? "" : " flare-tagbox-tag-removable")}")"
-              role="option"
-              tabindex="@(Disabled ? -1 : 0)"
-              aria-label="@($"{GetText(current)}, press Delete to remove")"
+              data-flare-tag
+              role="@(Disabled ? null : "button")"
+              tabindex="@(Disabled ? null : "0")"
+              aria-label="@(Disabled ? null : Locale.Ui("removeFormat", GetText(current)))"
               @onkeydown="e => HandleTagKeyDown(e, current)"
-              @onkeydown:preventDefault
               @onkeydown:stopPropagation
               @onpointerdown="() => RemoveTag(current)"
               @onpointerdown:stopPropagation>
@@ -41,7 +43,7 @@
            type="text"
            role="combobox"
            autocomplete="off"
-           aria-expanded="@(_isOpen && _items.Count > 0)"
+           aria-expanded="@(_isOpen && _items.Count > 0 ? "true" : "false")"
            aria-activedescendant="@ActiveDescendant()"
            aria-controls="@_listboxId"
            aria-autocomplete="list"
@@ -66,7 +68,7 @@
                 <li id="@OptionId(index)"
                     role="option"
                     class="@OptionClass(index)"
-                    aria-selected="@(index == _highlightedIndex)"
+                    aria-selected="@(index == _highlightedIndex ? "true" : "false")"
                     @onpointerdown="() => SelectItem(item)"
                     @onpointerdown:preventDefault>
                     @if (ItemTemplate is not null)
@@ -83,20 +85,20 @@
     }
     else if (_isOpen && _loading)
     {
-        <div class="@(Headless ? null : "flare-tagbox-dropdown flare-tagbox-loading")">
-            @(LoadingText ?? "Searching…")
+        <div class="@(Headless ? null : "flare-tagbox-dropdown flare-tagbox-loading")" role="status">
+            @(LoadingText ?? Locale.Ui("searching"))
         </div>
     }
     else if (_isOpen && _searched && _items.Count == 0 && !string.IsNullOrWhiteSpace(_text))
     {
-        <div class="@(Headless ? null : "flare-tagbox-dropdown flare-tagbox-empty")">
+        <div class="@(Headless ? null : "flare-tagbox-dropdown flare-tagbox-empty")" role="status">
             @if (CreateItem is not null)
             {
-                <span>Press Enter to create <strong>@_text.Trim()</strong></span>
+                <span>@CreateHint().Before<strong>@_text.Trim()</strong>@CreateHint().After</span>
             }
             else
             {
-                @(NotFoundText ?? "No results found")
+                @(NotFoundText ?? Locale.Ui("noResults"))
             }
         </div>
     }

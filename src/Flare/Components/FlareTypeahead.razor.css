@@ -12,25 +12,25 @@
     padding: 0.5rem 2rem 0.5rem 0.75rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: #1a1a1a;
-    background: #fff;
-    border: 1px solid #d1d5db;
+    color: var(--flare-typeahead-text, var(--flare-text, #1a1a1a));
+    background: var(--flare-typeahead-bg, var(--flare-bg, #fff));
+    border: 1px solid var(--flare-typeahead-border, var(--flare-border, #868e9b));
     border-radius: 0.375rem;
     transition: border-color 150ms, box-shadow 150ms;
 }
 
 .flare-typeahead-input::placeholder {
-    color: #9ca3af;
+    color: var(--flare-typeahead-text-faint, var(--flare-text-faint, #6b7280));
 }
 
 .flare-typeahead-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    border-color: var(--flare-typeahead-accent, var(--flare-accent, #2563eb));
+    box-shadow: 0 0 0 3px var(--flare-typeahead-focus-ring, color-mix(in srgb, var(--flare-typeahead-accent, var(--flare-accent, #2563eb)) 15%, transparent));
 }
 
 .flare-typeahead-input:disabled {
-    background: #f9fafb;
-    color: #9ca3af;
+    background: var(--flare-typeahead-bg-subtle, var(--flare-bg-subtle, #f9fafb));
+    color: var(--flare-typeahead-text-faint, var(--flare-text-faint, #6b7280));
     cursor: not-allowed;
 }
 
@@ -43,7 +43,7 @@
     cursor: pointer;
     font-size: 1.125rem;
     line-height: 1;
-    color: #9ca3af;
+    color: var(--flare-typeahead-text-faint, var(--flare-text-faint, #6b7280));
     padding: 0.125rem;
     border-radius: 0.25rem;
     display: flex;
@@ -52,7 +52,7 @@
 }
 
 .flare-typeahead-clear:hover {
-    color: #374151;
+    color: var(--flare-typeahead-text-secondary, var(--flare-text-secondary, #374151));
 }
 
 .flare-typeahead-dropdown {
@@ -63,8 +63,8 @@
     z-index: 50;
     margin-top: 0.25rem;
     max-height: 15rem;
-    background: #fff;
-    border: 1px solid #d1d5db;
+    background: var(--flare-typeahead-bg, var(--flare-bg, #fff));
+    border: 1px solid var(--flare-typeahead-border, var(--flare-border, #868e9b));
     border-radius: 0.375rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
     overflow-y: auto;
@@ -76,29 +76,29 @@
 .flare-typeahead-option {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
-    color: #374151;
+    color: var(--flare-typeahead-text-secondary, var(--flare-text-secondary, #374151));
     cursor: pointer;
     transition: background 80ms;
 }
 
 .flare-typeahead-option:hover {
-    background: #f3f4f6;
+    background: var(--flare-typeahead-hover, var(--flare-hover, #f3f4f6));
 }
 
 .flare-typeahead-option-active {
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: var(--flare-typeahead-tint, var(--flare-tint, #eff6ff));
+    color: var(--flare-typeahead-tint-text, var(--flare-tint-text, #1d4ed8));
 }
 
 .flare-typeahead-option-active:hover {
-    background: #dbeafe;
+    background: var(--flare-typeahead-tint-hover, var(--flare-tint-hover, #dbeafe));
 }
 
 .flare-typeahead-loading,
 .flare-typeahead-empty {
     padding: 0.75rem;
     font-size: 0.8125rem;
-    color: #6b7280;
+    color: var(--flare-typeahead-text-muted, var(--flare-text-muted, #6b7280));
     text-align: center;
 }
 
@@ -110,5 +110,30 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flare-typeahead-input,
+    .flare-typeahead-option {
+        transition: none;
+    }
+
+    .flare-typeahead-dropdown {
+        animation: none;
+    }
+}
+
+/* Forced colors drop the focus glow and the highlight background. */
+@media (forced-colors: active) {
+    .flare-typeahead-input:focus {
+        outline: 2px solid Highlight;
+        outline-offset: 1px;
+    }
+
+    .flare-typeahead-option-active {
+        forced-color-adjust: none;
+        background: Highlight;
+        color: HighlightText;
     }
 }

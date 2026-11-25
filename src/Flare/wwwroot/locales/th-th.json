@@ -27,5 +27,28 @@
     "tonight": "คืนนี้",
     "tomorrowNight": "คืนพรุ่งนี้",
     "nightFormat": "{0} ตอนกลางคืน"
+  },
+  "ui": {
+    "close": "ปิด",
+    "dismiss": "ปิดข้อความ",
+    "clear": "ล้าง",
+    "clearFilter": "ล้างตัวกรอง",
+    "filter": "กรอง",
+    "removeFormat": "นำ {0} ออก",
+    "notifications": "การแจ้งเตือน",
+    "loading": "กำลังโหลด…",
+    "searching": "กำลังค้นหา…",
+    "noItems": "ไม่พบรายการ",
+    "noResults": "ไม่พบผลลัพธ์",
+    "createFormat": "กด Enter เพื่อสร้าง {0}",
+    "copy": "คัดลอก",
+    "copyToClipboard": "คัดลอกไปยังคลิปบอร์ด",
+    "copied": "คัดลอกไปยังคลิปบอร์ดแล้ว",
+    "copyFailed": "คัดลอกไปยังคลิปบอร์ดไม่สำเร็จ",
+    "selectedFormat": "เลือกแล้ว {0} รายการ",
+    "selectedMaxFormat": "เลือกแล้ว {0} รายการ / สูงสุด {1}",
+    "ok": "ตกลง",
+    "cancel": "ยกเลิก",
+    "dialog": "กล่องโต้ตอบ"
   }
 }

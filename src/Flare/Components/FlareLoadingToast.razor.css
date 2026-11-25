@@ -6,14 +6,14 @@
     gap: 0.5rem;
     padding: 0.875rem 1rem;
     border-radius: 0.5rem;
-    background: #fff;
-    color: #1a1a1a;
+    background: var(--flare-loading-toast-bg, var(--flare-bg, #fff));
+    color: var(--flare-loading-toast-text, var(--flare-text, #1a1a1a));
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     animation: flare-loading-toast-in 300ms ease-out;
     font-size: 0.9rem;
     line-height: 1.4;
-    border-left: 4px solid var(--flare-loading-toast-accent, #3b82f6);
+    border-left: 4px solid var(--flare-loading-toast-accent, #2563eb);
     min-width: 260px;
 }
 
@@ -31,7 +31,7 @@
 .flare-loading-toast-percent {
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--flare-loading-toast-accent, #3b82f6);
+    color: var(--flare-loading-toast-accent, #2563eb);
     white-space: nowrap;
 }
 
@@ -97,5 +97,36 @@
     to {
         opacity: 0;
         transform: translateX(100%);
+    }
+}
+
+/* Reduced motion: no slide, and the indeterminate bar rests as a full, static bar. */
+@media (prefers-reduced-motion: reduce) {
+    .flare-loading-toast,
+    .flare-loading-toast-bar-indeterminate {
+        animation: none;
+    }
+
+    .flare-loading-toast-exiting {
+        animation: none;
+        opacity: 0;
+    }
+
+    .flare-loading-toast-bar-fill {
+        transition: none;
+    }
+}
+
+@media (forced-colors: active) {
+    .flare-loading-toast {
+        border: 1px solid CanvasText;
+    }
+
+    .flare-loading-toast-bar {
+        border: 1px solid CanvasText;
+    }
+
+    .flare-loading-toast-bar-fill {
+        background: Highlight;
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Flare.Internal;
 using Microsoft.JSInterop;
 
 namespace Flare;
@@ -12,6 +13,7 @@ public partial class FlareClipboard : ComponentBase, IAsyncDisposable
 {
     [Inject] private IFlareService Flare { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private Flare.Internal.FlareLocaleProvider Locale { get; set; } = default!;
 
     /// <summary>
     /// The content to display. The rendered text of this fragment is also the
@@ -39,6 +41,15 @@ public partial class FlareClipboard : ComponentBase, IAsyncDisposable
     private IJSObjectReference? _module;
     private bool _disposed;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // Loading the module registers the keyboard activation for data-flare-press.
+        try { await JS.GetFlareModuleAsync(); }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+    }
+
     private async Task<IJSObjectReference> GetModuleAsync()
     {
         return _module ??= await JS.InvokeAsync<IJSObjectReference>(
@@ -64,9 +75,9 @@ public partial class FlareClipboard : ComponentBase, IAsyncDisposable
         if (!_disposed)
         {
             if (success)
-                _ = Flare.ToastAsync("Copied to clipboard", ToastLevel.Success);
+                _ = Flare.ToastAsync(Locale.Ui("copied"), ToastLevel.Success);
             else
-                _ = Flare.ToastAsync("Failed to copy to clipboard", ToastLevel.Error);
+                _ = Flare.ToastAsync(Locale.Ui("copyFailed"), ToastLevel.Error);
         }
     }
 

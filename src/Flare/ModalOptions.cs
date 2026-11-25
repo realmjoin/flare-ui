@@ -17,6 +17,13 @@ public sealed class ModalOptions
     public string? CssClass { get; set; }
 
     /// <summary>
+    /// Accessible name announced by screen readers when the modal has no <see cref="Title"/>.
+    /// Ignored when a title is shown, since the title then names the dialog.
+    /// Defaults to a generic localized "Dialog".
+    /// </summary>
+    public string? AriaLabel { get; set; }
+
+    /// <summary>
     /// Whether clicking the backdrop closes the modal.
     /// </summary>
     public bool? CloseOnBackdropClick { get; set; }

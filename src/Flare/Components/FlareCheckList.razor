@@ -2,12 +2,14 @@
 @typeparam TItem
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
-<div @attributes="InputAttributes" class="@RootClass()">
+<div @attributes="RootAttributes()" class="@RootClass()">
     @if (ShowSearch)
     {
         <div class="@(Headless ? null : "flare-checklist-search")">
             <input type="text"
                    role="searchbox"
+                   aria-label="@(SearchLabel ?? Locale.Ui("filter"))"
+                   aria-controls="@_listId"
                    autocomplete="off"
                    class="@(Headless ? null : "flare-checklist-search-input")"
                    placeholder="@Placeholder"
@@ -21,7 +23,7 @@
                 <button type="button"
                         class="@(Headless ? null : "flare-checklist-search-clear")"
                         tabindex="-1"
-                        aria-label="Clear filter"
+                        aria-label="@Locale.Ui("clearFilter")"
                         @onclick="ClearFilter">&times;</button>
             }
         </div>
@@ -29,19 +31,35 @@
 
     <div class="@(Headless ? null : "flare-checklist-list")"
          style="@ListStyle()"
+         @ref="_list"
+         id="@_listId"
+         data-flare-listnav
          role="listbox"
          aria-multiselectable="true"
-         tabindex="0">
+         aria-label="@ListLabel("aria-label")"
+         aria-labelledby="@ListLabel("aria-labelledby")"
+         aria-activedescendant="@(ActiveIndex >= 0 ? OptionId(ActiveIndex) : null)"
+         aria-disabled="@(Disabled ? "true" : null)"
+         aria-busy="@(_loading ? "true" : null)"
+         tabindex="@(Disabled ? "-1" : "0")"
+         @onfocus="HandleListFocus"
+         @onkeydown="HandleListKeyDown">
         <Virtualize @ref="_virtualizer"
                     ItemsProvider="_itemsProvider"
                     ItemSize="ItemSize"
-                    Context="item">
+                    Context="row">
             <ItemContent>
+                @{ var item = row.Item; }
                 <div @key="GetKey(item)"
+                     id="@OptionId(row.Index)"
                      class="@RowClass(item)"
                      role="option"
-                     aria-selected="@IsSelected(item)"
-                     @onclick="() => ToggleItem(item)">
+                     aria-selected="@(IsSelected(item) ? "true" : "false")"
+                     aria-disabled="@(!IsSelected(item) && IsAtLimit ? "true" : null)"
+                     aria-setsize="@_totalCount"
+                     aria-posinset="@(row.Index + 1)"
+                     data-flare-active="@(row.Index == ActiveIndex ? "true" : null)"
+                     @onclick="() => HandleRowClick(row)">
                     <span class="@(Headless ? null : (IsSelected(item) ? "flare-checklist-check flare-checklist-checked" : "flare-checklist-check"))"
                           aria-hidden="true">
                         @if (IsSelected(item))
@@ -68,19 +86,6 @@
             </Placeholder>
         </Virtualize>
 
-        @if (_loading && _totalCount == 0)
-        {
-            <div class="@(Headless ? null : "flare-checklist-loading")">
-                @(LoadingText ?? "Loading…")
-            </div>
-        }
-        else if (_searched && _totalCount == 0)
-        {
-            <div class="@(Headless ? null : "flare-checklist-empty")">
-                @(NotFoundText ?? "No items found")
-            </div>
-        }
-
         @if (_searched && _totalCount > 0 && TruncatedText is not null && (TruncatedThreshold <= 0 || _totalCount >= TruncatedThreshold))
         {
             <div class="@(Headless ? null : "flare-checklist-truncated")">
@@ -89,10 +94,24 @@
         }
     </div>
 
+    @* Status messages live outside the listbox: a listbox may only contain options. *@
+    @if (_loading && _totalCount == 0)
+    {
+        <div class="@(Headless ? null : "flare-checklist-loading")" role="status">
+            @(LoadingText ?? Locale.Ui("loading"))
+        </div>
+    }
+    else if (_searched && _totalCount == 0)
+    {
+        <div class="@(Headless ? null : "flare-checklist-empty")" role="status">
+            @(NotFoundText ?? Locale.Ui("noItems"))
+        </div>
+    }
+
     @if (ShowCount)
     {
-        <div class="@(Headless ? null : "flare-checklist-footer")">
-            @_selectedValues.Count selected@(MaxItems > 0 ? $" / {MaxItems} max" : "")
+        <div class="@(Headless ? null : "flare-checklist-footer")" aria-live="polite">
+            @(MaxItems > 0 ? Locale.Ui("selectedMaxFormat", _selectedValues.Count, MaxItems) : Locale.Ui("selectedFormat", _selectedValues.Count))
         </div>
     }
 </div>

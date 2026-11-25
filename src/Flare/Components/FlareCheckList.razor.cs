@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using Flare.Internal;
+using Microsoft.JSInterop;
 
 namespace Flare;
 
@@ -13,6 +15,9 @@ namespace Flare;
 /// <typeparam name="TItem">The type of items to display and select.</typeparam>
 public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
 {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private FlareLocaleProvider Locale { get; set; } = default!;
+
     /// <summary>The currently selected items.</summary>
     [Parameter] public IReadOnlyList<TItem> Values { get; set; } = [];
 
@@ -66,6 +71,13 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
     /// <summary>Placeholder text for the search input.</summary>
     [Parameter] public string? Placeholder { get; set; }
 
+    /// <summary>
+    /// Accessible name of the search input. Defaults to a localized "Filter".
+    /// The list itself is named by an <c>aria-label</c> or <c>aria-labelledby</c>
+    /// attribute set on the component.
+    /// </summary>
+    [Parameter] public string? SearchLabel { get; set; }
+
     /// <summary>Text shown while loading. Defaults to "Loading…".</summary>
     [Parameter] public string? LoadingText { get; set; }
 
@@ -114,11 +126,27 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
     /// <summary>When true, all built-in CSS classes are omitted.</summary>
     [Parameter] public bool Headless { get; set; }
 
-    /// <summary>Additional HTML attributes splatted onto the root element.</summary>
+    /// <summary>
+    /// Additional HTML attributes splatted onto the root element. <c>aria-label</c> and
+    /// <c>aria-labelledby</c> are applied to the list instead, since that is the element they name.
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? InputAttributes { get; set; }
 
-    private Virtualize<TItem>? _virtualizer;
-    private readonly ItemsProviderDelegate<TItem> _itemsProvider;
+    // A row carries its position in the full (filtered) list: Virtualize only hands out the
+    // item, but keyboard navigation and aria-posinset need the index.
+    private readonly record struct Row(int Index, TItem Item);
+
+    private const int PageStep = 10;
+    private const int RowCacheLimit = 2000;
+
+    private Virtualize<Row>? _virtualizer;
+    private readonly ItemsProviderDelegate<Row> _itemsProvider;
+    private ElementReference _list;
+    private readonly string _listId = $"flare-cl-list-{Guid.NewGuid():N}";
+    private int _activeIndex = -1;
+    // Rows handed out by ProviderFunc, by index — the only place a server-paged item can be
+    // looked up again when it is toggled from the keyboard.
+    private readonly Dictionary<int, TItem> _rowCache = [];
     private string _filterText = "";
     private List<TItem> _cachedItems = [];
     private List<TItem> _selectedValues = [];
@@ -140,6 +168,10 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
 
     private bool IsAtLimit => MaxItems > 0 && _selectedValues.Count >= MaxItems;
 
+    private int ActiveIndex => _totalCount == 0 ? -1 : Math.Min(_activeIndex, _totalCount - 1);
+
+    private string OptionId(int index) => $"{_listId}-opt-{index}";
+
     protected override void OnParametersSet()
     {
         if (!Values.SequenceEqual(_selectedValues, ItemComparer))
@@ -149,6 +181,7 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
             if (_searched && _selectedValues.Count > 0)
             {
                 PatchMissingSelected();
+                _rowCache.Clear();
                 _needsRefresh = true;
             }
         }
@@ -160,6 +193,14 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            // Loading the module registers the key handling that keeps the page from
+            // scrolling while the list is navigated (data-flare-listnav).
+            try { await JS.GetFlareModuleAsync(); }
+            catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+        }
+
         if (_needsRefresh)
         {
             _needsRefresh = false;
@@ -215,17 +256,18 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         }
     }
 
-    private ValueTask<ItemsProviderResult<TItem>> ProvideItems(ItemsProviderRequest request)
+    private ValueTask<ItemsProviderResult<Row>> ProvideItems(ItemsProviderRequest request)
     {
         if (ProviderFunc is not null)
             return ProvideItemsFromServer(request);
 
         var items = GetFilteredItems();
-        var page = items.Skip(request.StartIndex).Take(request.Count).ToList();
-        return ValueTask.FromResult(new ItemsProviderResult<TItem>(page, items.Count));
+        var page = items.Skip(request.StartIndex).Take(request.Count)
+            .Select((item, i) => new Row(request.StartIndex + i, item)).ToList();
+        return ValueTask.FromResult(new ItemsProviderResult<Row>(page, items.Count));
     }
 
-    private async ValueTask<ItemsProviderResult<TItem>> ProvideItemsFromServer(ItemsProviderRequest request)
+    private async ValueTask<ItemsProviderResult<Row>> ProvideItemsFromServer(ItemsProviderRequest request)
     {
         _loading = true;
 
@@ -259,7 +301,17 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
             _totalCount = pinCount + _serverTotal;
             _searched = true;
             _loading = false;
-            return new ItemsProviderResult<TItem>(output, _totalCount);
+
+            if (_rowCache.Count > RowCacheLimit)
+                _rowCache.Clear();
+            var rows = new List<Row>(output.Count);
+            for (var i = 0; i < output.Count; i++)
+            {
+                _rowCache[request.StartIndex + i] = output[i];
+                rows.Add(new Row(request.StartIndex + i, output[i]));
+            }
+
+            return new ItemsProviderResult<Row>(rows, _totalCount);
         }
         catch (TaskCanceledException)
         {
@@ -271,7 +323,7 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
             _totalCount = 0;
             _loading = false;
             _searched = true;
-            return new ItemsProviderResult<TItem>([], 0);
+            return new ItemsProviderResult<Row>([], 0);
         }
     }
 
@@ -310,6 +362,7 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
     private async Task HandleFilterInput(ChangeEventArgs e)
     {
         _filterText = e.Value?.ToString() ?? "";
+        _activeIndex = -1;
 
         if (ProviderFunc is null && SearchFunc is null)
         {
@@ -338,6 +391,7 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
                 _searched = false;
                 _pinnedItems = [];
                 _serverTotal = 0;
+                _rowCache.Clear();
 
                 if (ProviderFunc is null)
                     await LoadDataAsync();
@@ -374,12 +428,98 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         _searched = false;
         _pinnedItems = [];
         _serverTotal = 0;
+        _activeIndex = -1;
+        _rowCache.Clear();
 
         if (ProviderFunc is null)
             await LoadDataAsync();
         else
             await RefreshVirtualizer();
     }
+
+    private void HandleListFocus()
+    {
+        if (_activeIndex < 0 && _totalCount > 0)
+            _activeIndex = 0;
+    }
+
+    private Task HandleRowClick(Row row)
+    {
+        if (!Disabled)
+            _activeIndex = row.Index;
+        return ToggleItem(row.Item);
+    }
+
+    // Listbox keyboard model: arrows, Home/End and PageUp/PageDown move the active option,
+    // Space or Enter toggles it. Focus stays on the list (aria-activedescendant), which is
+    // what lets this work with virtualized rows that come and go.
+    private async Task HandleListKeyDown(KeyboardEventArgs e)
+    {
+        if (Disabled || _totalCount == 0) return;
+
+        var current = ActiveIndex;
+        var last = _totalCount - 1;
+
+        switch (e.Key)
+        {
+            case "ArrowDown": await MoveActiveTo(Math.Min(current + 1, last)); break;
+            case "ArrowUp": await MoveActiveTo(Math.Max(current - 1, 0)); break;
+            case "PageDown": await MoveActiveTo(Math.Min(Math.Max(current, 0) + PageStep, last)); break;
+            case "PageUp": await MoveActiveTo(Math.Max(current - PageStep, 0)); break;
+            case "Home": await MoveActiveTo(0); break;
+            case "End": await MoveActiveTo(last); break;
+
+            case " ":
+            case "Enter":
+                if (current >= 0 && TryGetItemAt(current, out var item))
+                    await ToggleItem(item);
+                break;
+        }
+    }
+
+    private async Task MoveActiveTo(int index)
+    {
+        if (index == _activeIndex) return;
+        _activeIndex = index;
+
+        try
+        {
+            var module = await JS.GetFlareModuleAsync();
+            await module.InvokeVoidAsync("scrollListIndexIntoView", _list, OptionId(index), index, ItemSize);
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException or ObjectDisposedException) { }
+    }
+
+    private bool TryGetItemAt(int index, out TItem item)
+    {
+        if (ProviderFunc is not null)
+            return _rowCache.TryGetValue(index, out item!);
+
+        var items = GetFilteredItems();
+        if (index < items.Count)
+        {
+            item = items[index];
+            return true;
+        }
+
+        item = default!;
+        return false;
+    }
+
+    private Dictionary<string, object>? RootAttributes()
+    {
+        if (InputAttributes is null) return null;
+        if (!InputAttributes.ContainsKey("aria-label") && !InputAttributes.ContainsKey("aria-labelledby"))
+            return InputAttributes;
+
+        var attrs = new Dictionary<string, object>(InputAttributes);
+        attrs.Remove("aria-label");
+        attrs.Remove("aria-labelledby");
+        return attrs;
+    }
+
+    private object? ListLabel(string name) =>
+        InputAttributes is not null && InputAttributes.TryGetValue(name, out var value) ? value : null;
 
     private async Task ToggleItem(TItem item)
     {
@@ -406,6 +546,7 @@ public partial class FlareCheckList<TItem> : ComponentBase, IDisposable
         {
             if (ProviderFunc is not null)
                 _pinnedItems = [];
+            _rowCache.Clear();
             _needsRefresh = true;
         }
     }

@@ -3,8 +3,10 @@
 <div class="@CssClass()"
      role="@(Instance.Options.Level == ToastLevel.Error ? "alert" : "status")"
      aria-live="@(Instance.Options.Level == ToastLevel.Error ? "assertive" : "polite")"
-     @onmouseenter="PauseTimer"
-     @onmouseleave="ResumeTimer">
+     @onmouseenter="HandleMouseEnter"
+     @onmouseleave="HandleMouseLeave"
+     @onfocusin="HandleFocusIn"
+     @onfocusout="HandleFocusOut">
     @if (Instance.Options.OnClick is not null)
     {
         <button type="button" class="@(Headless ? null : "flare-toast-body flare-toast-clickable")" @onclick="HandleClick">
@@ -33,7 +35,7 @@
     }
     @if (Instance.Options.ShowCloseButton)
     {
-        <button type="button" class="@(Headless ? null : "flare-toast-close")" aria-label="Dismiss" @onclick="Dismiss">&times;</button>
+        <button type="button" class="@(Headless ? null : "flare-toast-close")" aria-label="@Locale.Ui("dismiss")" @onclick="Dismiss">&times;</button>
     }
     @if (Instance.Options.ShowProgress && !Instance.Options.Persistent && !Headless)
     {

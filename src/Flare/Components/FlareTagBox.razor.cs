@@ -15,6 +15,7 @@ namespace Flare;
 public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
 {
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private Flare.Internal.FlareLocaleProvider Locale { get; set; } = default!;
 
     /// <summary>The currently selected items.</summary>
     [Parameter] public IReadOnlyList<TItem> Values { get; set; } = [];
@@ -333,10 +334,16 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
 
     private async Task HandleTagKeyDown(KeyboardEventArgs e, TItem item)
     {
-        if (e.Key is "Delete" or "Backspace")
+        if (Disabled) return;
+
+        // The tag is a button whose action is "remove": Enter and Space activate it,
+        // Delete and Backspace are kept as the familiar shortcuts.
+        if (e.Key is "Delete" or "Backspace" or "Enter" or " ")
+        {
             await RemoveTag(item);
-        else if (e.Key is "Enter")
+            // The focused tag is gone from the DOM — move focus to the input instead of losing it.
             FocusInput();
+        }
     }
 
     private async Task SelectItem(TItem item)
@@ -427,6 +434,15 @@ public partial class FlareTagBox<TItem> : ComponentBase, IAsyncDisposable
             CloseDropdown();
             StateHasChanged();
         });
+    }
+
+    // Splits the localized "Press Enter to create {0}" text around its placeholder so the
+    // typed value can be rendered emphasised in between.
+    private (string Before, string After) CreateHint()
+    {
+        var format = Locale.Ui("createFormat");
+        var i = format.IndexOf("{0}", StringComparison.Ordinal);
+        return i < 0 ? (format + " ", "") : (format[..i], format[(i + 3)..]);
     }
 
     private string GetText(TItem item) => TextSelector(item);

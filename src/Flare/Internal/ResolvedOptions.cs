@@ -8,6 +8,7 @@ public sealed class ResolvedModalOptions
 {
     public string? Title { get; init; }
     public string? CssClass { get; init; }
+    public string? AriaLabel { get; init; }
     public bool CloseOnBackdropClick { get; init; }
     public bool CloseOnEscape { get; init; }
     public bool ShowCloseButton { get; init; }

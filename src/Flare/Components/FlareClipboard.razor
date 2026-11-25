@@ -1,8 +1,12 @@
 @namespace Flare
 
+@* Not a <button>: the content stays selectable inline text. flare.js turns Enter and
+   Space on a data-flare-press element into a click. *@
 <span @ref="_element"
+      tabindex="0"
+      data-flare-press
       @attributes="InputAttributes"
       class="flare-clipboard flare-title @Class"
-      data-flare-title="Copy"
+      data-flare-title="@Locale.Ui("copy")"
       role="button"
       @onclick="HandleClick">@ChildContent</span>

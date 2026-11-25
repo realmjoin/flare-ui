@@ -6,6 +6,7 @@ namespace Flare;
 internal sealed class FlareService : IFlareService
 {
     private readonly FlareOptions _options;
+    private readonly FlareLocaleProvider _locale;
     private readonly Queue<ToastInstance> _toastQueue = new();
     private readonly Lock _lock = new();
 
@@ -17,7 +18,11 @@ internal sealed class FlareService : IFlareService
 
     public event Action? OnChanged;
 
-    public FlareService(FlareOptions options) => _options = options;
+    public FlareService(FlareOptions options, FlareLocaleProvider locale)
+    {
+        _options = options;
+        _locale = locale;
+    }
 
     internal FlareOptions Options => _options;
 
@@ -238,6 +243,7 @@ internal sealed class FlareService : IFlareService
         {
             Title = perCall?.Title ?? d.Title,
             CssClass = perCall?.CssClass ?? d.CssClass,
+            AriaLabel = perCall?.AriaLabel,
             CloseOnBackdropClick = perCall?.CloseOnBackdropClick ?? d.CloseOnBackdropClick,
             CloseOnEscape = perCall?.CloseOnEscape ?? d.CloseOnEscape,
             ShowCloseButton = perCall?.ShowCloseButton ?? d.ShowCloseButton,
@@ -255,8 +261,8 @@ internal sealed class FlareService : IFlareService
 
         return new ResolvedConfirmOptions
         {
-            ConfirmText = perCall.ConfirmText ?? d.ConfirmText,
-            CancelText = perCall.CancelText ?? d.CancelText,
+            ConfirmText = perCall.ConfirmText ?? d.ConfirmText ?? _locale.Ui("ok"),
+            CancelText = perCall.CancelText ?? d.CancelText ?? _locale.Ui("cancel"),
             Intent = intent,
             DefaultButton = defaultButton,
             CloseOnEscape = perCall.CloseOnEscape ?? d.CloseOnEscape,

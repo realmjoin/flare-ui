@@ -27,5 +27,28 @@
     "tonight": "今晚",
     "tomorrowNight": "明晚",
     "nightFormat": "{0}（夜间）"
+  },
+  "ui": {
+    "close": "关闭",
+    "dismiss": "忽略",
+    "clear": "清除",
+    "clearFilter": "清除筛选",
+    "filter": "筛选",
+    "removeFormat": "移除 {0}",
+    "notifications": "通知",
+    "loading": "正在加载…",
+    "searching": "正在搜索…",
+    "noItems": "未找到项目",
+    "noResults": "未找到结果",
+    "createFormat": "按 Enter 创建 {0}",
+    "copy": "复制",
+    "copyToClipboard": "复制到剪贴板",
+    "copied": "已复制到剪贴板",
+    "copyFailed": "复制到剪贴板失败",
+    "selectedFormat": "已选择 {0} 项",
+    "selectedMaxFormat": "已选择 {0} 项 / 最多 {1} 项",
+    "ok": "确定",
+    "cancel": "取消",
+    "dialog": "对话框"
   }
 }

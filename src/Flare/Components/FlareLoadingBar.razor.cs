@@ -14,10 +14,17 @@ namespace Flare;
 /// </example>
 public partial class FlareLoadingBar : ComponentBase
 {
+    [Inject] private Flare.Internal.FlareLocaleProvider Locale { get; set; } = default!;
+
     /// <summary>
     /// Whether the loading bar is currently visible.
     /// </summary>
     [Parameter] public bool Active { get; set; }
+
+    /// <summary>
+    /// Accessible name of the progress bar. Defaults to a localized "Loading".
+    /// </summary>
+    [Parameter] public string? AriaLabel { get; set; }
 
     /// <summary>
     /// Progress percentage (0–100). When <c>null</c>, the bar shows an indeterminate animation.

@@ -27,5 +27,28 @@
     "tonight": "bu gece",
     "tomorrowNight": "yarın gece",
     "nightFormat": "{0} gece"
+  },
+  "ui": {
+    "close": "Kapat",
+    "dismiss": "Yoksay",
+    "clear": "Temizle",
+    "clearFilter": "Filtreyi temizle",
+    "filter": "Filtrele",
+    "removeFormat": "{0} öğesini kaldır",
+    "notifications": "Bildirimler",
+    "loading": "Yükleniyor…",
+    "searching": "Aranıyor…",
+    "noItems": "Öğe bulunamadı",
+    "noResults": "Sonuç bulunamadı",
+    "createFormat": "{0} oluşturmak için Enter'a basın",
+    "copy": "Kopyala",
+    "copyToClipboard": "Panoya kopyala",
+    "copied": "Panoya kopyalandı",
+    "copyFailed": "Panoya kopyalanamadı",
+    "selectedFormat": "{0} seçildi",
+    "selectedMaxFormat": "{0} seçildi / en fazla {1}",
+    "ok": "Tamam",
+    "cancel": "İptal",
+    "dialog": "İletişim kutusu"
   }
 }

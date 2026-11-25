@@ -10,6 +10,7 @@ internal sealed class FlareLocaleProvider
     private const string Fallback = "en-us";
 
     private readonly Dictionary<string, Dictionary<string, string>> _sections;
+    private readonly Dictionary<string, Dictionary<string, string>> _fallback;
 
     public FlareLocaleProvider(string locale)
     {
@@ -21,6 +22,11 @@ internal sealed class FlareLocaleProvider
         var lang = tag.Contains('-') ? tag[..tag.IndexOf('-')] : tag;
         if (!candidates.Contains($"{lang}-{lang}")) candidates.Add($"{lang}-{lang}");
         if (tag != Fallback && !candidates.Contains(Fallback)) candidates.Add(Fallback);
+
+        using (var fallbackStream = assembly.GetManifestResourceStream($"Flare.wwwroot.locales.{Fallback}.json"))
+        {
+            _fallback = fallbackStream is not null ? Parse(fallbackStream) : new(StringComparer.OrdinalIgnoreCase);
+        }
 
         foreach (var candidate in candidates)
         {
@@ -39,6 +45,22 @@ internal sealed class FlareLocaleProvider
 
     public IReadOnlyDictionary<string, string> Get(string section) =>
         _sections.TryGetValue(section, out var s) ? s : throw new KeyNotFoundException($"Locale section '{section}' not found.");
+
+    /// <summary>
+    /// Returns a built-in UI string (labels, status texts). Falls back to en-us per key,
+    /// so a locale file that lacks a newer key never breaks rendering.
+    /// </summary>
+    public string Ui(string key)
+    {
+        if (_sections.TryGetValue("ui", out var s) && s.TryGetValue(key, out var value) && value.Length > 0)
+            return value;
+        if (_fallback.TryGetValue("ui", out var f) && f.TryGetValue(key, out var fallback))
+            return fallback;
+        return key;
+    }
+
+    /// <summary>Formats a built-in UI string that contains <c>{0}</c>-style placeholders.</summary>
+    public string Ui(string key, params object?[] args) => string.Format(Ui(key), args);
 
     private static Dictionary<string, Dictionary<string, string>> Parse(Stream stream)
     {

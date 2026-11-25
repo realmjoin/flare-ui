@@ -52,6 +52,13 @@ public partial class FlareConfirmButton : ComponentBase, IDisposable
     [Parameter] public string? ArmedClass { get; set; }
 
     /// <summary>
+    /// CSS class merged into the button while it is not armed. Use it for a variant that the
+    /// armed look must replace rather than extend — for example Bootstrap's
+    /// <c>btn-outline-*</c>, which combined with the solid <c>btn-*</c> yields unreadable text.
+    /// </summary>
+    [Parameter] public string? StandbyClass { get; set; }
+
+    /// <summary>
     /// Delay in milliseconds before the button becomes clickable in the armed state.
     /// </summary>
     [Parameter] public int ArmDelayMs { get; set; } = 2000;
@@ -91,11 +98,12 @@ public partial class FlareConfirmButton : ComponentBase, IDisposable
             // Remove disabled — we handle it via IsDisabled
             attrs.Remove("disabled");
 
-            if (_state is ButtonState.ArmDelay or ButtonState.Armed && !string.IsNullOrEmpty(ArmedClass))
+            var stateClass = _isArmed ? ArmedClass : StandbyClass;
+            if (!string.IsNullOrEmpty(stateClass))
             {
                 attrs.TryGetValue("class", out var existing);
                 var current = existing as string ?? string.Empty;
-                attrs["class"] = string.IsNullOrEmpty(current) ? ArmedClass : $"{current} {ArmedClass}";
+                attrs["class"] = string.IsNullOrEmpty(current) ? stateClass : $"{current} {stateClass}";
             }
 
             return attrs.Count > 0 ? attrs : null;

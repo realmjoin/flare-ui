@@ -27,5 +27,28 @@
     "tonight": "आज रात",
     "tomorrowNight": "कल रात",
     "nightFormat": "{0} रात को"
+  },
+  "ui": {
+    "close": "बंद करें",
+    "dismiss": "ख़ारिज करें",
+    "clear": "साफ़ करें",
+    "clearFilter": "फ़िल्टर साफ़ करें",
+    "filter": "फ़िल्टर",
+    "removeFormat": "{0} हटाएँ",
+    "notifications": "सूचनाएँ",
+    "loading": "लोड हो रहा है…",
+    "searching": "खोजा जा रहा है…",
+    "noItems": "कोई आइटम नहीं मिला",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "createFormat": "{0} बनाने के लिए Enter दबाएँ",
+    "copy": "कॉपी करें",
+    "copyToClipboard": "क्लिपबोर्ड पर कॉपी करें",
+    "copied": "क्लिपबोर्ड पर कॉपी किया गया",
+    "copyFailed": "क्लिपबोर्ड पर कॉपी नहीं हो सका",
+    "selectedFormat": "{0} चयनित",
+    "selectedMaxFormat": "{0} चयनित / अधिकतम {1}",
+    "ok": "ठीक है",
+    "cancel": "रद्द करें",
+    "dialog": "संवाद"
   }
 }

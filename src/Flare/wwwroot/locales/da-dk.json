@@ -27,5 +27,28 @@
     "tonight": "i nat",
     "tomorrowNight": "i morgen nat",
     "nightFormat": "{0} om natten"
+  },
+  "ui": {
+    "close": "Luk",
+    "dismiss": "Afvis",
+    "clear": "Ryd",
+    "clearFilter": "Ryd filter",
+    "filter": "Filtrer",
+    "removeFormat": "Fjern {0}",
+    "notifications": "Notifikationer",
+    "loading": "Indlæser…",
+    "searching": "Søger…",
+    "noItems": "Ingen elementer fundet",
+    "noResults": "Ingen resultater fundet",
+    "createFormat": "Tryk på Enter for at oprette {0}",
+    "copy": "Kopiér",
+    "copyToClipboard": "Kopiér til udklipsholder",
+    "copied": "Kopieret til udklipsholder",
+    "copyFailed": "Kunne ikke kopiere til udklipsholder",
+    "selectedFormat": "{0} valgt",
+    "selectedMaxFormat": "{0} valgt / maks. {1}",
+    "ok": "OK",
+    "cancel": "Annuller",
+    "dialog": "Dialogboks"
   }
 }

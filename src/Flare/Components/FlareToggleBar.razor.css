@@ -2,8 +2,8 @@
     display: inline-flex;
     max-width: 100%;
     vertical-align: middle;
-    background: var(--flare-togglebar-bg, #fff);
-    border: 1px solid var(--flare-togglebar-border, #d1d5db);
+    background: var(--flare-togglebar-bg, var(--flare-bg, #fff));
+    border: 1px solid var(--flare-togglebar-border, var(--flare-border, #868e9b));
     border-radius: var(--flare-togglebar-radius, 0.375rem);
 }
 
@@ -29,11 +29,11 @@
     padding: var(--flare-togglebar-padding, 0.375rem 0.75rem);
     font-size: var(--flare-togglebar-font-size, 0.875rem);
     line-height: 1.5;
-    color: var(--flare-togglebar-text, #374151);
+    color: var(--flare-togglebar-text, var(--flare-text-secondary, #374151));
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
-    border-left: 1px solid var(--flare-togglebar-border, #d1d5db);
+    border-left: 1px solid var(--flare-togglebar-border, var(--flare-border, #868e9b));
     transition: background 150ms, color 150ms;
 }
 
@@ -65,16 +65,16 @@
     border-left: 0;
     border-radius: 0;
     box-shadow:
-        -1px 0 0 var(--flare-togglebar-border, #d1d5db),
-        0 -1px 0 var(--flare-togglebar-border, #d1d5db);
+        -1px 0 0 var(--flare-togglebar-border, var(--flare-border, #868e9b)),
+        0 -1px 0 var(--flare-togglebar-border, var(--flare-border, #868e9b));
 }
 
 .flare-togglebar-item:hover {
-    background: var(--flare-togglebar-hover, #f3f4f6);
+    background: var(--flare-togglebar-hover, var(--flare-hover, #f3f4f6));
 }
 
 .flare-togglebar-item:has(:focus-visible) {
-    outline: 2px solid var(--flare-togglebar-accent, #3b82f6);
+    outline: 2px solid var(--flare-togglebar-accent, var(--flare-accent, #2563eb));
     outline-offset: -2px;
 }
 
@@ -114,16 +114,16 @@
 /* Single select: exactly one segment is active, so it can carry the full accent colour. */
 .flare-togglebar-single .flare-togglebar-item-selected,
 .flare-togglebar-single .flare-togglebar-item-selected.flare-togglebar-item-disabled:hover {
-    color: var(--flare-togglebar-accent-text, #fff);
-    background: var(--flare-togglebar-accent, #3b82f6);
+    color: var(--flare-togglebar-accent-text, var(--flare-accent-text, #fff));
+    background: var(--flare-togglebar-accent, var(--flare-accent, #2563eb));
 }
 
 .flare-togglebar-single .flare-togglebar-item-selected:hover {
-    background: var(--flare-togglebar-accent-hover, #2563eb);
+    background: var(--flare-togglebar-accent-hover, var(--flare-accent-hover, #1d4ed8));
 }
 
 .flare-togglebar-single .flare-togglebar-item-selected:has(:focus-visible) {
-    outline-color: var(--flare-togglebar-accent-text, #fff);
+    outline-color: var(--flare-togglebar-accent-text, var(--flare-accent-text, #fff));
     outline-offset: -4px;
 }
 
@@ -136,27 +136,50 @@
     width: 1rem;
     height: 1rem;
     min-width: 1rem;
-    border: 1.5px solid #9ca3af;
+    border: 1.5px solid var(--flare-togglebar-check-border, var(--flare-text-faint, #6b7280));
     border-radius: 0.25rem;
     font-size: 0.6875rem;
     line-height: 1;
     color: transparent;
-    background: #fff;
+    background: var(--flare-togglebar-bg, var(--flare-bg, #fff));
     transition: background 150ms, border-color 150ms;
 }
 
 .flare-togglebar-multiple .flare-togglebar-item-selected,
 .flare-togglebar-multiple .flare-togglebar-item-selected.flare-togglebar-item-disabled:hover {
-    color: var(--flare-togglebar-tint-text, #1d4ed8);
-    background: var(--flare-togglebar-tint, #eff6ff);
+    color: var(--flare-togglebar-tint-text, var(--flare-tint-text, #1d4ed8));
+    background: var(--flare-togglebar-tint, var(--flare-tint, #eff6ff));
 }
 
 .flare-togglebar-multiple .flare-togglebar-item-selected:hover {
-    background: var(--flare-togglebar-tint-hover, #dbeafe);
+    background: var(--flare-togglebar-tint-hover, var(--flare-tint-hover, #dbeafe));
 }
 
 .flare-togglebar-item-selected .flare-togglebar-check {
-    color: #fff;
-    background: var(--flare-togglebar-accent, #3b82f6);
-    border-color: var(--flare-togglebar-accent, #3b82f6);
+    color: var(--flare-togglebar-accent-text, var(--flare-accent-text, #fff));
+    background: var(--flare-togglebar-accent, var(--flare-accent, #2563eb));
+    border-color: var(--flare-togglebar-accent, var(--flare-accent, #2563eb));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flare-togglebar-item,
+    .flare-togglebar-check {
+        transition: none;
+    }
+}
+
+/* Forced colors drop background colors: keep the active segment and the checked box visible. */
+@media (forced-colors: active) {
+    .flare-togglebar-single .flare-togglebar-item-selected,
+    .flare-togglebar-single .flare-togglebar-item-selected:hover,
+    .flare-togglebar-item-selected .flare-togglebar-check {
+        forced-color-adjust: none;
+        background: Highlight;
+        color: HighlightText;
+        border-color: Highlight;
+    }
+
+    .flare-togglebar-item:has(:focus-visible) {
+        outline-color: CanvasText;
+    }
 }

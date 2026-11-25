@@ -27,5 +27,28 @@
     "tonight": "esta noche",
     "tomorrowNight": "mañana por la noche",
     "nightFormat": "{0} de noche"
+  },
+  "ui": {
+    "close": "Cerrar",
+    "dismiss": "Descartar",
+    "clear": "Borrar",
+    "clearFilter": "Borrar filtro",
+    "filter": "Filtrar",
+    "removeFormat": "Quitar {0}",
+    "notifications": "Notificaciones",
+    "loading": "Cargando…",
+    "searching": "Buscando…",
+    "noItems": "No se encontraron elementos",
+    "noResults": "No se encontraron resultados",
+    "createFormat": "Pulsa Intro para crear {0}",
+    "copy": "Copiar",
+    "copyToClipboard": "Copiar al portapapeles",
+    "copied": "Copiado al portapapeles",
+    "copyFailed": "No se pudo copiar al portapapeles",
+    "selectedFormat": "{0} seleccionados",
+    "selectedMaxFormat": "{0} seleccionados / máx. {1}",
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "dialog": "Diálogo"
   }
 }

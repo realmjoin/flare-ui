@@ -232,7 +232,7 @@ Keyboard: Arrow keys navigate, Enter selects, Escape/Tab closes.
 
 A multi-select tagging control with typeahead search. Selected items appear as removable tags; the skills field in the same modal is the live example.
 
-Keyboard: Arrow keys navigate, Enter/Comma selects, Backspace removes last tag, Escape closes.
+Keyboard: Arrow keys navigate, Enter/Comma selects, Backspace removes last tag, Escape closes. Each tag is a button in the tab order; Enter, Space, Delete or Backspace removes the focused tag.
 
 </td>
 </tr>
@@ -342,6 +342,7 @@ A searchable, scrollable multi-select list with virtualized rendering. Uses Blaz
 | `KeySelector` | `null` | Extracts a unique key for stable virtual scroll tracking (falls back to `TextSelector`) |
 | `ItemTemplate` | `null` | Custom render template for each row |
 | `Placeholder` | `null` | Search input placeholder |
+| `SearchLabel` | `"Filter"` | Accessible name of the search input |
 | `MaxHeight` | `null` | CSS max-height for scroll area (`null` = auto-expand) |
 | `ItemSize` | `40` | Row height in px for virtual scroll |
 | `DebounceMs` | `300` | Debounce delay before remote search |
@@ -354,7 +355,9 @@ A searchable, scrollable multi-select list with virtualized rendering. Uses Blaz
 | `Disabled` | `false` | Disables the control |
 | `Headless` | `false` | Strips all built-in CSS |
 
-Keyboard: Escape clears filter. Click row to toggle.
+Keyboard: Tab moves from the filter to the list. In the list, Arrow keys, Home/End and PageUp/PageDown move the active row, Space or Enter toggles it. Escape clears the filter.
+
+Name the list with `aria-label` or `aria-labelledby` on the component; both are applied to the list element.
 
 ## Toggle Bar
 
@@ -407,12 +410,12 @@ Look and size are set with CSS variables, on the bar itself or any ancestor:
 
 | Variable | Default | Applies to |
 |---|---|---|
-| `--flare-togglebar-accent` / `-accent-hover` | `#3b82f6` / `#2563eb` | Active segment (single select), check box, focus ring |
+| `--flare-togglebar-accent` / `-accent-hover` | `#2563eb` / `#1d4ed8` | Active segment (single select), check box, focus ring |
 | `--flare-togglebar-accent-text` | `#fff` | Text on the active segment (single select) |
 | `--flare-togglebar-tint` / `-tint-hover` / `-tint-text` | `#eff6ff` / `#dbeafe` / `#1d4ed8` | Active segments (multi select) |
 | `--flare-togglebar-bg` / `-hover` | `#fff` / `#f3f4f6` | Bar background, hover on inactive segments |
 | `--flare-togglebar-text` | `#374151` | Text of inactive segments |
-| `--flare-togglebar-border` | `#d1d5db` | Outer border and dividers |
+| `--flare-togglebar-border` | `#868e9b` | Outer border and dividers |
 | `--flare-togglebar-radius` | `0.375rem` | Corner radius |
 | `--flare-togglebar-font-size` | `0.875rem` | Label size |
 | `--flare-togglebar-padding` | `0.375rem 0.75rem` | Segment padding, and with it the height of the bar |
@@ -451,6 +454,8 @@ Declarative:
 <FlareLoadingBar Active="_loading" Fixed />
 <FlareLoadingBar Active="_loading" Progress="_percent" />
 ```
+
+Screen readers announce the bar as "Loading"; set `AriaLabel` to say what is loading.
 
 Imperative:
 
@@ -504,7 +509,7 @@ The bar uses the same `--flare-loading-bar-*` colors by default. Override indepe
 --flare-loading-toast-color-alt: #22c55e;
 --flare-loading-toast-background: ...;   /* optional full fill override */
 --flare-loading-toast-track: #e5e7eb;    /* unfilled track */
---flare-loading-toast-accent: #3b82f6;   /* left border + percent label */
+--flare-loading-toast-accent: #2563eb;   /* left border + percent label */
 ```
 
 Regular toasts also have a countdown bar. It follows the toast accent, or `--flare-toast-progress` if set:
@@ -541,7 +546,7 @@ A two-stage confirmation button that prevents accidental destructive actions. Su
 By default the button permanently disables after confirmation. Set `DisableOnConfirm="false"` for repeatable actions:
 
 ```razor
-<FlareConfirmButton class="btn btn-outline-warning" ArmedClass="btn-warning"
+<FlareConfirmButton class="btn" StandbyClass="btn-outline-warning" ArmedClass="btn-warning"
                     DisableOnConfirm="false" OnConfirmed="Rollback">
     <Standby>Rollback</Standby>
     <Armed>Confirm rollback</Armed>
@@ -557,6 +562,7 @@ By default the button permanently disables after confirmation. Set `DisableOnCon
 | `ModalHeading` | `"Confirm"` | Dialog title (modal mode) |
 | `ModalMessage` | `null` | Dialog body (modal mode) |
 | `ArmedClass` | `null` | CSS class merged when armed |
+| `StandbyClass` | `null` | CSS class merged while not armed; use it when the armed class must replace a variant (e.g. Bootstrap `btn-outline-*` → `btn-*`) instead of adding to it |
 | `ArmDelayMs` | `2000` | Disabled wait before arming |
 | `ArmedWindowMs` | `8000` | Time window to confirm before reset |
 | `DisableOnConfirm` | `true` | Permanently disable after confirmation |
@@ -601,7 +607,7 @@ Copies a string to the system clipboard and shows success/error feedback via Fla
 
 ## Clipboard Inline
 
-Renders inline content that copies its text to the clipboard on click. Shows a "Copy" tooltip on hover with a pointer cursor. No default styling — bring your own classes.
+Renders inline content that copies its text to the clipboard on click, or on Enter/Space when focused — it is a button in the tab order. Shows a "Copy" tooltip on hover and focus with a pointer cursor. No default styling — bring your own classes.
 
 ```razor
 <FlareClipboard Class="text-monospace">@user.ID</FlareClipboard>
@@ -620,8 +626,8 @@ When no `Value` is set, the component reads the rendered text content from the D
 Tooltip colors are customizable via CSS variables:
 
 ```css
---flare-clipboard-tooltip-bg: #333;
---flare-clipboard-tooltip-color: #fff;
+--flare-tooltip-bg: #333;
+--flare-tooltip-color: #fff;
 ```
 
 ## Configuration
@@ -643,8 +649,8 @@ builder.Services.AddFlare(o =>
     o.Modal.CloseOnBackdropClick = false;
     // Confirm defaults
     o.Confirm.Intent = ConfirmIntent.Primary;
-    o.Confirm.ConfirmText = "OK";
-    o.Confirm.CancelText = "Cancel";
+    o.Confirm.ConfirmText = "OK";      // default: localized "OK" of o.Locale
+    o.Confirm.CancelText = "Cancel";   // default: localized "Cancel" of o.Locale
 });
 ```
 
@@ -723,6 +729,57 @@ Detects the client's IANA timezone and converts UTC timestamps to client-local t
 
 The service initializes automatically when `<FlareProvider>` renders on the client.
 
+## Theming
+
+Every color of the built-in styles is a CSS variable. Set the shared tokens on `:root` (or any ancestor) to restyle all components at once, for example for a dark theme or higher contrast:
+
+```css
+:root {
+    --flare-bg: #1f2937;
+    --flare-text: #f9fafb;
+    --flare-border: #6b7280;
+    --flare-accent: #60a5fa;
+}
+```
+
+| Token | Default | Used for |
+|---|---|---|
+| `--flare-bg` / `--flare-bg-subtle` | `#fff` / `#f9fafb` | Surfaces; search field, footer and disabled inputs |
+| `--flare-text` | `#1a1a1a` | Primary text |
+| `--flare-text-secondary` | `#374151` | Options, default buttons |
+| `--flare-text-muted` | `#6b7280` | Loading and empty states, footers |
+| `--flare-text-faint` | `#6b7280` | Placeholders, close and clear icons |
+| `--flare-border` / `--flare-border-subtle` | `#868e9b` / `#e5e7eb` | Outer borders; inner dividers |
+| `--flare-hover` | `#f3f4f6` | Hover background |
+| `--flare-accent` / `--flare-accent-hover` | `#2563eb` / `#1d4ed8` | Primary button, checked boxes, focus rings |
+| `--flare-accent-text` | `#fff` | Text on accent and danger backgrounds |
+| `--flare-tint` / `--flare-tint-hover` | `#eff6ff` / `#dbeafe` | Selected rows, tags, highlighted option |
+| `--flare-tint-text` / `--flare-tint-border` | `#1d4ed8` / `#bfdbfe` | Text and border on tinted backgrounds |
+| `--flare-danger` / `--flare-danger-hover` | `#dc2626` / `#b91c1c` | Danger confirm button |
+| `--flare-backdrop` | `rgba(0, 0, 0, 0.4)` | Modal and confirm backdrop |
+
+Each token can be overridden for a single component by inserting its name: `--flare-<component>-<token>`, with `checklist`, `confirm`, `modal`, `tagbox`, `typeahead`, `toast`, `loading-toast` or `togglebar` as the component — for example `--flare-confirm-accent` or `--flare-tagbox-border`. The component variable wins over the shared token.
+
+A few variables exist only per component: `--flare-confirm-message` (message text, `#4b5563`), `--flare-typeahead-focus-ring` / `--flare-tagbox-focus-ring` (focus glow, 15% of the accent), `--flare-togglebar-check-border`, `--flare-toast-focus` (focus ring of toast buttons, defaults to the accent), plus the ones listed under [Toggle Bar](#toggle-bar), [Loading Bar](#loading-bar) and the toast level colors `--flare-toast-info` / `-success` / `-warning` / `-error`. Note that `--flare-togglebar-text` falls back to `--flare-text-secondary`. The toast level colors, the loading toast accent and the loading bar gradient do not follow `--flare-accent`; set their own variables. Shadows are not variables.
+
+## Accessibility
+
+The components follow the WAI-ARIA Authoring Practices patterns and are fully keyboard operable:
+
+- **Dialogs** (modal, confirm) trap focus, return it to the opener and close on Escape. A modal without a title is named by `ModalOptions.AriaLabel`.
+- **Typeahead and tag box** are comboboxes with a listbox popup; the **check list** is a multi-select listbox, also when virtualized.
+- **Toasts** are live regions (`alert` for errors, `status` otherwise). The dismiss timer pauses while keyboard focus is inside a toast.
+- **Tooltips** on focusable elements (such as the inline clipboard) appear on focus as well as hover, are announced as the description of the focused element and close on Escape. The absolute-time tooltip of `FlareRelativeTime` / `FlareRelativeDay` sits on plain text and is reachable by mouse and touch only.
+- **Reduced motion:** with `prefers-reduced-motion: reduce`, slide, scale and shimmer animations are off.
+- **Forced colors** (Windows high contrast): selection, focus and progress stay visible through system colors.
+- Built-in labels and status texts ("Close", "Loading…", "No results found", …) follow the configured [locale](#localization).
+
+What stays with you: give inputs a label (attributes such as `aria-label` or `id` pass through to the input of typeahead and tag box), name check lists and toggle bars with `aria-label`, and check color contrast when you change the theme. The default palette meets the WCAG AA contrast ratios (4.5:1 for text, 3:1 for input borders, check boxes and focus rings) on the default backgrounds.
+
+Next to Bootstrap fields the Flare inputs look darker, because Bootstrap's own field border (`#dee2e6`) is below 3:1. Either darken Bootstrap's (`.form-control, .form-select { border-color: var(--flare-border, #868e9b); }`) or, if you accept the lower contrast, set `--flare-border: var(--bs-border-color)`.
+
+In `Headless` mode all roles, states and keyboard handling remain; the focus styles are yours to provide. The active check list row is marked with `data-flare-active`.
+
 ## Localization
 
 Flare ships 25 locale files using BCP 47 tags. Set the locale at startup:
@@ -736,6 +793,8 @@ builder.Services.AddFlare(o => o.Locale = "ja-jp");
 **Fallback resolution:** exact tag → base language (e.g. `de` → `de-de`) → `en-us`.
 
 Locale files are JSON in `wwwroot/locales/`. During server prerender, strings are read from embedded resources. On the client, the matching JSON file is fetched at runtime.
+
+Besides the `time` section, each file has a `ui` section with the built-in labels and status texts (close, dismiss, loading, no results, copy, OK/Cancel, …). Parameters such as `LoadingText` or `ConfirmText` still override them per component or call. A key missing from a locale falls back to `en-us`.
 
 The relative-day locale contract includes dedicated keys for person-friendly night phrasing such as `earlierTonight`, `tonight`, `tomorrowNight`, and `lastNight`, with `nightFormat` used only for longer ranges like "in 3 days at night".
 

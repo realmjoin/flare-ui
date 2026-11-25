@@ -11,7 +11,7 @@
     <FlareDebouncedButton class="btn btn-outline-secondary" OnAction="ImportMembers">Import members</FlareDebouncedButton>
     @if (_members.Count > 0)
     {
-        <FlareConfirmButton class="btn btn-outline-danger" ArmedClass="btn-danger"
+        <FlareConfirmButton class="btn" StandbyClass="btn-outline-danger" ArmedClass="btn-danger"
                             OnConfirmed="ClearAll">
             <Standby>Clear all<br />members</Standby>
             <Armed>Confirm clear</Armed>

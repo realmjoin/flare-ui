@@ -2,8 +2,11 @@
 
 @if (Active)
 {
+    @* Indeterminate: no aria-valuenow at all, which is what marks the bar as indeterminate. *@
     <div class="@ContainerClass()" role="progressbar"
-         aria-valuenow="@Progress" aria-valuemin="0" aria-valuemax="100">
+         aria-label="@(AriaLabel ?? Locale.Ui("loading").TrimEnd('…', '.', ' '))"
+         aria-valuenow="@(Progress is { } p ? Math.Clamp(p, 0, 100).ToString() : null)"
+         aria-valuemin="@(IsIndeterminate ? null : "0")" aria-valuemax="@(IsIndeterminate ? null : "100")">
         <div class="@BarClass()" style="@BarStyle()"></div>
     </div>
 }

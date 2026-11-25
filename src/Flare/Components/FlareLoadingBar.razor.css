@@ -45,3 +45,20 @@
         background-position: 0% 50%;
     }
 }
+
+/* Reduced motion: the indeterminate bar rests as a full, static bar. */
+@media (prefers-reduced-motion: reduce) {
+    .flare-loading-bar-track {
+        transition: none;
+    }
+
+    .flare-loading-bar-indeterminate {
+        animation: none;
+    }
+}
+
+@media (forced-colors: active) {
+    .flare-loading-bar-track {
+        background: Highlight;
+    }
+}

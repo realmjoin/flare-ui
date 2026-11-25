@@ -14,7 +14,7 @@
     <FlareDebouncedButton class="btn btn-outline-secondary" OnAction="SimulateIncident">Simulate incident</FlareDebouncedButton>
     @if (_incidents.Count > 0)
     {
-        <FlareConfirmButton class="btn btn-outline-danger" ArmedClass="btn-danger"
+        <FlareConfirmButton class="btn" StandbyClass="btn-outline-danger" ArmedClass="btn-danger"
                             UseModal ModalHeading="Acknowledge All"
                             ModalMessage="This will acknowledge all open incidents. Continue?"
                             OnConfirmed="AcknowledgeAll">
@@ -69,7 +69,7 @@ else
                         <FlareRelativeTime Value="@inc.OpenedUtc" />
                     </td>
                     <td style="white-space: nowrap;">
-                        <FlareConfirmButton class="btn btn-sm btn-outline-success" ArmedClass="btn-success"
+                        <FlareConfirmButton class="btn btn-sm" StandbyClass="btn-outline-success" ArmedClass="btn-success"
                                             OnConfirmed="() => Resolve(inc)">
                             <Standby>Resolve</Standby>
                             <Armed>Confirm</Armed>

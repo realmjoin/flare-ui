@@ -27,5 +27,28 @@
     "tonight": "dnes v noci",
     "tomorrowNight": "zítra v noci",
     "nightFormat": "{0} v noci"
+  },
+  "ui": {
+    "close": "Zavřít",
+    "dismiss": "Zahodit",
+    "clear": "Vymazat",
+    "clearFilter": "Vymazat filtr",
+    "filter": "Filtrovat",
+    "removeFormat": "Odebrat {0}",
+    "notifications": "Oznámení",
+    "loading": "Načítání…",
+    "searching": "Hledání…",
+    "noItems": "Nebyly nalezeny žádné položky",
+    "noResults": "Nebyly nalezeny žádné výsledky",
+    "createFormat": "Stisknutím klávesy Enter vytvoříte {0}",
+    "copy": "Kopírovat",
+    "copyToClipboard": "Kopírovat do schránky",
+    "copied": "Zkopírováno do schránky",
+    "copyFailed": "Kopírování do schránky se nezdařilo",
+    "selectedFormat": "Vybráno: {0}",
+    "selectedMaxFormat": "Vybráno: {0} / max. {1}",
+    "ok": "OK",
+    "cancel": "Zrušit",
+    "dialog": "Dialogové okno"
   }
 }

@@ -8,8 +8,8 @@
     border-radius: 0.5rem;
     width: fit-content;
     max-width: min(28rem, calc(100vw - 2rem));
-    background: #fff;
-    color: #1a1a1a;
+    background: var(--flare-toast-bg, var(--flare-bg, #fff));
+    color: var(--flare-toast-text, var(--flare-text, #1a1a1a));
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     animation: flare-toast-in 300ms ease-out;
@@ -53,7 +53,7 @@
 }
 
 .flare-toast-clickable:focus-visible {
-    outline: 2px solid var(--flare-toast-accent, #3b82f6);
+    outline: 2px solid var(--flare-toast-focus, var(--flare-accent, #2563eb));
     outline-offset: 2px;
 }
 
@@ -62,17 +62,17 @@
     cursor: pointer;
     font-size: 1.25rem;
     line-height: 1;
-    color: #9ca3af;
+    color: var(--flare-toast-text-faint, var(--flare-text-faint, #6b7280));
     padding: 0 0.25rem;
     border-radius: 0.25rem;
 }
 
 .flare-toast-close:hover {
-    color: #1a1a1a;
+    color: var(--flare-toast-text, var(--flare-text, #1a1a1a));
 }
 
 .flare-toast-close:focus-visible {
-    outline: 2px solid var(--flare-toast-accent, #3b82f6);
+    outline: 2px solid var(--flare-toast-focus, var(--flare-accent, #2563eb));
     outline-offset: 2px;
 }
 
@@ -116,5 +116,28 @@
     }
     to {
         transform: scaleX(0);
+    }
+}
+
+/* Reduced motion: no slide in or out. The countdown bar keeps running — it is the only
+   sign of how long the toast stays, and it does not move across the screen. */
+@media (prefers-reduced-motion: reduce) {
+    .flare-toast {
+        animation: none;
+    }
+
+    .flare-toast-exiting {
+        animation: none;
+        opacity: 0;
+    }
+}
+
+@media (forced-colors: active) {
+    .flare-toast {
+        border: 1px solid CanvasText;
+    }
+
+    .flare-toast-progress {
+        background: CanvasText;
     }
 }

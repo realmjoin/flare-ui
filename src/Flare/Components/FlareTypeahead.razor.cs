@@ -15,6 +15,7 @@ namespace Flare;
 public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
 {
     [Inject] private IJSRuntime JS { get; set; } = default!;
+    [Inject] private Flare.Internal.FlareLocaleProvider Locale { get; set; } = default!;
 
     /// <summary>The currently selected item.</summary>
     [Parameter] public TItem? Value { get; set; }
@@ -397,6 +398,15 @@ public partial class FlareTypeahead<TItem> : ComponentBase, IAsyncDisposable
             CloseDropdown();
             StateHasChanged();
         });
+    }
+
+    // Splits the localized "Press Enter to create {0}" text around its placeholder so the
+    // typed value can be rendered emphasised in between.
+    private (string Before, string After) CreateHint()
+    {
+        var format = Locale.Ui("createFormat");
+        var i = format.IndexOf("{0}", StringComparison.Ordinal);
+        return i < 0 ? (format + " ", "") : (format[..i], format[(i + 3)..]);
     }
 
     private string GetText(TItem item) => TextSelector(item) ?? "";

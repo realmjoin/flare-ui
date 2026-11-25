@@ -5,10 +5,11 @@
     align-items: center;
     gap: 0.375rem;
     width: 100%;
-    min-height: 2.375rem;
+    /* Same height and text inset as the typeahead input, so both line up in a form. */
+    min-height: 2.4375rem;
     padding: 0.3125rem 0.5rem;
-    background: #fff;
-    border: 1px solid #d1d5db;
+    background: var(--flare-tagbox-bg, var(--flare-bg, #fff));
+    border: 1px solid var(--flare-tagbox-border, var(--flare-border, #868e9b));
     border-radius: 0.375rem;
     cursor: text;
     transition: border-color 150ms, box-shadow 150ms;
@@ -16,17 +17,17 @@
 }
 
 .flare-tagbox:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    border-color: var(--flare-tagbox-accent, var(--flare-accent, #2563eb));
+    box-shadow: 0 0 0 3px var(--flare-tagbox-focus-ring, color-mix(in srgb, var(--flare-tagbox-accent, var(--flare-accent, #2563eb)) 15%, transparent));
 }
 
 .flare-tagbox-disabled {
-    background: #f9fafb;
+    background: var(--flare-tagbox-bg-subtle, var(--flare-bg-subtle, #f9fafb));
     cursor: not-allowed;
 }
 
 .flare-tagbox-disabled:focus-within {
-    border-color: #d1d5db;
+    border-color: var(--flare-tagbox-border, var(--flare-border, #868e9b));
     box-shadow: none;
 }
 
@@ -36,9 +37,9 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.125rem 0.375rem;
-    background: #eff6ff;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
+    background: var(--flare-tagbox-tint, var(--flare-tint, #eff6ff));
+    color: var(--flare-tagbox-tint-text, var(--flare-tint-text, #1d4ed8));
+    border: 1px solid var(--flare-tagbox-tint-border, var(--flare-tint-border, #bfdbfe));
     border-radius: 0.25rem;
     font-size: 0.8125rem;
     line-height: 1.5;
@@ -51,18 +52,18 @@
 }
 
 .flare-tagbox-tag-removable:hover {
-    background: #dbeafe;
+    background: var(--flare-tagbox-tint-hover, var(--flare-tint-hover, #dbeafe));
 }
 
 .flare-tagbox-tag:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--flare-tagbox-accent, var(--flare-accent, #2563eb));
     outline-offset: 1px;
 }
 
 .flare-tagbox-tag-x {
     font-size: 0.875rem;
     line-height: 1;
-    color: #3b82f6;
+    color: var(--flare-tagbox-accent, var(--flare-accent, #2563eb));
 }
 
 /* Inline input */
@@ -72,16 +73,16 @@
     min-width: 4rem;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: #1a1a1a;
-    padding: 0.0625rem 0;
+    color: var(--flare-tagbox-text, var(--flare-text, #1a1a1a));
+    padding: 0.0625rem 0.25rem;
 }
 
 .flare-tagbox-input::placeholder {
-    color: #9ca3af;
+    color: var(--flare-tagbox-text-faint, var(--flare-text-faint, #6b7280));
 }
 
 .flare-tagbox-input:disabled {
-    color: #9ca3af;
+    color: var(--flare-tagbox-text-faint, var(--flare-text-faint, #6b7280));
     cursor: not-allowed;
 }
 
@@ -94,8 +95,8 @@
     z-index: 50;
     margin-top: 0.25rem;
     max-height: 15rem;
-    background: #fff;
-    border: 1px solid #d1d5db;
+    background: var(--flare-tagbox-bg, var(--flare-bg, #fff));
+    border: 1px solid var(--flare-tagbox-border, var(--flare-border, #868e9b));
     border-radius: 0.375rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
     overflow-y: auto;
@@ -107,29 +108,29 @@
 .flare-tagbox-option {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
-    color: #374151;
+    color: var(--flare-tagbox-text-secondary, var(--flare-text-secondary, #374151));
     cursor: pointer;
     transition: background 80ms;
 }
 
 .flare-tagbox-option:hover {
-    background: #f3f4f6;
+    background: var(--flare-tagbox-hover, var(--flare-hover, #f3f4f6));
 }
 
 .flare-tagbox-option-active {
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: var(--flare-tagbox-tint, var(--flare-tint, #eff6ff));
+    color: var(--flare-tagbox-tint-text, var(--flare-tint-text, #1d4ed8));
 }
 
 .flare-tagbox-option-active:hover {
-    background: #dbeafe;
+    background: var(--flare-tagbox-tint-hover, var(--flare-tint-hover, #dbeafe));
 }
 
 .flare-tagbox-loading,
 .flare-tagbox-empty {
     padding: 0.75rem;
     font-size: 0.8125rem;
-    color: #6b7280;
+    color: var(--flare-tagbox-text-muted, var(--flare-text-muted, #6b7280));
     text-align: center;
 }
 
@@ -152,5 +153,30 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flare-tagbox,
+    .flare-tagbox-option {
+        transition: none;
+    }
+
+    .flare-tagbox-dropdown, .flare-tagbox-tag {
+        animation: none;
+    }
+}
+
+/* Forced colors drop the focus glow and the highlight background. */
+@media (forced-colors: active) {
+    .flare-tagbox:focus-within {
+        outline: 2px solid Highlight;
+        outline-offset: 1px;
+    }
+
+    .flare-tagbox-option-active {
+        forced-color-adjust: none;
+        background: Highlight;
+        color: HighlightText;
     }
 }
